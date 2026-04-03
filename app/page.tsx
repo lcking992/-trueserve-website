@@ -94,9 +94,9 @@ export default async function Home() {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black" />
           </div>
 
-          <div className="relative z-10 max-w-6xl space-y-12 animate-fade-in text-center flex flex-col items-center justify-center glow-blur-primary">
+          <div className="relative z-10 max-w-6xl space-y-6 sm:space-y-12 animate-fade-in text-center flex flex-col items-center justify-center glow-blur-primary px-2">
             
-            <h1 className="text-5xl md:text-[115px] leading-[0.8] text-white font-black tracking-tighter italic animate-slide-up select-none">
+            <h1 className="text-[2.25rem] sm:text-5xl md:text-[115px] leading-[0.85] md:leading-[0.8] text-white font-black tracking-tighter italic animate-slide-up select-none">
               Cravings meet <br />
               <span className="text-primary not-italic tracking-[-0.03em] drop-shadow-[5px_5px_0px_rgba(255,255,255,0.1)] uppercase italic">Lightning Speed.</span>
             </h1>
@@ -105,11 +105,11 @@ export default async function Home() {
               Experience the future of local food delivery. Zero platform fees, fair driver pay, and the best local flavors delivered to your door.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-12">
-              <Link href="/restaurants" className="badge-solid-primary !px-16 !py-6 !text-sm">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 pt-8 sm:pt-12 w-full px-2">
+              <Link href="/restaurants" className="badge-solid-primary !px-8 sm:!px-16 !py-4 sm:!py-6 !text-sm w-full sm:w-auto">
                 Browse Restaurants
               </Link>
-              <Link href="/merchant" className="badge-outline-white !px-16 !py-6 !text-sm h-glow">
+              <Link href="/merchant" className="badge-outline-white !px-8 sm:!px-16 !py-4 sm:!py-6 !text-sm h-glow w-full sm:w-auto">
                 For Businesses
               </Link>
             </div>
@@ -117,12 +117,12 @@ export default async function Home() {
         </section>
 
         {/* ── PLATFORM FEATURES ───────────────────────────────────────────── */}
-        <section className="py-32 bg-[#0a0a0b] w-full flex flex-col items-center">
-          <div className="w-full max-w-7xl px-8 flex flex-col items-center text-center">
-            <div className="flex items-center justify-center gap-10 text-primary font-black uppercase tracking-[1em] text-[9px] mb-24 opacity-80 select-none w-full">
-                <div className="flex-1 h-px bg-primary/20 max-w-[80px]" />
-                <span className="shrink-0 px-4">Platform Features</span>
-                <div className="flex-1 h-px bg-primary/20 max-w-[80px]" />
+        <section className="py-16 sm:py-32 bg-[#0a0a0b] w-full flex flex-col items-center">
+          <div className="w-full max-w-7xl px-4 sm:px-8 flex flex-col items-center text-center">
+            <div className="flex items-center justify-center gap-3 sm:gap-10 text-primary font-black uppercase tracking-[0.3em] sm:tracking-[1em] text-[9px] mb-12 sm:mb-24 opacity-80 select-none w-full">
+                <div className="flex-1 h-px bg-primary/20 max-w-[40px] sm:max-w-[80px]" />
+                <span className="shrink-0 px-2 sm:px-4">Platform Features</span>
+                <div className="flex-1 h-px bg-primary/20 max-w-[40px] sm:max-w-[80px]" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
               {[
@@ -148,18 +148,18 @@ export default async function Home() {
                   link: "/driver"
                 }
               ].map((card, i) => (
-                <Link key={i} href={card.link} className={`reveal-scale delay-${(i + 1) * 200} group relative min-h-[600px] bg-black overflow-hidden border border-white/5 transition-all duration-700 flex flex-col justify-end p-12 hover:bg-white/[0.02] active:scale-[0.98] shadow-2xl`}>
+                <Link key={i} href={card.link} className={`reveal-scale delay-${(i + 1) * 200} group relative min-h-[340px] sm:min-h-[480px] md:min-h-[600px] bg-black overflow-hidden border border-white/5 transition-all duration-700 flex flex-col justify-end p-6 sm:p-10 md:p-12 hover:bg-white/[0.02] active:scale-[0.98] shadow-2xl`}>
                   <img src={card.img} alt={card.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2.5s] opacity-20 group-hover:opacity-45 brightness-50" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                  <div className="relative z-10 space-y-6 flex flex-col items-center text-center">
-                    <h3 className="text-4xl md:text-6xl font-[900] text-white leading-[0.85] italic uppercase font-serif tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                  <div className="relative z-10 space-y-3 sm:space-y-6 flex flex-col items-center text-center">
+                    <h3 className="text-3xl sm:text-4xl md:text-6xl font-[900] text-white leading-[0.85] italic uppercase font-serif tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                         {card.title}
                     </h3>
                     <p className="text-slate-400 text-sm md:text-base font-medium leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity italic">
                         {card.desc}
                     </p>
-                    <div className="pt-6">
-                      <div className="inline-flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-white border border-white/20 rounded-md px-8 py-4 backdrop-blur-sm bg-black/40 group-hover:border-primary group-hover:text-primary transition-all duration-500 italic">
+                    <div className="pt-2 sm:pt-6">
+                      <div className="inline-flex items-center gap-4 text-[10px] font-black uppercase tracking-[0.4em] text-white border border-white/20 rounded-md px-6 sm:px-8 py-3 sm:py-4 backdrop-blur-sm bg-black/40 group-hover:border-primary group-hover:text-primary transition-all duration-500 italic">
                          {card.cta} <span className="group-hover:translate-x-2 transition-transform duration-500">→</span>
                       </div>
                     </div>
@@ -172,7 +172,7 @@ export default async function Home() {
       </main>
 
       {/* ── FOOTER ──────────────────────────────────────────────────────── */}
-       <footer className="py-32 bg-black border-t border-white/10 px-10">
+       <footer className="py-16 sm:py-32 bg-black border-t border-white/10 px-6 sm:px-10">
         <div className="container mx-auto max-w-7xl text-center space-y-20">
           <div className="flex flex-col items-center gap-10">
             <Logo size="xl" className="animate-pulse" />
