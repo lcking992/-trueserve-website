@@ -87,6 +87,15 @@ export default async function MerchantDashboardLayout({ children }: { children: 
                 }
                 .ml-mode-tab:hover { color: #888; }
                 .ml-mode-tab.active { background: #e8a230; color: #000; }
+
+                /* ── MOBILE ── */
+                @media (max-width: 640px) {
+                    .ml-top-nav { padding: 0 14px; height: 52px; }
+                    .ml-nav-links { display: none; }
+                    .ml-store-status { display: none; }
+                    .ml-mode-tabs { display: none; }
+                    .ml-nav-right { gap: 12px; }
+                }
             `}</style>
 
             <div style={{ background: '#0c0e13', minHeight: '100vh', color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>

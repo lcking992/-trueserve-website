@@ -60,27 +60,39 @@ export default async function DriverDashboardLayout({ children }: { children: Re
                 .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 52px; border-bottom: 1px solid #1c1f28; background: #0c0e13; position: sticky; top: 0; z-index: 100; }
                 .nav-brand { font-size: 15px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
                 .nav-brand span { color: #e8a230; }
-                
+
                 .nav-link { font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase; color: #555; padding: 6px 12px; cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s; text-decoration: none; }
                 .nav-link:hover { color: #999; }
                 .nav-link.active { color: #e8a230; border-bottom-color: #e8a230; }
-                
+
                 .balance-wrap { display: flex; flex-direction: column; align-items: flex-end; margin-right: 4px; }
                 .balance-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #444; }
                 .balance-val { font-size: 13px; font-weight: 700; font-family: 'DM Mono', monospace; color: #e8a230; }
-                
+
                 .mode-tabs { display: flex; gap: 1px; }
                 .mode-tab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 14px; background: #131720; border: 1px solid #1c1f28; color: #555; cursor: pointer; }
                 .mode-tab.active { background: #e8a230; color: #000; border-color: #e8a230; }
-                
-                .nav-av { width: 32px; height: 32px; background: #e8a230; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #000; }
 
-                .sub-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 40px; background: #090b0f; border-bottom: 1px solid #1c1f28; position: sticky; top: 52px; z-index: 90; }
-                .sub-link { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #444; padding: 5px 12px; cursor: pointer; border-bottom: 2px solid transparent; text-decoration: none; }
+                .nav-av { width: 32px; height: 32px; background: #e8a230; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #000; flex-shrink: 0; }
+
+                .sub-nav { display: flex; align-items: center; justify-content: space-between; padding: 0 28px; height: 40px; background: #090b0f; border-bottom: 1px solid #1c1f28; position: sticky; top: 52px; z-index: 90; overflow-x: auto; }
+                .sub-link { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #444; padding: 5px 12px; cursor: pointer; border-bottom: 2px solid transparent; text-decoration: none; white-space: nowrap; }
                 .sub-link:hover { color: #888; }
                 .sub-link.active { color: #e8a230; border-bottom-color: #e8a230; }
 
                 .main-content { padding: 0; min-height: calc(100vh - 92px); position: relative; z-index: 10; }
+
+                /* ── MOBILE ── */
+                @media (max-width: 640px) {
+                    .top-nav { padding: 0 16px; height: 52px; }
+                    .nav-link { display: none; }
+                    .balance-wrap { margin-right: 0; }
+                    .balance-lbl { display: none; }
+                    .balance-val { font-size: 14px; }
+                    .mode-tabs { display: none; }
+                    .sub-nav { padding: 0 16px; height: 40px; gap: 0; }
+                    .sub-nav-logout { display: none; }
+                }
             ` }} />
             
             <div className="top-nav">
@@ -105,7 +117,7 @@ export default async function DriverDashboardLayout({ children }: { children: Re
 
             <div className="sub-nav">
                 <DashboardNav />
-                <div className="text-[10px] font-bold uppercase tracking-widest text-[#2a2f3a] hover:text-[#444]">
+                <div className="sub-nav-logout text-[10px] font-bold uppercase tracking-widest text-[#2a2f3a] hover:text-[#444]">
                     <LogoutButton />
                 </div>
             </div>
