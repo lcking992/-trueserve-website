@@ -110,6 +110,13 @@ export default async function MerchantDashboardLayout({ children }: { children: 
                                 </svg>
                                 Live Terminal
                             </Link>
+                            <Link href="/merchant/dashboard/compliance" className="ml-nav-link">
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                    <rect x="2" y="1" width="8" height="10" rx="1" stroke="currentColor" strokeWidth="1.3"/>
+                                    <path d="M4 4.5h4M4 6.5h4M4 8.5h2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+                                </svg>
+                                Compliance
+                            </Link>
                             <Link href="/merchant/dashboard/integrations" className="ml-nav-link">
                                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                                     <path d="M4 4h4M4 8h4M2 6h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
