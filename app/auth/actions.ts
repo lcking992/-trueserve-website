@@ -464,10 +464,28 @@ export async function loginAsPilot() {
 export async function loginAsDemoMerchant() {
     const cookieStore = await cookies();
     const DEMO_MERCHANT_ID = "merchant-demo-2026";
-    
+
     // Clear old tokens to avoid session ghosting
     cookieStore.delete("sb-access-token");
     cookieStore.delete("sb-refresh-token");
+
+    // Ensure User record exists so support chat and other features work
+    const { data: existingUser } = await supabaseAdmin
+        .from('User')
+        .select('id')
+        .eq('id', DEMO_MERCHANT_ID)
+        .maybeSingle();
+
+    if (!existingUser) {
+        await supabaseAdmin.from('User').insert({
+            id: DEMO_MERCHANT_ID,
+            name: "Demo Merchant",
+            email: "demo-merchant@trueservedelivery.com",
+            role: "MERCHANT",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        });
+    }
 
     cookieStore.set("userId", DEMO_MERCHANT_ID, {
         httpOnly: true,
@@ -478,9 +496,9 @@ export async function loginAsDemoMerchant() {
     });
 
     // Set the Pilot bypass for redirect speed
-    cookieStore.set("preview_mode", "true", { 
-        path: "/", 
-        httpOnly: false, 
+    cookieStore.set("preview_mode", "true", {
+        path: "/",
+        httpOnly: false,
         secure: false, // Ensure visibility on localtunnel HTTPS
         maxAge: 60 * 60 * 12 // 12 hours
     });

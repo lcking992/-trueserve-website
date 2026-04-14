@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import Anthropic from '@anthropic-ai/sdk';
@@ -28,7 +29,22 @@ export async function sendMessageToSupport(chatId: string | null, messageContent
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
-        if (!user) {
+        // Fallback: pilot/demo sessions use a userId cookie without a Supabase JWT
+        let userId = user?.id;
+        if (!userId) {
+            const cookieStore = await cookies();
+            const cookieUserId = cookieStore.get("userId")?.value;
+            if (cookieUserId) {
+                const { data: dbUser } = await supabaseAdmin
+                    .from('User')
+                    .select('id')
+                    .eq('id', cookieUserId)
+                    .maybeSingle();
+                if (dbUser) userId = cookieUserId;
+            }
+        }
+
+        if (!userId) {
             throw new Error("You must be logged in to access support.");
         }
 
@@ -39,7 +55,7 @@ export async function sendMessageToSupport(chatId: string | null, messageContent
             const { data: newChat, error: chatError } = await supabaseAdmin
                 .from('SupportChat')
                 .insert({
-                    userId: user.id,
+                    userId: userId,
                     userRole: role,
                     status: 'BOT_ACTIVE'
                 })
