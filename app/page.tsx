@@ -803,59 +803,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── DRIVER + MERCHANT RECRUITMENT ── */}
-        <section className="mt-16 ts-scroll-reveal">
-          <div className="mb-10 text-center">
-            <p className="food-kicker mb-3">Join the network</p>
-            <h2 className="food-heading" style={{ fontSize: 38 }}>Built for the people <span className="accent">behind the food</span></h2>
-          </div>
-          <div style={{ display: "grid", gap: 16 }} className="lg:grid-cols-2">
-            <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(10,12,16,0) 70%)", border: "1px solid rgba(249,115,22,0.2)" }}>
-              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.25)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-                </svg>
-              </div>
-              <p className="food-kicker mb-2">For Drivers</p>
-              <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Earn on your <span className="accent">own schedule</span></h3>
-              <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
-                No subscription fees. No hidden cuts. Keep more of what you earn with transparent per-delivery pay, real-time settlements, and a compliance dashboard that protects your standing.
-              </p>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 28 }}>
-                {["Transparent pay", "Flexible hours", "Real-time settlement", "Compliance support"].map(tag => (
-                  <span key={tag} style={{ padding: "5px 11px", borderRadius: 999, border: "1px solid rgba(249,115,22,0.3)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.6)" }}>{tag}</span>
-                ))}
-              </div>
-              <Link href="/driver/signup" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
-                Start Driving
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </Link>
-            </div>
-
-            <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(10,12,16,0) 70%)", border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 11l19-9-9 19-2-8-8-2z"/>
-                </svg>
-              </div>
-              <p className="food-kicker mb-2">For Merchants</p>
-              <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Grow without <span className="accent">the commission tax</span></h3>
-              <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
-                List your restaurant for free. Pay a flat split only when orders come in — no monthly fees on the base plan. Get compliance tools, a storefront, and a real operations dashboard built for busy kitchens.
-              </p>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 28 }}>
-                {["Zero setup fee", "15% flat split", "Compliance tools", "Live order dashboard"].map(tag => (
-                  <span key={tag} style={{ padding: "5px 11px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.12)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)" }}>{tag}</span>
-                ))}
-              </div>
-              <Link href="/merchant/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
-                List Your Restaurant
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-              </Link>
-            </div>
-          </div>
-        </section>
-
         {/* ── EARLY ACCESS ── */}
         <section className="mt-16 ts-scroll-reveal">
           <div
@@ -914,10 +861,13 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
               <Link href="/merchant/signup" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
                 Apply as a Restaurant
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </Link>
+              <Link href="/driver/signup" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.12em", textDecoration: "none" }}>
+                Want to drive instead? →
               </Link>
             </div>
           </div>
