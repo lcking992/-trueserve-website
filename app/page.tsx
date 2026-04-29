@@ -32,6 +32,31 @@ import {
 } from "@/lib/public-restaurants";
 import { getAccountHomeHref } from "@/lib/account-routing";
 
+// ── CountUp component ────────────────────────────────────────────────────────
+function CountUp({ value, active }: { value: string; active: boolean }) {
+  const [display, setDisplay] = React.useState("0");
+  React.useEffect(() => {
+    if (!active) return;
+    const match = value.match(/^(\d+)(.*)$/);
+    if (!match) { setDisplay(value); return; }
+    const target = parseInt(match[1]);
+    const suffix = match[2];
+    const duration = 1400;
+    const startTime = performance.now();
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * target) + suffix);
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [active, value]);
+  return <>{display}</>;
+}
+
+// ── Cycling words for hero headline ─────────────────────────────────────────
+const CYCLE_WORDS = ["craving", "ordering", "hungry for", "in the mood for"];
+
 export default function Home() {
   const [userId, setUserId] = useState<string | null>(null);
   const [accountHref, setAccountHref] = useState("/account");
@@ -46,6 +71,9 @@ export default function Home() {
     averageRating: null as number | null,
   });
   const [menuOpen, setMenuOpen] = useState(false);
+  const [wordIdx, setWordIdx] = useState(0);
+  const [wordVisible, setWordVisible] = useState(true);
+  const [statsActive, setStatsActive] = useState(false);
   const socialLinks = [
     {
       label: "Instagram",
@@ -64,13 +92,14 @@ export default function Home() {
     },
   ];
 
-  // Scroll-triggered section reveals
+  // Scroll-triggered section reveals + stat counter trigger
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("ts-in");
+            if (entry.target.hasAttribute("data-stats")) setStatsActive(true);
             observer.unobserve(entry.target);
           }
         });
@@ -79,6 +108,18 @@ export default function Home() {
     );
     document.querySelectorAll(".ts-scroll-reveal").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
+  }, []);
+
+  // Hero headline word cycling
+  useEffect(() => {
+    const id = setInterval(() => {
+      setWordVisible(false);
+      setTimeout(() => {
+        setWordIdx((i) => (i + 1) % CYCLE_WORDS.length);
+        setWordVisible(true);
+      }, 320);
+    }, 2600);
+    return () => clearInterval(id);
   }, []);
 
   useEffect(() => {
@@ -242,7 +283,22 @@ export default function Home() {
           <div className="food-hero-content">
             <div className="space-y-6 ts-animate-fade-up">
               <div className="space-y-3">
-                <h1 className="food-title">What are you<br /><span className="accent">craving tonight?</span></h1>
+                <h1 className="food-title">
+                  What are you<br />
+                  <span
+                    className="accent"
+                    style={{
+                      display: "inline-block",
+                      opacity: wordVisible ? 1 : 0,
+                      transform: wordVisible ? "translateY(0)" : "translateY(10px)",
+                      transition: "opacity 0.32s ease, transform 0.32s ease",
+                      minWidth: "4ch",
+                    }}
+                  >
+                    {CYCLE_WORDS[wordIdx]}
+                  </span>
+                  <span className="accent"> tonight?</span>
+                </h1>
                 <p className="food-subtitle">
                   Charlotte and Rock Hill's only delivery platform that screens every kitchen before your order goes in. Local restaurants. Real compliance. Live tracking.
                 </p>
@@ -340,7 +396,35 @@ export default function Home() {
           ))}
         </div>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-4 ts-scroll-reveal">
+        {/* ── MARQUEE TICKER ── */}
+        <div className="ts-marquee-wrap" aria-hidden="true">
+          <div className="ts-marquee-track">
+            {[0, 1].map((dupe) => (
+              <div key={dupe} className="ts-marquee-content">
+                {[
+                  { dot: "orange", text: "Health-screened kitchens" },
+                  { dot: "green",  text: "Charlotte & Rock Hill" },
+                  { dot: "orange", text: "Live driver tracking" },
+                  { dot: "green",  text: "15% flat split — no hidden fees" },
+                  { dot: "orange", text: "Avg. 30 min delivery" },
+                  { dot: "green",  text: "NC & SC public health verified" },
+                  { dot: "orange", text: "48-hr driver settlements" },
+                  { dot: "green",  text: "Founding partner program open" },
+                ].map((item) => (
+                  <span key={item.text} className="ts-marquee-item">
+                    <span
+                      className="ts-marquee-dot"
+                      style={{ background: item.dot === "orange" ? "#f97316" : "#4dca80" }}
+                    />
+                    {item.text}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <section className="mt-8 grid gap-4 md:grid-cols-4 ts-scroll-reveal" data-stats="1">
           {[
             {
               kicker: "Restaurant partners",
@@ -365,14 +449,14 @@ export default function Home() {
           ].map((stat, index) => (
             <div
               key={stat.kicker}
-              className="food-card transition-transform hover:-translate-y-1"
+              className="food-card ts-shimmer-card transition-transform hover:-translate-y-1"
             >
               <p className="food-kicker mb-3">{stat.kicker}</p>
               <h2
-                className="food-heading !text-[38px] mb-3 ts-stat-pop"
-                style={{ animationDelay: `${index * 100}ms` }}
+                className="food-heading !text-[38px] mb-3"
+                style={{ transitionDelay: `${index * 100}ms` }}
               >
-                {stat.value}
+                <CountUp value={stat.value} active={statsActive} />
               </h2>
               <p className="text-sm leading-7">{stat.detail}</p>
             </div>

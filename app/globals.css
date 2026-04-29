@@ -209,6 +209,121 @@ nav {
   animation: ts-stat-pop 480ms cubic-bezier(.34,1.56,.64,1) both;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   MARQUEE TICKER
+   ────────────────────────────────────────────────────────────────────────── */
+.ts-marquee-wrap {
+  overflow: hidden;
+  width: 100%;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin: 10px 0 0;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.ts-marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+@keyframes ts-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.ts-marquee-content {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  animation: ts-marquee 28s linear infinite;
+  flex-shrink: 0;
+}
+
+.ts-marquee-content:hover {
+  animation-play-state: paused;
+}
+
+.ts-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 28px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.38);
+  white-space: nowrap;
+  border-right: 1px solid rgba(255,255,255,0.07);
+}
+
+.ts-marquee-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   CARD SHIMMER SWEEP ON HOVER
+   ────────────────────────────────────────────────────────────────────────── */
+.ts-shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.ts-shimmer-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    108deg,
+    transparent 30%,
+    rgba(255,255,255,0.055) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transition: none;
+}
+
+.ts-shimmer-card:hover::after {
+  left: 160%;
+  transition: left 0.65s ease;
+}
+
+/* Apply shimmer to food-card on hover too */
+.food-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.food-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    108deg,
+    transparent 30%,
+    rgba(255,255,255,0.04) 50%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transition: none;
+}
+
+.food-card:hover::after {
+  left: 160%;
+  transition: left 0.65s ease;
+}
+
 .logo {
   font-family: var(--font-bebas), sans-serif;
   text-transform: uppercase;
