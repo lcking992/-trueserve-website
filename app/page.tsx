@@ -908,9 +908,6 @@ export default function Home() {
                 Apply as a Restaurant
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
-              <Link href="/driver/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
-                Apply as a Driver
-              </Link>
             </div>
           </div>
         </section>
@@ -940,9 +937,24 @@ export default function Home() {
                 </span>
               ))}
             </div>
-            <Link href="/merchant/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
-              Bring TrueServe to My City
-            </Link>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const el = e.currentTarget.querySelector("input") as HTMLInputElement;
+                if (el?.value) { el.value = ""; alert("You're on the list — we'll reach out when we launch near you!"); }
+              }}
+              style={{ display: "flex", gap: 8, maxWidth: 400, margin: "0 auto", flexWrap: "wrap", justifyContent: "center" }}
+            >
+              <input
+                type="email"
+                placeholder="your@email.com"
+                required
+                style={{ flex: 1, minWidth: 200, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, padding: "11px 16px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "inherit" }}
+              />
+              <button type="submit" className="portal-btn-gold" style={{ whiteSpace: "nowrap", width: "auto" }}>
+                Notify Me
+              </button>
+            </form>
           </div>
         </section>
 
