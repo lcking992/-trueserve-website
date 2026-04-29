@@ -134,7 +134,6 @@ export default function Home() {
         <div className="nav-links hidden md:flex">
           <Link href="/restaurants">Order Food</Link>
           <Link href="/rewards">Rewards</Link>
-          <Link href="/pricing">Pricing</Link>
           <Link href="/merchant/signup">For Merchants</Link>
           <Link href="/driver/signup">For Drivers</Link>
           <Link href="/contact">Contact</Link>
@@ -170,7 +169,6 @@ export default function Home() {
                 { href:"/merchant/signup", icon:"🍽️", label:"For Merchants", sub:"List your restaurant" },
                 { href:"/restaurants", icon:"🛍️", label:"Order Food", sub:"Browse local restaurants" },
                 { href:"/rewards", icon:"⭐", label:"Rewards", sub:"Earn points on every order" },
-                { href:"/pricing", icon:"💲", label:"Pricing", sub:"Zero commission plans" },
               ].map(item => (
                 <Link
                   key={item.href}
