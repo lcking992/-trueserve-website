@@ -792,72 +792,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── PRODUCT VIDEO ── */}
-        <section className="mt-16">
-          <div className="mb-10 text-center">
-            <p className="food-kicker mb-3">See it in action</p>
-            <h2 className="food-heading" style={{ fontSize: 38 }}>The dashboard built for <span className="accent">real operators.</span></h2>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginTop: 12, maxWidth: 480, margin: "12px auto 0" }}>
-              Watch how merchants manage orders, compliance, and payouts — all from one screen.
-            </p>
-          </div>
-          <div
-            className="food-card"
-            style={{
-              padding: 0,
-              overflow: "hidden",
-              position: "relative",
-              aspectRatio: "16/9",
-              background: "#0a0c09",
-              cursor: "pointer",
-            }}
-          >
-            {/* Swap the src below for your real YouTube embed URL or /videos/demo.mp4 */}
-            <iframe
-              src="https://www.youtube.com/embed/?controls=1&rel=0&modestbranding=1"
-              title="TrueServe platform demo"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-            />
-            {/* Placeholder shown until a real video URL is added */}
-            <div
-              id="video-placeholder"
-              style={{
-                position: "absolute", inset: 0,
-                background: "linear-gradient(135deg, #0f1210 0%, #141a18 100%)",
-                display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center", gap: 20,
-              }}
-            >
-              <div style={{
-                width: 72, height: 72, borderRadius: "50%",
-                background: "rgba(249,115,22,0.12)",
-                border: "2px solid rgba(249,115,22,0.35)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="#f97316">
-                  <polygon points="5 3 19 12 5 21 5 3"/>
-                </svg>
-              </div>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 4 }}>Demo video coming soon</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Replace the iframe src with your YouTube or video URL</div>
-              </div>
-              <div style={{ display: "flex", gap: 24, marginTop: 8 }}>
-                {["Live order queue", "Compliance dashboard", "Real-time driver tracking"].map(label => (
-                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)" }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    {label}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ── DRIVER + MERCHANT RECRUITMENT ── */}
         <section className="mt-16 ts-scroll-reveal">
           <div className="mb-10 text-center">
@@ -907,44 +841,6 @@ export default function Home() {
                 List Your Restaurant
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── FOUNDER NOTE ── */}
-        {/* UPDATE: Replace "Leon King" with your full name, and update the quote/story to match your voice */}
-        <section className="mt-16 ts-scroll-reveal">
-          <div className="food-card" style={{ display: "grid", gap: 40, alignItems: "center", gridTemplateColumns: "1fr" }} >
-            <div style={{ display: "grid", gap: 40, alignItems: "center" }} className="lg:grid-cols-[1fr_2fr]">
-              {/* Photo — drop your real headshot at /public/founder.jpg to replace the initials block */}
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-                <div style={{
-                  width: 120, height: 120, borderRadius: "50%",
-                  background: "linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(249,115,22,0.05) 100%)",
-                  border: "2px solid rgba(249,115,22,0.35)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 40, fontWeight: 900, color: "#f97316",
-                  flexShrink: 0,
-                  overflow: "hidden",
-                }}>
-                  {/* Swap this for <img src="/founder.jpg" ... /> once you have a headshot */}
-                  LK
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: "0.1em" }}>Leon King</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>Founder, TrueServe</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>Charlotte, NC</div>
-                </div>
-              </div>
-              <div>
-                <p className="food-kicker mb-4">Why I built this</p>
-                <blockquote style={{ fontSize: 18, lineHeight: 1.85, color: "rgba(255,255,255,0.8)", fontStyle: "italic", borderLeft: "3px solid #f97316", paddingLeft: 20, margin: "0 0 20px 0" }}>
-                  "I kept ordering from apps that had no idea what was actually happening inside the kitchens they were sending me to. No health scores. No compliance data. Nothing. I built TrueServe because people deserve to know where their food is actually coming from — and local restaurants deserve a platform that isn't taking 30% of every order they work hard to fill."
-                </blockquote>
-                <p style={{ fontSize: 13, lineHeight: 1.8, color: "rgba(255,255,255,0.45)", maxWidth: 560 }}>
-                  TrueServe started in Charlotte. We're building the infrastructure that local food operators actually need — compliance tools, real-time dashboards, and a delivery network that treats drivers and restaurants like partners, not contractors.
-                </p>
-              </div>
             </div>
           </div>
         </section>
