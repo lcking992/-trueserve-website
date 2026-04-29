@@ -777,60 +777,73 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── TESTIMONIALS ── */}
+        {/* ── EARLY ACCESS ── */}
         <section className="mt-16">
-          <div className="mb-10 text-center">
-            <p className="food-kicker mb-3">From the community</p>
-            <h2 className="food-heading" style={{ fontSize: 38 }}>Real people. <span className="accent">Real results.</span></h2>
-          </div>
-          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-            {([
-              {
-                quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.",
-                name: "Marcus T.",
-                role: "Customer · Charlotte, NC",
-                initial: "M",
-                photoUrl: "", // e.g. "/testimonials/marcus.jpg" or a full https:// URL
-              },
-              {
-                quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.",
-                name: "Dhanashree P.",
-                role: "Merchant · Dhan's Kitchen",
-                initial: "D",
-                photoUrl: "",
-              },
-              {
-                quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.",
-                name: "Jerome W.",
-                role: "Driver · 300+ deliveries",
-                initial: "J",
-                photoUrl: "",
-              },
-            ] as { quote: string; name: string; role: string; initial: string; photoUrl: string }[]).map((t, i) => (
-              <div key={t.name} className="food-card ts-reveal" style={{ animationDelay: `${i * 80}ms`, display: "flex", flexDirection: "column", gap: 20 }}>
-                <svg width="28" height="20" viewBox="0 0 28 20" fill="none">
-                  <path d="M0 20V12.4C0 5.467 3.644 1.333 10.933 0L12.4 2.533C9.511 3.2 7.511 4.267 6.4 5.733 5.378 7.111 4.956 8.8 5.133 10.8H10V20H0ZM16 20V12.4C16 5.467 19.644 1.333 26.933 0L28.4 2.533C25.511 3.2 23.511 4.267 22.4 5.733 21.378 7.111 20.956 8.8 21.133 10.8H26V20H16Z" fill="rgba(249,115,22,0.25)"/>
-                </svg>
-                <p style={{ fontSize: 14, lineHeight: 1.85, color: "rgba(255,255,255,0.7)", flex: 1 }}>{t.quote}</p>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 16 }}>
-                  {t.photoUrl ? (
-                    <img
-                      src={t.photoUrl}
-                      alt={t.name}
-                      width={38}
-                      height={38}
-                      style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(249,115,22,0.3)", flexShrink: 0 }}
-                    />
-                  ) : (
-                    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0 }}>{t.initial}</div>
-                  )}
-                  <div>
-                    <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff" }}>{t.name}</div>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{t.role}</div>
-                  </div>
+          <div
+            className="food-card"
+            style={{
+              background: "linear-gradient(135deg, rgba(249,115,22,0.07) 0%, rgba(10,12,16,0) 70%)",
+              border: "1px solid rgba(249,115,22,0.2)",
+              textAlign: "center",
+              padding: "56px 32px",
+            }}
+          >
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(249,115,22,0.35)", background: "rgba(249,115,22,0.08)", marginBottom: 24 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#f97316", display: "inline-block", boxShadow: "0 0 6px #f97316" }} />
+              <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.16em", color: "#f97316" }}>Now accepting pilot partners</span>
+            </div>
+            <h2 className="food-heading" style={{ fontSize: 40, marginBottom: 16 }}>
+              Be among the first<br /><span className="accent">restaurants on TrueServe.</span>
+            </h2>
+            <p style={{ fontSize: 15, lineHeight: 1.85, color: "rgba(255,255,255,0.55)", maxWidth: 520, margin: "0 auto 40px" }}>
+              We're onboarding a limited number of restaurant partners in Charlotte and surrounding markets. No setup fee. No commitment. Just a real operations platform built for kitchens like yours.
+            </p>
+            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", maxWidth: 680, margin: "0 auto 40px" }}>
+              {([
+                {
+                  icon: (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  ),
+                  label: "Zero setup cost",
+                  sub: "Get listed for free during the pilot",
+                },
+                {
+                  icon: (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  ),
+                  label: "Dedicated onboarding",
+                  sub: "We set everything up with you",
+                },
+                {
+                  icon: (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  ),
+                  label: "Shape the product",
+                  sub: "Direct line to the founding team",
+                },
+              ] as { icon: React.ReactNode; label: string; sub: string }[]).map(item => (
+                <div key={item.label} style={{ padding: "18px 16px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)", textAlign: "left" }}>
+                  <div style={{ marginBottom: 10 }}>{item.icon}</div>
+                  <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff", marginBottom: 4 }}>{item.label}</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>{item.sub}</div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              <Link href="/merchant/signup" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
+                Apply as a Restaurant
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </Link>
+              <Link href="/driver/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
+                Apply as a Driver
+              </Link>
+            </div>
           </div>
         </section>
 
