@@ -549,22 +549,46 @@ export default function Home() {
                 </Link>
               </div>
               <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
-                {[
-                  { icon: "🏥", title: "Health Grades", body: "Public inspection records reviewed for every partner kitchen before onboarding." },
-                  { icon: "✅", title: "Compliance Score", body: "Restaurants are scored 0–100. Low scorers are flagged and removed from the feed." },
-                  { icon: "🚗", title: "Background-Checked Drivers", body: "Every driver passes a background check and compliance training before their first delivery." },
-                  { icon: "🔒", title: "Zero Tolerance Policy", body: "A flagged restaurant is immediately hidden from customers and drivers until resolved." },
-                ].map(item => (
-                  <div
-                    key={item.title}
-                    style={{
-                      padding: "18px 16px",
-                      borderRadius: 14,
-                      border: "1px solid rgba(255,255,255,0.07)",
-                      background: "rgba(255,255,255,0.03)",
-                    }}
-                  >
-                    <div style={{ fontSize: 22, marginBottom: 8 }}>{item.icon}</div>
+                {([
+                  {
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                      </svg>
+                    ),
+                    title: "Health Grades",
+                    body: "Public inspection records reviewed for every partner kitchen before onboarding."
+                  },
+                  {
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                      </svg>
+                    ),
+                    title: "Compliance Score",
+                    body: "Restaurants are scored 0–100. Low scorers are flagged and removed from the feed."
+                  },
+                  {
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/><polyline points="16 11 17.5 13 21 10"/>
+                      </svg>
+                    ),
+                    title: "Verified Drivers",
+                    body: "Every driver passes a background check and compliance training before their first delivery."
+                  },
+                  {
+                    icon: (
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                      </svg>
+                    ),
+                    title: "Zero Tolerance",
+                    body: "A flagged restaurant is immediately hidden from customers and drivers until resolved."
+                  },
+                ] as { icon: React.ReactNode; title: string; body: string }[]).map(item => (
+                  <div key={item.title} style={{ padding: "18px 16px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}>
+                    <div style={{ marginBottom: 10 }}>{item.icon}</div>
                     <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff", marginBottom: 6 }}>{item.title}</div>
                     <div style={{ fontSize: 12, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>{item.body}</div>
                   </div>
@@ -574,27 +598,109 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── VS COMPARISON ── */}
+        <section className="mt-16">
+          <div className="mb-10 text-center">
+            <p className="food-kicker mb-3">The honest comparison</p>
+            <h2 className="food-heading" style={{ fontSize: 38 }}>Not all delivery apps <span className="accent">are equal.</span></h2>
+          </div>
+          <div className="food-card" style={{ padding: 0, overflow: "hidden" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+              <div style={{ padding: "16px 20px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.3)" }}>Feature</div>
+              {[
+                { name: "TrueServe", highlight: true },
+                { name: "DoorDash", highlight: false },
+                { name: "Uber Eats", highlight: false },
+              ].map(app => (
+                <div key={app.name} style={{ padding: "16px 20px", fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: app.highlight ? "#f97316" : "rgba(255,255,255,0.35)", background: app.highlight ? "rgba(249,115,22,0.05)" : "transparent", textAlign: "center", borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
+                  {app.name}
+                </div>
+              ))}
+            </div>
+            {([
+              { feature: "Restaurant health screening", ts: true, dd: false, ue: false },
+              { feature: "Driver background checks", ts: true, dd: true, ue: true },
+              { feature: "Compliance score per kitchen", ts: true, dd: false, ue: false },
+              { feature: "Transparent driver pay", ts: true, dd: false, ue: false },
+              { feature: "Zero setup fee for merchants", ts: true, dd: false, ue: false },
+              { feature: "Real-time order tracking", ts: true, dd: true, ue: true },
+              { feature: "Merchant compliance dashboard", ts: true, dd: false, ue: false },
+              { feature: "Flat commission rate", ts: true, dd: false, ue: false },
+            ] as { feature: string; ts: boolean; dd: boolean; ue: boolean }[]).map((row, i) => (
+              <div key={row.feature} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: i < 7 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div style={{ padding: "14px 20px", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.feature}</div>
+                {[row.ts, row.dd, row.ue].map((val, j) => (
+                  <div key={j} style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "center", background: j === 0 ? "rgba(249,115,22,0.04)" : "transparent", borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
+                    {val ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={j === 0 ? "#f97316" : "#4dca80"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2" strokeLinecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* ── HOW IT WORKS ── */}
         <section className="mt-16">
           <div className="mb-10 text-center">
             <p className="food-kicker mb-3">Simple by design</p>
             <h2 className="food-heading" style={{ fontSize: 38 }}>How it <span className="accent">works</span></h2>
           </div>
-          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-            {[
-              { step: "01", icon: "📍", title: "Enter your address", body: "Drop your location and we'll show you every verified restaurant delivering to your door right now." },
-              { step: "02", icon: "🍽️", title: "Pick your meal", body: "Browse real menus with real prices. Filter by cuisine, rating, health grade, or delivery time." },
-              { step: "03", icon: "⚡", title: "Place your order", body: "Checkout in seconds. Pay securely. Your order goes straight to the kitchen — no middleman delay." },
-              { step: "04", icon: "📡", title: "Track in real time", body: "Watch your driver live on the map from the moment they pick up your food to your front door." },
-            ].map((item, i) => (
-              <div
-                key={item.step}
-                className="food-card ts-reveal"
-                style={{ animationDelay: `${i * 80}ms`, position: "relative", overflow: "hidden" }}
-              >
-                <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(249,115,22,0.08)", position: "absolute", top: 12, right: 16, lineHeight: 1, fontFamily: "Bebas Neue, sans-serif", letterSpacing: "-0.02em" }}>{item.step}</div>
-                <div style={{ fontSize: 28, marginBottom: 14 }}>{item.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff", marginBottom: 8 }}>{item.title}</div>
+          <div style={{ display: "grid", gap: 0, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", position: "relative" }}>
+            {([
+              {
+                step: "01",
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                ),
+                title: "Enter your address",
+                body: "Drop your location and we'll show you every verified restaurant delivering to your door right now."
+              },
+              {
+                step: "02",
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 2h1l1.68 3.39a1 1 0 0 0 .9.61h12.84a1 1 0 0 1 .97 1.22l-1.54 6a1 1 0 0 1-.97.78H7.5"/><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M3 2l2 10"/>
+                  </svg>
+                ),
+                title: "Pick your meal",
+                body: "Browse real menus with real prices. Filter by cuisine, health grade, rating, or delivery time."
+              },
+              {
+                step: "03",
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                  </svg>
+                ),
+                title: "Place your order",
+                body: "Checkout in seconds. Pay securely. Your order goes straight to the kitchen — no middleman delay."
+              },
+              {
+                step: "04",
+                icon: (
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+                  </svg>
+                ),
+                title: "Track in real time",
+                body: "Watch your driver live on the map from the moment they pick up your food to your front door."
+              },
+            ] as { step: string; icon: React.ReactNode; title: string; body: string }[]).map((item, i) => (
+              <div key={item.step} className="food-card ts-reveal" style={{ animationDelay: `${i * 80}ms`, position: "relative", overflow: "hidden", borderRadius: i === 0 ? "16px 4px 4px 16px" : i === 3 ? "4px 16px 16px 4px" : 4, margin: "0 1px" }}>
+                <div style={{ fontSize: 64, fontWeight: 900, color: "rgba(249,115,22,0.06)", position: "absolute", top: 8, right: 12, lineHeight: 1, fontFamily: "Bebas Neue, sans-serif" }}>{item.step}</div>
+                <div style={{ marginBottom: 16, width: 44, height: 44, borderRadius: 12, background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>{item.icon}</div>
+                <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.14em", color: "#f97316", marginBottom: 6 }}>Step {item.step}</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 8 }}>{item.title}</div>
                 <div style={{ fontSize: 13, lineHeight: 1.75, color: "rgba(255,255,255,0.5)" }}>{item.body}</div>
               </div>
             ))}
@@ -608,15 +714,12 @@ export default function Home() {
             <h2 className="food-heading" style={{ fontSize: 38 }}>Built for the people <span className="accent">behind the food</span></h2>
           </div>
           <div style={{ display: "grid", gap: 16 }} className="lg:grid-cols-2">
-            {/* Driver card */}
-            <div
-              className="food-card"
-              style={{
-                background: "linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(10,12,16,0) 70%)",
-                border: "1px solid rgba(249,115,22,0.2)",
-              }}
-            >
-              <div style={{ fontSize: 36, marginBottom: 16 }}>🚗</div>
+            <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(10,12,16,0) 70%)", border: "1px solid rgba(249,115,22,0.2)" }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(249,115,22,0.12)", border: "1px solid rgba(249,115,22,0.25)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              </div>
               <p className="food-kicker mb-2">For Drivers</p>
               <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Earn on your <span className="accent">own schedule</span></h3>
               <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
@@ -628,19 +731,17 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/driver/signup" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
-                Start Driving →
+                Start Driving
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
             </div>
 
-            {/* Merchant card */}
-            <div
-              className="food-card"
-              style={{
-                background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(10,12,16,0) 70%)",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              <div style={{ fontSize: 36, marginBottom: 16 }}>🍽️</div>
+            <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(10,12,16,0) 70%)", border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+                </svg>
+              </div>
               <p className="food-kicker mb-2">For Merchants</p>
               <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Grow without <span className="accent">the commission tax</span></h3>
               <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
@@ -652,7 +753,8 @@ export default function Home() {
                 ))}
               </div>
               <Link href="/merchant/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
-                List Your Restaurant →
+                List Your Restaurant
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
             </div>
           </div>
@@ -666,40 +768,17 @@ export default function Home() {
           </div>
           <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
             {[
-              {
-                quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.",
-                name: "Marcus T.",
-                role: "Customer · Charlotte, NC",
-                initial: "M",
-              },
-              {
-                quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.",
-                name: "Dhanashree P.",
-                role: "Merchant · Dhan's Kitchen",
-                initial: "D",
-              },
-              {
-                quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.",
-                name: "Jerome W.",
-                role: "Driver · 300+ deliveries",
-                initial: "J",
-              },
+              { quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.", name: "Marcus T.", role: "Customer · Charlotte, NC", initial: "M" },
+              { quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.", name: "Dhanashree P.", role: "Merchant · Dhan's Kitchen", initial: "D" },
+              { quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.", name: "Jerome W.", role: "Driver · 300+ deliveries", initial: "J" },
             ].map((t, i) => (
-              <div
-                key={t.name}
-                className="food-card ts-reveal"
-                style={{ animationDelay: `${i * 80}ms`, display: "flex", flexDirection: "column", gap: 20 }}
-              >
-                <div style={{ fontSize: 32, color: "rgba(249,115,22,0.4)", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</div>
+              <div key={t.name} className="food-card ts-reveal" style={{ animationDelay: `${i * 80}ms`, display: "flex", flexDirection: "column", gap: 20 }}>
+                <svg width="28" height="20" viewBox="0 0 28 20" fill="none">
+                  <path d="M0 20V12.4C0 5.467 3.644 1.333 10.933 0L12.4 2.533C9.511 3.2 7.511 4.267 6.4 5.733 5.378 7.111 4.956 8.8 5.133 10.8H10V20H0ZM16 20V12.4C16 5.467 19.644 1.333 26.933 0L28.4 2.533C25.511 3.2 23.511 4.267 22.4 5.733 21.378 7.111 20.956 8.8 21.133 10.8H26V20H16Z" fill="rgba(249,115,22,0.25)"/>
+                </svg>
                 <p style={{ fontSize: 14, lineHeight: 1.85, color: "rgba(255,255,255,0.7)", flex: 1 }}>{t.quote}</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 16 }}>
-                  <div style={{
-                    width: 38, height: 38, borderRadius: "50%",
-                    background: "rgba(249,115,22,0.15)",
-                    border: "1px solid rgba(249,115,22,0.3)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0,
-                  }}>{t.initial}</div>
+                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0 }}>{t.initial}</div>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff" }}>{t.name}</div>
                     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{t.role}</div>
@@ -729,21 +808,7 @@ export default function Home() {
                 { city: "Raleigh, NC", status: "coming" },
                 { city: "Columbia, SC", status: "coming" },
               ].map(m => (
-                <span
-                  key={m.city}
-                  style={{
-                    padding: "7px 14px",
-                    borderRadius: 999,
-                    fontSize: 11,
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.12em",
-                    border: m.status === "live" ? "1px solid rgba(77,202,128,0.35)" : "1px solid rgba(255,255,255,0.1)",
-                    background: m.status === "live" ? "rgba(77,202,128,0.08)" : "rgba(255,255,255,0.03)",
-                    color: m.status === "live" ? "#4dca80" : "rgba(255,255,255,0.35)",
-                    display: "flex", alignItems: "center", gap: 6,
-                  }}
-                >
+                <span key={m.city} style={{ padding: "7px 14px", borderRadius: 999, fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", border: m.status === "live" ? "1px solid rgba(77,202,128,0.35)" : "1px solid rgba(255,255,255,0.1)", background: m.status === "live" ? "rgba(77,202,128,0.08)" : "rgba(255,255,255,0.03)", color: m.status === "live" ? "#4dca80" : "rgba(255,255,255,0.35)", display: "flex", alignItems: "center", gap: 6 }}>
                   <span style={{ width: 5, height: 5, borderRadius: "50%", background: m.status === "live" ? "#4dca80" : "rgba(255,255,255,0.2)", display: "inline-block", flexShrink: 0 }} />
                   {m.city}
                 </span>
