@@ -69,21 +69,23 @@ export default function LoginPage() {
               style={{ backgroundImage: "url('https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80')" }}
             />
             <div className="food-auth-hero-inner">
-              <div className="food-eyebrow">Customer and team access</div>
+              <div className="food-eyebrow">Charlotte &amp; Rock Hill · Local delivery</div>
               <div className="mt-5 space-y-4">
-                <h1 className="food-heading !text-[52px] md:!text-[56px]">Welcome Back To <span className="accent">Dinner Mode.</span></h1>
+                <h1 className="food-heading !text-[52px] md:!text-[56px]">Good to have you <span className="accent">back.</span></h1>
                 <p className="food-subtitle !max-w-[520px]">
-                  The sign-in experience now matches the rest of the food app: warm dark surfaces, clear hierarchy, and straightforward next steps.
+                  Your favorite local restaurants, live order tracking, and 48-hour driver settlements — all in one place. Pick up right where you left off.
                 </p>
               </div>
               <ul className="food-auth-list">
-                {[
-                  ["Order faster", "Save addresses, past orders, and checkout details."],
-                  ["Track live", "Follow prep and delivery progress in one place."],
-                  ["Switch roles", "Customer, merchant, and driver access stays organized here."],
-                ].map(([title, desc], index) => (
+                {([
+                  ["Your orders, live", "Track every order from kitchen to door with a real-time map."],
+                  ["Saved addresses", "Skip re-entering your details every time you order."],
+                  ["One account, every role", "Switch between customer, merchant, and driver views seamlessly."],
+                ] as [string, string][]).map(([title, desc]) => (
                   <li key={title}>
-                    <div className="food-auth-icon">{index + 1}</div>
+                    <div className="food-auth-icon">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
                     <div>
                       <div className="font-extrabold">{title}</div>
                       <div className="text-sm text-white/65">{desc}</div>

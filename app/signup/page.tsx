@@ -42,33 +42,39 @@ function SignupForm() {
               style={{ backgroundImage: "url('/hero_food_delivery.png')" }}
             />
             <div className="food-auth-hero-inner">
-              <div className="food-eyebrow">Customer onboarding</div>
+              <div className="food-eyebrow">Now live · Charlotte &amp; Rock Hill</div>
               <div className="mt-5 space-y-4">
-                <h1 className="food-heading !text-[56px]">Make Ordering Feel <span className="accent">Easy.</span></h1>
+                <h1 className="food-heading !text-[56px]">Order from kitchens <span className="accent">you can trust.</span></h1>
                 <p className="food-subtitle !max-w-[520px]">
-                  Create your account, save your address, and move from sign-up to checkout in one clear, consistent experience.
+                  Every restaurant on TrueServe is screened before your first order. Create your account and start ordering from health-verified local restaurants near you.
                 </p>
               </div>
               <ul className="food-auth-list">
                 <li>
-                  <div className="food-auth-icon">✓</div>
+                  <div className="food-auth-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
                   <div>
-                    <div className="font-extrabold">Saved delivery details</div>
-                    <div className="text-sm text-white/65">Reuse addresses and preferences on future orders.</div>
+                    <div className="font-extrabold">Health-screened restaurants</div>
+                    <div className="text-sm text-white/65">Every partner kitchen is reviewed against NC and SC public health records.</div>
                   </div>
                 </li>
                 <li>
-                  <div className="food-auth-icon">★</div>
+                  <div className="food-auth-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
                   <div>
-                    <div className="font-extrabold">Faster reorders</div>
-                    <div className="text-sm text-white/65">Keep favorites and order history ready to go.</div>
+                    <div className="font-extrabold">Live order tracking</div>
+                    <div className="text-sm text-white/65">Watch your driver in real time from pickup to your front door.</div>
                   </div>
                 </li>
                 <li>
-                  <div className="food-auth-icon">→</div>
+                  <div className="food-auth-icon">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
                   <div>
-                    <div className="font-extrabold">Seamless next step</div>
-                    <div className="text-sm text-white/65">Continue straight into restaurant browsing once you finish.</div>
+                    <div className="font-extrabold">Saved addresses &amp; reorders</div>
+                    <div className="text-sm text-white/65">Skip re-entering details every time — your preferences stay ready.</div>
                   </div>
                 </li>
               </ul>
@@ -82,8 +88,9 @@ function SignupForm() {
             <p className="lead mt-2">Create your account and start ordering from nearby restaurants.</p>
 
             {refCode && (
-              <div className="mt-4 rounded-xl border border-[#f97316]/30 bg-[#f97316]/[0.07] px-4 py-3 text-xs font-bold tracking-[0.08em] text-[#f97316]">
-                🎉 Referral applied — your first delivery fee is on us.
+              <div className="mt-4 rounded-xl border border-[#f97316]/30 bg-[#f97316]/[0.07] px-4 py-3 text-xs font-bold tracking-[0.08em] text-[#f97316] flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Referral applied — your first delivery fee is on us.
               </div>
             )}
 

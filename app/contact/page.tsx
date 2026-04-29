@@ -44,12 +44,12 @@ export default function ContactPage() {
                 <Logo size="sm" />
                 <div className="nav-links hidden md:flex">
                     <Link href="/restaurants">Order Food</Link>
-                    <Link href="/pricing">Pricing</Link>
+                    <Link href="/rewards">Rewards</Link>
                     <Link href="/merchant/signup">For Merchants</Link>
+                    <Link href="/driver/signup">For Drivers</Link>
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/merchant/login" className="btn btn-ghost">Sign In</Link>
-                    <Link href="/merchant/signup" className="btn btn-gold">Get Started</Link>
+                    <Link href="/login" className="btn btn-ghost">Sign In</Link>
                 </div>
             </nav>
 
@@ -93,7 +93,9 @@ export default function ContactPage() {
                     <div className="food-panel">
                         {status === "done" ? (
                             <div className="text-center py-12">
-                                <div className="text-5xl mb-4">✅</div>
+                                <div className="mb-4 flex justify-center">
+                                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                </div>
                                 <h2 className="food-heading !text-[32px] mb-2">Message sent!</h2>
                                 <p className="text-sm text-white/50 mb-6">We&rsquo;ll reply to your email within 1 business day.</p>
                                 <button
@@ -233,7 +235,7 @@ export default function ContactPage() {
                                     { label: "Order Food", href: "/restaurants" },
                                     { label: "Merchant Signup", href: "/merchant/signup" },
                                     { label: "Drive for TrueServe", href: "/driver/signup" },
-                                    { label: "Pricing", href: "/pricing" },
+                                    { label: "Rewards", href: "/rewards" },
                                     { label: "Privacy Policy", href: "/privacy" },
                                     { label: "Terms of Service", href: "/terms" },
                                 ].map(l => (
