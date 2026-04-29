@@ -532,6 +532,229 @@ export default function Home() {
           </section>
         )}
 
+        {/* ── COMPLIANCE / TRUST DIFFERENTIATOR ── */}
+        <section className="mt-16">
+          <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(10,12,16,0) 60%)", border: "1px solid rgba(249,115,22,0.18)" }}>
+            <div style={{ display: "grid", gap: 48, gridTemplateColumns: "1fr", alignItems: "center" }} className="lg:grid-cols-2">
+              <div>
+                <p className="food-kicker mb-3" style={{ color: "#f97316" }}>Why TrueServe</p>
+                <h2 className="food-heading" style={{ fontSize: 38, lineHeight: 1.1, marginBottom: 16 }}>
+                  We only work with<br /><span className="accent">kitchens that pass.</span>
+                </h2>
+                <p style={{ fontSize: 15, lineHeight: 1.8, color: "rgba(255,255,255,0.6)", maxWidth: 460, marginBottom: 28 }}>
+                  Every restaurant on TrueServe is screened against public health records, compliance history, and operational standards before a single order is accepted. DoorDash doesn't do this. We do.
+                </p>
+                <Link href="/restaurants" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
+                  Browse Verified Restaurants
+                </Link>
+              </div>
+              <div style={{ display: "grid", gap: 12, gridTemplateColumns: "1fr 1fr" }}>
+                {[
+                  { icon: "🏥", title: "Health Grades", body: "Public inspection records reviewed for every partner kitchen before onboarding." },
+                  { icon: "✅", title: "Compliance Score", body: "Restaurants are scored 0–100. Low scorers are flagged and removed from the feed." },
+                  { icon: "🚗", title: "Background-Checked Drivers", body: "Every driver passes a background check and compliance training before their first delivery." },
+                  { icon: "🔒", title: "Zero Tolerance Policy", body: "A flagged restaurant is immediately hidden from customers and drivers until resolved." },
+                ].map(item => (
+                  <div
+                    key={item.title}
+                    style={{
+                      padding: "18px 16px",
+                      borderRadius: 14,
+                      border: "1px solid rgba(255,255,255,0.07)",
+                      background: "rgba(255,255,255,0.03)",
+                    }}
+                  >
+                    <div style={{ fontSize: 22, marginBottom: 8 }}>{item.icon}</div>
+                    <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff", marginBottom: 6 }}>{item.title}</div>
+                    <div style={{ fontSize: 12, lineHeight: 1.7, color: "rgba(255,255,255,0.45)" }}>{item.body}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── HOW IT WORKS ── */}
+        <section className="mt-16">
+          <div className="mb-10 text-center">
+            <p className="food-kicker mb-3">Simple by design</p>
+            <h2 className="food-heading" style={{ fontSize: 38 }}>How it <span className="accent">works</span></h2>
+          </div>
+          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+            {[
+              { step: "01", icon: "📍", title: "Enter your address", body: "Drop your location and we'll show you every verified restaurant delivering to your door right now." },
+              { step: "02", icon: "🍽️", title: "Pick your meal", body: "Browse real menus with real prices. Filter by cuisine, rating, health grade, or delivery time." },
+              { step: "03", icon: "⚡", title: "Place your order", body: "Checkout in seconds. Pay securely. Your order goes straight to the kitchen — no middleman delay." },
+              { step: "04", icon: "📡", title: "Track in real time", body: "Watch your driver live on the map from the moment they pick up your food to your front door." },
+            ].map((item, i) => (
+              <div
+                key={item.step}
+                className="food-card ts-reveal"
+                style={{ animationDelay: `${i * 80}ms`, position: "relative", overflow: "hidden" }}
+              >
+                <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(249,115,22,0.08)", position: "absolute", top: 12, right: 16, lineHeight: 1, fontFamily: "Bebas Neue, sans-serif", letterSpacing: "-0.02em" }}>{item.step}</div>
+                <div style={{ fontSize: 28, marginBottom: 14 }}>{item.icon}</div>
+                <div style={{ fontSize: 13, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff", marginBottom: 8 }}>{item.title}</div>
+                <div style={{ fontSize: 13, lineHeight: 1.75, color: "rgba(255,255,255,0.5)" }}>{item.body}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── DRIVER + MERCHANT RECRUITMENT ── */}
+        <section className="mt-16">
+          <div className="mb-10 text-center">
+            <p className="food-kicker mb-3">Join the network</p>
+            <h2 className="food-heading" style={{ fontSize: 38 }}>Built for the people <span className="accent">behind the food</span></h2>
+          </div>
+          <div style={{ display: "grid", gap: 16 }} className="lg:grid-cols-2">
+            {/* Driver card */}
+            <div
+              className="food-card"
+              style={{
+                background: "linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(10,12,16,0) 70%)",
+                border: "1px solid rgba(249,115,22,0.2)",
+              }}
+            >
+              <div style={{ fontSize: 36, marginBottom: 16 }}>🚗</div>
+              <p className="food-kicker mb-2">For Drivers</p>
+              <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Earn on your <span className="accent">own schedule</span></h3>
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
+                No subscription fees. No hidden cuts. Keep more of what you earn with transparent per-delivery pay, real-time settlements, and a compliance dashboard that protects your standing.
+              </p>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 28 }}>
+                {["Transparent pay", "Flexible hours", "Real-time settlement", "Compliance support"].map(tag => (
+                  <span key={tag} style={{ padding: "5px 11px", borderRadius: 999, border: "1px solid rgba(249,115,22,0.3)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.6)" }}>{tag}</span>
+                ))}
+              </div>
+              <Link href="/driver/signup" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
+                Start Driving →
+              </Link>
+            </div>
+
+            {/* Merchant card */}
+            <div
+              className="food-card"
+              style={{
+                background: "linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(10,12,16,0) 70%)",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            >
+              <div style={{ fontSize: 36, marginBottom: 16 }}>🍽️</div>
+              <p className="food-kicker mb-2">For Merchants</p>
+              <h3 className="food-heading" style={{ fontSize: 30, marginBottom: 12 }}>Grow without <span className="accent">the commission tax</span></h3>
+              <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.55)", marginBottom: 24, maxWidth: 400 }}>
+                List your restaurant for free. Pay a flat split only when orders come in — no monthly fees on the base plan. Get compliance tools, a storefront, and a real operations dashboard built for busy kitchens.
+              </p>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 28 }}>
+                {["Zero setup fee", "15% flat split", "Compliance tools", "Live order dashboard"].map(tag => (
+                  <span key={tag} style={{ padding: "5px 11px", borderRadius: 999, border: "1px solid rgba(255,255,255,0.12)", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.45)" }}>{tag}</span>
+                ))}
+              </div>
+              <Link href="/merchant/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
+                List Your Restaurant →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TESTIMONIALS ── */}
+        <section className="mt-16">
+          <div className="mb-10 text-center">
+            <p className="food-kicker mb-3">From the community</p>
+            <h2 className="food-heading" style={{ fontSize: 38 }}>Real people. <span className="accent">Real results.</span></h2>
+          </div>
+          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+            {[
+              {
+                quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.",
+                name: "Marcus T.",
+                role: "Customer · Charlotte, NC",
+                initial: "M",
+              },
+              {
+                quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.",
+                name: "Dhanashree P.",
+                role: "Merchant · Dhan's Kitchen",
+                initial: "D",
+              },
+              {
+                quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.",
+                name: "Jerome W.",
+                role: "Driver · 300+ deliveries",
+                initial: "J",
+              },
+            ].map((t, i) => (
+              <div
+                key={t.name}
+                className="food-card ts-reveal"
+                style={{ animationDelay: `${i * 80}ms`, display: "flex", flexDirection: "column", gap: 20 }}
+              >
+                <div style={{ fontSize: 32, color: "rgba(249,115,22,0.4)", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</div>
+                <p style={{ fontSize: 14, lineHeight: 1.85, color: "rgba(255,255,255,0.7)", flex: 1 }}>{t.quote}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 16 }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: "50%",
+                    background: "rgba(249,115,22,0.15)",
+                    border: "1px solid rgba(249,115,22,0.3)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0,
+                  }}>{t.initial}</div>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff" }}>{t.name}</div>
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── COVERAGE / MARKETS ── */}
+        <section className="mt-16 mb-4">
+          <div className="food-card" style={{ textAlign: "center" }}>
+            <p className="food-kicker mb-3">Where we operate</p>
+            <h2 className="food-heading" style={{ fontSize: 38, marginBottom: 12 }}>Live in the <span className="accent">Southeast.</span><br />Expanding fast.</h2>
+            <p style={{ fontSize: 14, lineHeight: 1.8, color: "rgba(255,255,255,0.5)", maxWidth: 480, margin: "0 auto 32px" }}>
+              TrueServe launched in the Carolinas and is actively onboarding restaurants and drivers across new markets. If you don't see your city yet — it's coming.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 36 }}>
+              {[
+                { city: "Charlotte, NC", status: "live" },
+                { city: "Rock Hill, SC", status: "live" },
+                { city: "Concord, NC", status: "live" },
+                { city: "Gastonia, NC", status: "live" },
+                { city: "Mooresville, NC", status: "live" },
+                { city: "Atlanta, GA", status: "coming" },
+                { city: "Raleigh, NC", status: "coming" },
+                { city: "Columbia, SC", status: "coming" },
+              ].map(m => (
+                <span
+                  key={m.city}
+                  style={{
+                    padding: "7px 14px",
+                    borderRadius: 999,
+                    fontSize: 11,
+                    fontWeight: 800,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    border: m.status === "live" ? "1px solid rgba(77,202,128,0.35)" : "1px solid rgba(255,255,255,0.1)",
+                    background: m.status === "live" ? "rgba(77,202,128,0.08)" : "rgba(255,255,255,0.03)",
+                    color: m.status === "live" ? "#4dca80" : "rgba(255,255,255,0.35)",
+                    display: "flex", alignItems: "center", gap: 6,
+                  }}
+                >
+                  <span style={{ width: 5, height: 5, borderRadius: "50%", background: m.status === "live" ? "#4dca80" : "rgba(255,255,255,0.2)", display: "inline-block", flexShrink: 0 }} />
+                  {m.city}
+                </span>
+              ))}
+            </div>
+            <Link href="/merchant/signup" className="portal-btn-outline" style={{ width: "auto", display: "inline-flex" }}>
+              Bring TrueServe to My City
+            </Link>
+          </div>
+        </section>
+
         <footer className="mt-8 border-t border-white/5 px-2 pt-10 pb-12 text-center">
           <div className="mx-auto flex max-w-7xl flex-col items-center gap-6">
             <Logo size="md" />
