@@ -120,6 +120,95 @@ nav {
   animation: ts-shimmer 1.6s ease-in-out infinite;
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   VISUAL ENHANCEMENT ANIMATIONS
+   ────────────────────────────────────────────────────────────────────────── */
+
+/* Hero right panel: slow float bob */
+@keyframes ts-float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
+}
+.ts-float {
+  animation: ts-float 6s ease-in-out infinite;
+}
+
+/* Background ambient orb drift */
+@keyframes ts-orb-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.85; }
+  33%      { transform: translate(28px, -18px) scale(1.05); opacity: 1; }
+  66%      { transform: translate(-14px, 10px) scale(0.97); opacity: 0.75; }
+}
+.ts-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+}
+.ts-orb-a {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, rgba(249,115,22,0.16) 0%, transparent 68%);
+  top: -80px; left: -100px;
+  animation: ts-orb-drift 14s ease-in-out infinite;
+}
+.ts-orb-b {
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(249,115,22,0.09) 0%, transparent 68%);
+  bottom: 30px; right: -80px;
+  animation: ts-orb-drift 18s ease-in-out infinite reverse;
+}
+
+/* Scroll-triggered reveal — IntersectionObserver adds .ts-in */
+.ts-scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 640ms cubic-bezier(.2,.8,.2,1), transform 640ms cubic-bezier(.2,.8,.2,1);
+}
+.ts-scroll-reveal.ts-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delay helpers for siblings */
+.ts-delay-1 { transition-delay: 80ms; }
+.ts-delay-2 { transition-delay: 160ms; }
+.ts-delay-3 { transition-delay: 240ms; }
+.ts-delay-4 { transition-delay: 320ms; }
+
+/* Eyebrow badge — gentle pulse glow */
+@keyframes ts-eyebrow-pulse {
+  0%, 100% { border-color: rgba(249,115,22,0.22); box-shadow: none; }
+  50%      { border-color: rgba(249,115,22,0.48); box-shadow: 0 0 14px rgba(249,115,22,0.16); }
+}
+.food-eyebrow {
+  animation: ts-eyebrow-pulse 3.8s ease-in-out infinite;
+}
+
+/* Live chip dot — sonar pulse */
+.food-chip-dot {
+  animation: ts-sonar 2.4s ease-out infinite;
+}
+
+/* Pilot "live now" badge dot */
+@keyframes ts-pilot-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.8); }
+  60%      { box-shadow: 0 0 0 7px rgba(249,115,22,0); }
+}
+.ts-pilot-dot {
+  animation: ts-pilot-dot 2.2s ease-out infinite;
+}
+
+/* Stat card number count pop */
+@keyframes ts-stat-pop {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.94); }
+  60%  { transform: translateY(-2px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ts-stat-pop {
+  animation: ts-stat-pop 480ms cubic-bezier(.34,1.56,.64,1) both;
+}
+
 .logo {
   font-family: var(--font-bebas), sans-serif;
   text-transform: uppercase;
@@ -378,7 +467,9 @@ nav {
 }
 
 .portal-btn-gold:hover {
-  filter: brightness(1.05);
+  filter: brightness(1.07);
+  box-shadow: 0 10px 40px rgba(249, 115, 22, 0.55), 0 0 0 1px rgba(249, 115, 22, 0.28);
+  transform: translateY(-1px);
 }
 
 .portal-btn-gold:active {

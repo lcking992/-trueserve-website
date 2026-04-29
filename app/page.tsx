@@ -64,6 +64,23 @@ export default function Home() {
     },
   ];
 
+  // Scroll-triggered section reveals
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("ts-in");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll(".ts-scroll-reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const match = document.cookie.match(new RegExp('(^| )userId=([^;]+)'));
     if (match) setUserId(match[2]);
@@ -164,19 +181,35 @@ export default function Home() {
               </button>
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
-              {[
-                { href:"/driver/signup", icon:"🚗", label:"For Drivers", sub:"Earn delivering food" },
-                { href:"/merchant/signup", icon:"🍽️", label:"For Merchants", sub:"List your restaurant" },
-                { href:"/restaurants", icon:"🛍️", label:"Order Food", sub:"Browse local restaurants" },
-                { href:"/rewards", icon:"⭐", label:"Rewards", sub:"Earn points on every order" },
-              ].map(item => (
+              {([
+                {
+                  href:"/driver/signup",
+                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
+                  label:"For Drivers", sub:"Earn delivering food"
+                },
+                {
+                  href:"/merchant/signup",
+                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
+                  label:"For Merchants", sub:"List your restaurant"
+                },
+                {
+                  href:"/restaurants",
+                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>,
+                  label:"Order Food", sub:"Browse local restaurants"
+                },
+                {
+                  href:"/rewards",
+                  icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+                  label:"Rewards", sub:"Earn points on every order"
+                },
+              ] as { href: string; icon: React.ReactNode; label: string; sub: string }[]).map(item => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
                   style={{display:"flex",alignItems:"center",gap:16,padding:"14px 16px",borderRadius:14,border:"1px solid rgba(255,255,255,0.07)",background:"rgba(255,255,255,0.03)",color:"#fff",textDecoration:"none"}}
                 >
-                  <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,fontSize:22,borderRadius:12,background:"rgba(255,255,255,0.06)"}}>
+                  <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,borderRadius:12,background:"rgba(255,255,255,0.06)"}}>
                     {item.icon}
                   </span>
                   <div>
@@ -201,6 +234,9 @@ export default function Home() {
 
       <main className="food-app-main">
         <section className="food-hero-card">
+          {/* Ambient background orbs */}
+          <div className="ts-orb ts-orb-a" aria-hidden="true" />
+          <div className="ts-orb ts-orb-b" aria-hidden="true" />
           <div className="home-bg-img"></div>
           <div className="home-bg-grad"></div>
           <div className="food-hero-content">
@@ -228,7 +264,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="food-panel food-hero-right flex-col gap-5 ts-animate-fade-up ts-animate-delay-1">
+            <div className="food-panel food-hero-right flex-col gap-5 ts-animate-fade-up ts-animate-delay-1 ts-float">
               <div className="space-y-4">
                 <p className="food-kicker">Ready to eat?</p>
                 <h2 className="food-heading">Pick a spot. <span className="accent">Dig in.</span></h2>
@@ -304,7 +340,7 @@ export default function Home() {
           ))}
         </div>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-4">
+        <section className="mt-8 grid gap-4 md:grid-cols-4 ts-scroll-reveal">
           {[
             {
               kicker: "Restaurant partners",
@@ -329,11 +365,15 @@ export default function Home() {
           ].map((stat, index) => (
             <div
               key={stat.kicker}
-              className="food-card ts-reveal transition-transform hover:-translate-y-1"
-              style={{ animationDelay: `${index * 80}ms` }}
+              className="food-card transition-transform hover:-translate-y-1"
             >
               <p className="food-kicker mb-3">{stat.kicker}</p>
-              <h2 className="food-heading !text-[38px] mb-3">{stat.value}</h2>
+              <h2
+                className="food-heading !text-[38px] mb-3 ts-stat-pop"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {stat.value}
+              </h2>
               <p className="text-sm leading-7">{stat.detail}</p>
             </div>
           ))}
@@ -543,7 +583,7 @@ export default function Home() {
         )}
 
         {/* ── COMPLIANCE / TRUST DIFFERENTIATOR ── */}
-        <section className="mt-16">
+        <section className="mt-16 ts-scroll-reveal">
           <div className="food-card" style={{ background: "linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(10,12,16,0) 60%)", border: "1px solid rgba(249,115,22,0.18)" }}>
             <div style={{ display: "grid", gap: 48, gridTemplateColumns: "1fr", alignItems: "center" }} className="lg:grid-cols-2">
               <div>
@@ -609,7 +649,7 @@ export default function Home() {
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section className="mt-16">
+        <section className="mt-16 ts-scroll-reveal">
           <div className="mb-10 text-center">
             <p className="food-kicker mb-3">Simple by design</p>
             <h2 className="food-heading" style={{ fontSize: 38 }}>How it <span className="accent">works</span></h2>
@@ -735,7 +775,7 @@ export default function Home() {
         </section>
 
         {/* ── DRIVER + MERCHANT RECRUITMENT ── */}
-        <section className="mt-16">
+        <section className="mt-16 ts-scroll-reveal">
           <div className="mb-10 text-center">
             <p className="food-kicker mb-3">Join the network</p>
             <h2 className="food-heading" style={{ fontSize: 38 }}>Built for the people <span className="accent">behind the food</span></h2>
@@ -789,7 +829,7 @@ export default function Home() {
 
         {/* ── FOUNDER NOTE ── */}
         {/* UPDATE: Replace "Leon King" with your full name, and update the quote/story to match your voice */}
-        <section className="mt-16">
+        <section className="mt-16 ts-scroll-reveal">
           <div className="food-card" style={{ display: "grid", gap: 40, alignItems: "center", gridTemplateColumns: "1fr" }} >
             <div style={{ display: "grid", gap: 40, alignItems: "center" }} className="lg:grid-cols-[1fr_2fr]">
               {/* Photo — drop your real headshot at /public/founder.jpg to replace the initials block */}
@@ -826,7 +866,7 @@ export default function Home() {
         </section>
 
         {/* ── EARLY ACCESS ── */}
-        <section className="mt-16">
+        <section className="mt-16 ts-scroll-reveal">
           <div
             className="food-card"
             style={{
@@ -837,7 +877,7 @@ export default function Home() {
             }}
           >
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 14px", borderRadius: 999, border: "1px solid rgba(249,115,22,0.35)", background: "rgba(249,115,22,0.08)", marginBottom: 24 }}>
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#f97316", display: "inline-block", boxShadow: "0 0 6px #f97316" }} />
+              <span className="ts-pilot-dot" style={{ width: 7, height: 7, borderRadius: "50%", background: "#f97316", display: "inline-block" }} />
               <span style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.16em", color: "#f97316" }}>Now accepting pilot partners</span>
             </div>
             <h2 className="food-heading" style={{ fontSize: 40, marginBottom: 16 }}>
@@ -896,7 +936,7 @@ export default function Home() {
         </section>
 
         {/* ── COVERAGE / MARKETS ── */}
-        <section className="mt-16 mb-4">
+        <section className="mt-16 mb-4 ts-scroll-reveal">
           <div className="food-card" style={{ textAlign: "center" }}>
             <p className="food-kicker mb-3">Where we operate</p>
             <h2 className="food-heading" style={{ fontSize: 38, marginBottom: 12 }}>Live in the <span className="accent">Southeast.</span><br />Expanding fast.</h2>
