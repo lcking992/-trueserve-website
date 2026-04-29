@@ -598,55 +598,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ── VS COMPARISON ── */}
-        <section className="mt-16">
-          <div className="mb-10 text-center">
-            <p className="food-kicker mb-3">The honest comparison</p>
-            <h2 className="food-heading" style={{ fontSize: 38 }}>Not all delivery apps <span className="accent">are equal.</span></h2>
-          </div>
-          <div className="food-card" style={{ padding: 0, overflow: "hidden" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-              <div style={{ padding: "16px 20px", fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(255,255,255,0.3)" }}>Feature</div>
-              {[
-                { name: "TrueServe", highlight: true },
-                { name: "DoorDash", highlight: false },
-                { name: "Uber Eats", highlight: false },
-              ].map(app => (
-                <div key={app.name} style={{ padding: "16px 20px", fontSize: 12, fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: app.highlight ? "#f97316" : "rgba(255,255,255,0.35)", background: app.highlight ? "rgba(249,115,22,0.05)" : "transparent", textAlign: "center", borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
-                  {app.name}
-                </div>
-              ))}
-            </div>
-            {([
-              { feature: "Restaurant health screening", ts: true, dd: false, ue: false },
-              { feature: "Driver background checks", ts: true, dd: true, ue: true },
-              { feature: "Compliance score per kitchen", ts: true, dd: false, ue: false },
-              { feature: "Transparent driver pay", ts: true, dd: false, ue: false },
-              { feature: "Zero setup fee for merchants", ts: true, dd: false, ue: false },
-              { feature: "Real-time order tracking", ts: true, dd: true, ue: true },
-              { feature: "Merchant compliance dashboard", ts: true, dd: false, ue: false },
-              { feature: "Flat commission rate", ts: true, dd: false, ue: false },
-            ] as { feature: string; ts: boolean; dd: boolean; ue: boolean }[]).map((row, i) => (
-              <div key={row.feature} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: i < 7 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                <div style={{ padding: "14px 20px", fontSize: 13, color: "rgba(255,255,255,0.6)" }}>{row.feature}</div>
-                {[row.ts, row.dd, row.ue].map((val, j) => (
-                  <div key={j} style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "center", background: j === 0 ? "rgba(249,115,22,0.04)" : "transparent", borderLeft: "1px solid rgba(255,255,255,0.07)" }}>
-                    {val ? (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={j === 0 ? "#f97316" : "#4dca80"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="2" strokeLinecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* ── HOW IT WORKS ── */}
         <section className="mt-16">
           <div className="mb-10 text-center">
@@ -704,6 +655,72 @@ export default function Home() {
                 <div style={{ fontSize: 13, lineHeight: 1.75, color: "rgba(255,255,255,0.5)" }}>{item.body}</div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── PRODUCT VIDEO ── */}
+        <section className="mt-16">
+          <div className="mb-10 text-center">
+            <p className="food-kicker mb-3">See it in action</p>
+            <h2 className="food-heading" style={{ fontSize: 38 }}>The dashboard built for <span className="accent">real operators.</span></h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginTop: 12, maxWidth: 480, margin: "12px auto 0" }}>
+              Watch how merchants manage orders, compliance, and payouts — all from one screen.
+            </p>
+          </div>
+          <div
+            className="food-card"
+            style={{
+              padding: 0,
+              overflow: "hidden",
+              position: "relative",
+              aspectRatio: "16/9",
+              background: "#0a0c09",
+              cursor: "pointer",
+            }}
+          >
+            {/* Swap the src below for your real YouTube embed URL or /videos/demo.mp4 */}
+            <iframe
+              src="https://www.youtube.com/embed/?controls=1&rel=0&modestbranding=1"
+              title="TrueServe platform demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+            />
+            {/* Placeholder shown until a real video URL is added */}
+            <div
+              id="video-placeholder"
+              style={{
+                position: "absolute", inset: 0,
+                background: "linear-gradient(135deg, #0f1210 0%, #141a18 100%)",
+                display: "flex", flexDirection: "column",
+                alignItems: "center", justifyContent: "center", gap: 20,
+              }}
+            >
+              <div style={{
+                width: 72, height: 72, borderRadius: "50%",
+                background: "rgba(249,115,22,0.12)",
+                border: "2px solid rgba(249,115,22,0.35)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="#f97316">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 4 }}>Demo video coming soon</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Replace the iframe src with your YouTube or video URL</div>
+              </div>
+              <div style={{ display: "flex", gap: 24, marginTop: 8 }}>
+                {["Live order queue", "Compliance dashboard", "Real-time driver tracking"].map(label => (
+                  <div key={label} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.35)" }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -767,18 +784,46 @@ export default function Home() {
             <h2 className="food-heading" style={{ fontSize: 38 }}>Real people. <span className="accent">Real results.</span></h2>
           </div>
           <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-            {[
-              { quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.", name: "Marcus T.", role: "Customer · Charlotte, NC", initial: "M" },
-              { quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.", name: "Dhanashree P.", role: "Merchant · Dhan's Kitchen", initial: "D" },
-              { quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.", name: "Jerome W.", role: "Driver · 300+ deliveries", initial: "J" },
-            ].map((t, i) => (
+            {([
+              {
+                quote: "I was skeptical at first but TrueServe actually shows me which restaurants have clean health inspections. That alone made me switch from the other apps.",
+                name: "Marcus T.",
+                role: "Customer · Charlotte, NC",
+                initial: "M",
+                photoUrl: "", // e.g. "/testimonials/marcus.jpg" or a full https:// URL
+              },
+              {
+                quote: "The dashboard is insane — I can see every order, pause my kitchen in one click, and track my compliance score. I've never had this kind of visibility before.",
+                name: "Dhanashree P.",
+                role: "Merchant · Dhan's Kitchen",
+                initial: "D",
+                photoUrl: "",
+              },
+              {
+                quote: "Settlement hits within 48 hours, I can see exactly what each delivery paid me, and there are no surprise deductions. This is how it should work.",
+                name: "Jerome W.",
+                role: "Driver · 300+ deliveries",
+                initial: "J",
+                photoUrl: "",
+              },
+            ] as { quote: string; name: string; role: string; initial: string; photoUrl: string }[]).map((t, i) => (
               <div key={t.name} className="food-card ts-reveal" style={{ animationDelay: `${i * 80}ms`, display: "flex", flexDirection: "column", gap: 20 }}>
                 <svg width="28" height="20" viewBox="0 0 28 20" fill="none">
                   <path d="M0 20V12.4C0 5.467 3.644 1.333 10.933 0L12.4 2.533C9.511 3.2 7.511 4.267 6.4 5.733 5.378 7.111 4.956 8.8 5.133 10.8H10V20H0ZM16 20V12.4C16 5.467 19.644 1.333 26.933 0L28.4 2.533C25.511 3.2 23.511 4.267 22.4 5.733 21.378 7.111 20.956 8.8 21.133 10.8H26V20H16Z" fill="rgba(249,115,22,0.25)"/>
                 </svg>
                 <p style={{ fontSize: 14, lineHeight: 1.85, color: "rgba(255,255,255,0.7)", flex: 1 }}>{t.quote}</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 16 }}>
-                  <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0 }}>{t.initial}</div>
+                  {t.photoUrl ? (
+                    <img
+                      src={t.photoUrl}
+                      alt={t.name}
+                      width={38}
+                      height={38}
+                      style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover", border: "1px solid rgba(249,115,22,0.3)", flexShrink: 0 }}
+                    />
+                  ) : (
+                    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 900, color: "#f97316", flexShrink: 0 }}>{t.initial}</div>
+                  )}
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.1em", color: "#fff" }}>{t.name}</div>
                     <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{t.role}</div>
