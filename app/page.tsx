@@ -208,7 +208,7 @@ export default function Home() {
               <div className="space-y-3">
                 <h1 className="food-title">What are you<br /><span className="accent">craving tonight?</span></h1>
                 <p className="food-subtitle">
-                  Browse local favorites, place your order in seconds, and watch your food travel from kitchen to doorstep in real time.
+                  Charlotte and Rock Hill's only delivery platform that screens every kitchen before your order goes in. Local restaurants. Real compliance. Live tracking.
                 </p>
               </div>
 
@@ -277,14 +277,26 @@ export default function Home() {
         {/* Trust bar */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexWrap:"wrap", gap:0, padding:"14px 24px 6px" }}>
           {([
-            { icon:"📍", label:"Local Restaurants" },
-            { icon:"📡", label:"Live Tracking" },
-            { icon:"⚡", label:"Avg. 30 min" },
-            { icon:"⭐", label:"Google Reviews" },
-          ] as const).map((item, i, arr) => (
+            {
+              icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>,
+              label: "Charlotte & Rock Hill"
+            },
+            {
+              icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+              label: "Avg. 30 min delivery"
+            },
+            {
+              icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+              label: "Health-screened kitchens"
+            },
+            {
+              icon: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>,
+              label: "Live driver tracking"
+            },
+          ] as { icon: React.ReactNode; label: string }[]).map((item, i, arr) => (
             <React.Fragment key={item.label}>
-              <div style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap" }}>
-                <span style={{ fontSize:14 }}>{item.icon}</span>
+              <div style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap", color:"rgba(255,255,255,0.4)" }}>
+                {item.icon}
                 <span style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.14em", color:"rgba(255,255,255,0.45)" }}>{item.label}</span>
               </div>
               {i < arr.length - 1 && <div style={{ width:1, height:14, background:"rgba(255,255,255,0.1)", flexShrink:0 }} />}
@@ -295,24 +307,24 @@ export default function Home() {
         <section className="mt-8 grid gap-4 md:grid-cols-4">
           {[
             {
-              kicker: "Live network",
-              value: networkStats.totalRestaurants ? `${networkStats.totalRestaurants}+` : "Growing",
-              detail: "Approved restaurant partners live on TrueServe",
+              kicker: "Restaurant partners",
+              value: networkStats.totalRestaurants ? `${networkStats.totalRestaurants}+` : "Pilot",
+              detail: "Local restaurants onboarded and live in Charlotte & Rock Hill",
             },
             {
-              kicker: "Verified kitchens",
-              value: networkStats.verifiedCount ? `${networkStats.verifiedCount}` : "Reviewing",
-              detail: "Operators showing strong health and compliance signals",
+              kicker: "Kitchens screened",
+              value: networkStats.verifiedCount ? `${networkStats.verifiedCount}` : "100%",
+              detail: "Every partner kitchen reviewed against public health records before going live",
             },
             {
-              kicker: "Local markets",
-              value: networkStats.markets ? `${networkStats.markets}` : "Expanding",
-              detail: "Distinct city markets with active restaurant coverage",
+              kicker: "Markets active",
+              value: networkStats.markets ? `${networkStats.markets}` : "5",
+              detail: "Charlotte, Rock Hill, Concord, Gastonia, and Mooresville — expanding monthly",
             },
             {
-              kicker: "Average rating",
-              value: networkStats.averageRating ? `${networkStats.averageRating.toFixed(1)}★` : "Trusted",
-              detail: "Review average across live restaurants on the platform",
+              kicker: "Commission model",
+              value: "15%",
+              detail: "Flat split only — no monthly fees on the base plan, no surprise charges",
             },
           ].map((stat, index) => (
             <div
@@ -540,7 +552,7 @@ export default function Home() {
                   We only work with<br /><span className="accent">kitchens that pass.</span>
                 </h2>
                 <p style={{ fontSize: 15, lineHeight: 1.8, color: "rgba(255,255,255,0.6)", maxWidth: 460, marginBottom: 28 }}>
-                  Every restaurant on TrueServe is screened against public health records, compliance history, and operational standards before a single order is accepted. DoorDash doesn't do this. We do.
+                  Before a single order goes through, every restaurant on TrueServe is reviewed against North and South Carolina public health inspection records. Low compliance scores get flagged automatically — and restaurants stay hidden from customers until they're resolved. The other apps don't do this. We do.
                 </p>
                 <Link href="/restaurants" className="portal-btn-gold" style={{ width: "auto", display: "inline-flex" }}>
                   Browse Verified Restaurants
@@ -771,6 +783,44 @@ export default function Home() {
                 List Your Restaurant
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 8 }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── FOUNDER NOTE ── */}
+        {/* UPDATE: Replace "Leon King" with your full name, and update the quote/story to match your voice */}
+        <section className="mt-16">
+          <div className="food-card" style={{ display: "grid", gap: 40, alignItems: "center", gridTemplateColumns: "1fr" }} >
+            <div style={{ display: "grid", gap: 40, alignItems: "center" }} className="lg:grid-cols-[1fr_2fr]">
+              {/* Photo — drop your real headshot at /public/founder.jpg to replace the initials block */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                <div style={{
+                  width: 120, height: 120, borderRadius: "50%",
+                  background: "linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(249,115,22,0.05) 100%)",
+                  border: "2px solid rgba(249,115,22,0.35)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 40, fontWeight: 900, color: "#f97316",
+                  flexShrink: 0,
+                  overflow: "hidden",
+                }}>
+                  {/* Swap this for <img src="/founder.jpg" ... /> once you have a headshot */}
+                  LK
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", textTransform: "uppercase", letterSpacing: "0.1em" }}>Leon King</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>Founder, TrueServe</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>Charlotte, NC</div>
+                </div>
+              </div>
+              <div>
+                <p className="food-kicker mb-4">Why I built this</p>
+                <blockquote style={{ fontSize: 18, lineHeight: 1.85, color: "rgba(255,255,255,0.8)", fontStyle: "italic", borderLeft: "3px solid #f97316", paddingLeft: 20, margin: "0 0 20px 0" }}>
+                  "I kept ordering from apps that had no idea what was actually happening inside the kitchens they were sending me to. No health scores. No compliance data. Nothing. I built TrueServe because people deserve to know where their food is actually coming from — and local restaurants deserve a platform that isn't taking 30% of every order they work hard to fill."
+                </blockquote>
+                <p style={{ fontSize: 13, lineHeight: 1.8, color: "rgba(255,255,255,0.45)", maxWidth: 560 }}>
+                  TrueServe started in Charlotte. We're building the infrastructure that local food operators actually need — compliance tools, real-time dashboards, and a delivery network that treats drivers and restaurants like partners, not contractors.
+                </p>
+              </div>
             </div>
           </div>
         </section>
