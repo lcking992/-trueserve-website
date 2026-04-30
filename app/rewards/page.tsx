@@ -227,76 +227,62 @@ export default async function RewardsPage({
                 <section className="food-panel relative overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
                     <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div>
+                        <div className="min-w-0">
                             <p className="food-kicker mb-3">Customer Loyalty</p>
                             <h1 className="food-heading">TrueServe Rewards</h1>
                             <p className="food-subtitle mt-3 !max-w-none">
                                 Turn every order into perks. Earn points automatically, climb tiers, and unlock faster service plus stronger rewards over time.
                             </p>
-                            <div className="food-chip-row mt-5">
+                            <div className="food-chip-row rewards-chip-row mt-5">
                                 <div className="food-chip"><span className="food-chip-dot" /> Points tracked in real-time</div>
                                 <div className="food-chip"><span className="food-chip-dot" /> Tier upgrades in one tap</div>
                                 <div className="food-chip"><span className="food-chip-dot" /> Rewards tied to real order activity</div>
                             </div>
                             {!isSignedIn && (
                                 <div className="mt-5">
-                                    <Link href="/login" className="btn btn-gold">Sign In To Join Rewards</Link>
+                                    <Link href="/login" className="btn btn-gold rewards-hero-cta">Sign In To Join Rewards</Link>
                                 </div>
                             )}
                         </div>
 
-                        <div className="food-card border border-[#f97316]/30">
+                        <div className="food-card min-w-0 border border-[#f97316]/30">
                             <p className="food-kicker mb-2">Progress</p>
                             <h3 className="food-heading !text-[30px]">{journey.title}</h3>
-                            <p className="text-sm text-white/75 mt-2">{journey.detail}</p>
+                            <p className="mt-2 text-sm text-white/75 break-words">{journey.detail}</p>
                             <div className="mt-4 rounded-full bg-white/10 h-2 overflow-hidden">
                                 <div
                                     className="h-full rounded-full bg-gradient-to-r from-[#f97316] to-[#ffb64a]"
                                     style={{ width: `${journey.progress}%` }}
                                 />
                             </div>
-                            <div className="mt-3 flex items-center justify-between text-xs text-white/60">
+                            <div className="mt-3 flex flex-col gap-1 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
                                 <span>{journey.progress}% complete</span>
                                 <span>{journey.remaining.toLocaleString()} points to go</span>
                             </div>
-                            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/65">
+                            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/65 break-words">
                                 Tip: Place larger group orders to accelerate your next tier faster.
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section className="mt-8 grid gap-6 md:grid-cols-3">
-                    <article className="food-card">
-                        <p className="food-kicker mb-2 flex items-center gap-2">
-                            <Crown size={14} className="text-[#f97316]" />
-                            Current Tier
-                        </p>
-                        <h3 className="food-heading !text-[34px]">{currentPlan}</h3>
-                        <p className="text-sm text-white/65 mt-2">Updates instantly in your account settings after selection.</p>
-                    </article>
-                    <article className="food-card">
-                        <p className="food-kicker mb-2 flex items-center gap-2">
-                            <Sparkles size={14} className="text-[#f97316]" />
-                            Reward Points
-                        </p>
-                        <h3 className="food-heading !text-[34px]">{snapshot ? snapshot.points.toLocaleString() : "0"}</h3>
-                        <p className="text-sm text-white/65 mt-2">Based on lifetime order spend and your current tier multiplier.</p>
-                    </article>
-                    <article className="food-card">
-                        <p className="food-kicker mb-2 flex items-center gap-2">
-                            <TrendingUp size={14} className="text-[#f97316]" />
-                            Order Activity
-                        </p>
-                        <h3 className="food-heading !text-[34px]">{snapshot ? snapshot.ordersCount : 0}</h3>
-                        <p className="text-sm text-white/65 mt-2">
-                            Lifetime spend ${snapshot ? snapshot.lifetimeSpend.toFixed(2) : "0.00"} · Multiplier {snapshot?.multiplierText || "1x"}
-                        </p>
-                    </article>
+                <section className="mt-4 grid grid-cols-1 divide-y divide-white/8 overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                    <div className="px-5 py-4">
+                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><Crown size={11} className="text-[#f97316]" />Tier</p>
+                        <p className="text-2xl font-black text-white">{currentPlan}</p>
+                    </div>
+                    <div className="px-5 py-4">
+                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><Sparkles size={11} className="text-[#f97316]" />Points</p>
+                        <p className="text-2xl font-black text-white">{snapshot ? snapshot.points.toLocaleString() : "0"}</p>
+                    </div>
+                    <div className="px-5 py-4">
+                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><TrendingUp size={11} className="text-[#f97316]" />Orders</p>
+                        <p className="text-2xl font-black text-white">{snapshot ? snapshot.ordersCount : 0}</p>
+                    </div>
                 </section>
 
                 <section className="mt-8">
-                    <div className="food-section-head">
+                    <div className="food-section-head rewards-section-head">
                         <div>
                             <p className="food-kicker mb-2">Membership</p>
                             <h2 className="food-heading">Choose Your Tier</h2>
@@ -361,22 +347,53 @@ export default async function RewardsPage({
                     )}
                 </section>
 
-                <section className="mt-8 grid gap-6 md:grid-cols-3">
-                    <article className="food-card">
-                        <p className="food-kicker mb-2">How It Works</p>
-                        <h3 className="food-heading !text-[30px]">Order</h3>
-                        <p className="text-sm text-white/70 mt-2">Place food orders as normal from local restaurants.</p>
-                    </article>
-                    <article className="food-card">
-                        <p className="food-kicker mb-2">How It Works</p>
-                        <h3 className="food-heading !text-[30px]">Earn</h3>
-                        <p className="text-sm text-white/70 mt-2">Points are added automatically based on your tier multiplier.</p>
-                    </article>
-                    <article className="food-card">
-                        <p className="food-kicker mb-2">How It Works</p>
-                        <h3 className="food-heading !text-[30px]">Unlock</h3>
-                        <p className="text-sm text-white/70 mt-2">Upgrade anytime to increase perks and accelerate your rewards.</p>
-                    </article>
+                {/* HOW IT WORKS */}
+                <section className="mt-8 food-panel">
+                    <p className="food-kicker mb-1">How It Works</p>
+                    <h2 className="food-heading !text-[26px] mb-6">Three steps to better perks</h2>
+                    <div className="space-y-6">
+                        {[
+                            { n: "01", title: "Order Normally", desc: "Browse health-verified restaurants and check out. Rewards are automatic on every completed delivery — no extra steps." },
+                            { n: "02", title: "Earn Points", desc: "Points credit instantly after delivery. Your tier multiplier applies automatically.", extra: (
+                                <div className="flex gap-2 flex-wrap mt-2">
+                                    <span className="px-2.5 py-1 rounded-full bg-white/[0.05] border border-white/10 text-[11px] font-bold text-white/50">Basic 1×</span>
+                                    <span className="px-2.5 py-1 rounded-full bg-[rgba(249,115,22,0.08)] border border-[rgba(249,115,22,0.2)] text-[11px] font-bold text-[#f97316]/80">Plus 1.5×</span>
+                                    <span className="px-2.5 py-1 rounded-full bg-[rgba(249,115,22,0.14)] border border-[rgba(249,115,22,0.3)] text-[11px] font-bold text-[#f97316]">Premium 2×</span>
+                                </div>
+                            )},
+                            { n: "03", title: "Unlock Tiers", desc: "Hit 1,200 pts to unlock Plus (1.5×, priority dispatch). Hit 3,000 pts to unlock Premium (2×, concierge support)." },
+                        ].map((step, i, arr) => (
+                            <div key={step.n} className={`flex gap-4 ${i < arr.length - 1 ? "pb-6 border-b border-white/6" : ""}`}>
+                                <span className="text-[11px] font-black text-[#f97316]/50 tracking-[0.18em] shrink-0 pt-0.5 w-6">{step.n}</span>
+                                <div>
+                                    <p className="font-black text-white text-sm mb-1">{step.title}</p>
+                                    <p className="text-sm text-white/50 leading-relaxed">{step.desc}</p>
+                                    {step.extra}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* FAQ */}
+                <section className="mt-8 food-panel">
+                    <p className="food-kicker mb-1">Questions</p>
+                    <h2 className="food-heading !text-[26px] mb-6">Rewards FAQ</h2>
+                    <div className="divide-y divide-white/6">
+                        {[
+                            { q: "When do I see my points?", a: "Points are credited automatically within minutes of your order being marked delivered." },
+                            { q: "Do points expire?", a: "No. Your points never expire as long as your account is active and in good standing." },
+                            { q: "Can I downgrade my tier?", a: "Yes. You can switch tiers anytime from account settings. Changes take effect on your next billing cycle." },
+                            { q: "What does priority dispatch mean?", a: "During peak times, Plus and Premium orders are assigned to available drivers first — resulting in faster pickup and delivery." },
+                            { q: "Is there a free tier?", a: "Yes — Basic is completely free. You earn 1× points on every order with no monthly fee." },
+                            { q: "How does the 2× multiplier work?", a: "Premium members earn double points on every dollar spent. A $30 order earns 60 points instead of 30." },
+                        ].map((faq) => (
+                            <div key={faq.q} className="py-4 first:pt-0 last:pb-0">
+                                <p className="font-black text-white text-sm mb-1">{faq.q}</p>
+                                <p className="text-sm text-white/50 leading-relaxed">{faq.a}</p>
+                            </div>
+                        ))}
+                    </div>
                 </section>
             </main>
         </div>
