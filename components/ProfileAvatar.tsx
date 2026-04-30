@@ -104,8 +104,10 @@ export default function ProfileAvatar({
         }
     };
 
+    const hasImage = Boolean(url);
+
     return (
-        <div className={`relative inline-flex shrink-0 items-center justify-center ${sizeClass}`}>
+        <div className={`relative inline-flex aspect-square shrink-0 items-center justify-center ${sizeClass}`}>
             <input
                 type="file"
                 ref={fileInputRef}
@@ -116,23 +118,24 @@ export default function ProfileAvatar({
 
             {/* Outer glow ring matching avatar color */}
             <div
-                className="absolute inset-[-3px] rounded-full opacity-60"
+                className="pointer-events-none absolute inset-[-3px] rounded-full opacity-60"
                 style={{ boxShadow: `0 0 0 2px ${color}55, 0 0 20px ${color}30` }}
             />
 
             <button
                 onClick={() => setIsMenuOpen(true)}
                 disabled={isUploading || isSaving}
-                className="relative h-full w-full rounded-full overflow-hidden flex items-center justify-center font-black border-2 border-white/10 transition-all hover:border-white/25 hover:scale-[1.03] group"
-                style={!url ? { backgroundColor: color, color: "#fff", fontSize: "clamp(1.1rem, 30%, 2.6rem)" } : undefined}
+                className="group relative flex h-full w-full items-center justify-center overflow-hidden rounded-full border-2 border-white/10 font-black transition-all hover:scale-[1.03] hover:border-white/25"
+                style={!hasImage ? { backgroundColor: color, color: "#fff" } : undefined}
                 aria-label="Customize avatar"
+                aria-haspopup="dialog"
             >
-                {url ? (
+                {hasImage ? (
                     <img src={url} alt="Profile avatar" className="h-full w-full object-cover" />
                 ) : isUploading || isSaving ? (
                     <div className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 ) : (
-                    <span style={{ fontSize: "clamp(1.1rem, 35%, 2.4rem)", lineHeight: 1 }}>{initials}</span>
+                    <span className="px-2 text-[clamp(1.4rem,3vw,2.8rem)] leading-none">{initials}</span>
                 )}
 
                 {/* Camera overlay on hover */}
@@ -152,7 +155,7 @@ export default function ProfileAvatar({
                     />
 
                     {/* Modal — full height on mobile, centered card on desktop */}
-                    <div className="fixed inset-x-3 top-3 bottom-3 z-50 rounded-[24px] border border-white/10 bg-[#0c0f0d] shadow-[0_32px_80px_rgba(0,0,0,0.7)] flex flex-col sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(700px,calc(100vw-32px))] sm:max-h-[90vh] sm:-translate-x-1/2 sm:-translate-y-1/2 overflow-hidden">
+                    <div className="fixed inset-x-3 top-3 bottom-3 z-50 flex flex-col overflow-hidden rounded-[24px] border border-white/10 bg-[#0c0f0d] shadow-[0_32px_80px_rgba(0,0,0,0.7)] sm:inset-auto sm:left-1/2 sm:top-1/2 sm:w-[min(700px,calc(100vw-32px))] sm:max-h-[90vh] sm:-translate-x-1/2 sm:-translate-y-1/2">
 
                         {/* Header */}
                         <div className="shrink-0 border-b border-white/8 px-5 py-4 sm:px-7 sm:py-5">
@@ -179,13 +182,13 @@ export default function ProfileAvatar({
                             <div className="grid gap-4 sm:grid-cols-[180px_1fr]">
 
                                 {/* Preview panel */}
-                                <div className="rounded-2xl border border-white/8 bg-white/[0.025] p-4 flex flex-col items-center text-center gap-3">
-                                    <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35 self-start">Preview</p>
+                                <div className="rounded-2xl border border-white/8 bg-white/[0.025] p-4 flex flex-col items-center text-center gap-3 sm:sticky sm:top-0">
+                                    <p className="self-start text-[10px] font-black uppercase tracking-[0.16em] text-white/35">Preview</p>
                                     <div
-                                        className="h-24 w-24 rounded-full overflow-hidden border-2 border-white/10 flex items-center justify-center font-black text-white text-3xl shadow-lg"
-                                        style={!url ? { backgroundColor: color } : undefined}
+                                        className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-2 border-white/10 font-black text-3xl text-white shadow-lg"
+                                        style={!hasImage ? { backgroundColor: color } : undefined}
                                     >
-                                        {url
+                                        {hasImage
                                             ? <img src={url} alt="Preview" className="h-full w-full object-cover" />
                                             : <span style={{ fontSize: "2rem", lineHeight: 1 }}>{initials}</span>
                                         }
@@ -208,25 +211,29 @@ export default function ProfileAvatar({
                                             <button
                                                 onClick={() => fileInputRef.current?.click()}
                                                 disabled={isUploading || isSaving}
-                                                className="w-full flex items-center gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm font-semibold text-white hover:border-[#f97316]/50 hover:bg-[#f97316]/8 transition-colors disabled:opacity-50 text-left"
+                                                className="w-full rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-left text-sm font-semibold text-white transition-colors hover:border-[#f97316]/50 hover:bg-[#f97316]/8 disabled:opacity-50"
                                             >
-                                                <span className="h-8 w-8 shrink-0 flex items-center justify-center rounded-full bg-[#f97316]/15 text-[#f97316]">
-                                                    <ImagePlus size={15} />
+                                                <span className="flex items-center gap-3">
+                                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f97316]/15 text-[#f97316]">
+                                                        <ImagePlus size={15} />
+                                                    </span>
+                                                    <span className="min-w-0 flex-1">Upload Custom Photo</span>
                                                 </span>
-                                                <span className="flex-1">Upload Custom Photo</span>
-                                                <span className="text-[10px] text-white/30 font-normal">JPG · PNG · WEBP</span>
+                                                <span className="mt-2 block pl-11 text-[10px] font-normal uppercase tracking-[0.12em] text-white/30">JPG · PNG · WEBP</span>
                                             </button>
 
                                             <button
                                                 onClick={handleUseMonogram}
-                                                disabled={!url || isUploading || isSaving}
-                                                className="w-full flex items-center gap-3 rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-sm font-semibold text-white hover:border-white/20 hover:bg-white/5 transition-colors disabled:opacity-30 text-left"
+                                                disabled={!hasImage || isUploading || isSaving}
+                                                className="w-full rounded-xl border border-white/8 bg-white/[0.02] px-4 py-3 text-left text-sm font-semibold text-white transition-colors hover:border-white/20 hover:bg-white/5 disabled:opacity-30"
                                             >
-                                                <span className="h-8 w-8 shrink-0 flex items-center justify-center rounded-full bg-white/8 text-white/70">
-                                                    <UserCircle2 size={15} />
+                                                <span className="flex items-center gap-3">
+                                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/8 text-white/70">
+                                                        <UserCircle2 size={15} />
+                                                    </span>
+                                                    <span className="min-w-0 flex-1">Switch to Monogram</span>
                                                 </span>
-                                                <span className="flex-1">Switch to Monogram</span>
-                                                <span className="text-[10px] text-white/30 font-normal">Initials + color</span>
+                                                <span className="mt-2 block pl-11 text-[10px] font-normal uppercase tracking-[0.12em] text-white/30">Initials + color</span>
                                             </button>
                                         </div>
                                     </section>
@@ -234,7 +241,7 @@ export default function ProfileAvatar({
                                     {/* Presets */}
                                     <section className="rounded-2xl border border-white/8 bg-white/[0.025] p-4">
                                         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35 mb-3">Choose a Preset</p>
-                                        <div className="grid grid-cols-3 gap-2">
+                                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                                             {AVATAR_PRESETS.map((preset) => (
                                                 <button
                                                     key={preset.id}
@@ -255,7 +262,7 @@ export default function ProfileAvatar({
                                                     </div>
                                                     <div className="flex items-center justify-between px-0.5 pt-2 pb-0.5">
                                                         <span className="text-xs font-semibold text-white/80">{preset.label}</span>
-                                                        {url === preset.url && (
+                                                        {hasImage && url === preset.url && (
                                                             <span className="h-5 w-5 flex items-center justify-center rounded-full bg-[#f97316]">
                                                                 <Check size={11} strokeWidth={3} className="text-black" />
                                                             </span>
@@ -269,21 +276,21 @@ export default function ProfileAvatar({
                                     {/* Color swatches */}
                                     <section className="rounded-2xl border border-white/8 bg-white/[0.025] p-4">
                                         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/35 mb-3">Monogram Color</p>
-                                        <div className="flex gap-2 flex-wrap">
+                                        <div className="flex flex-wrap gap-2.5">
                                             {COLOR_OPTIONS.map((swatch) => (
                                                 <button
                                                     key={swatch}
                                                     onClick={() => handleColorPick(swatch)}
                                                     disabled={isUploading || isSaving}
-                                                    className="h-9 w-9 rounded-full border-2 transition-all hover:scale-110 flex items-center justify-center"
+                                                    className="flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all hover:scale-110"
                                                     style={{
                                                         backgroundColor: swatch,
-                                                        borderColor: (color === swatch && !url) ? "#fff" : "transparent",
-                                                        boxShadow: (color === swatch && !url) ? `0 0 0 3px ${swatch}50` : "none",
+                                                        borderColor: (color === swatch && !hasImage) ? "#fff" : "transparent",
+                                                        boxShadow: (color === swatch && !hasImage) ? `0 0 0 3px ${swatch}50` : "none",
                                                     }}
                                                     aria-label={`Select color ${swatch}`}
                                                 >
-                                                    {color === swatch && !url && (
+                                                    {color === swatch && !hasImage && (
                                                         <Check size={14} strokeWidth={3} className="text-white drop-shadow" />
                                                     )}
                                                 </button>
@@ -303,17 +310,19 @@ export default function ProfileAvatar({
                         </div>
 
                         {/* Footer */}
-                        <div className="shrink-0 border-t border-white/8 px-5 py-4 sm:px-7 flex items-center justify-between gap-4">
+                        <div className="shrink-0 border-t border-white/8 px-5 py-4 sm:px-7">
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <span className="flex items-center gap-2 text-xs text-white/35">
                                 <Palette size={13} />
                                 Changes save instantly
                             </span>
                             <button
                                 onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-white/60 hover:text-white hover:border-white/20 transition-colors"
+                                className="flex w-full items-center justify-center gap-2 rounded-full border border-white/10 px-4 py-2 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white sm:w-auto"
                             >
                                 <X size={13} /> Done
                             </button>
+                            </div>
                         </div>
                     </div>
                 </>

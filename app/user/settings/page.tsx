@@ -53,8 +53,8 @@ export default async function UserSettings() {
                             <h1 className="food-heading !text-[clamp(36px,6vw,64px)] leading-none">
                                 {user?.name || "Account Settings"}
                             </h1>
-                            <p className="text-sm text-white/45 mt-2 truncate">{user?.email}</p>
-                            <div className="food-chip-row mt-4 justify-center sm:justify-start">
+                            <p className="mt-2 break-all text-sm text-white/45 sm:break-normal">{user?.email}</p>
+                            <div className="food-chip-row mt-4 justify-center gap-2 sm:justify-start">
                                 <div className="food-chip"><span className="food-chip-dot" />Tap avatar to customize</div>
                                 <div className="food-chip"><span className="food-chip-dot" />Wallet below</div>
                             </div>
