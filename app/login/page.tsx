@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Logo from "@/components/Logo";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,8 +18,9 @@ export default function LoginPage() {
       alert('Please enter your email and password.');
       return;
     }
-    
+
     setIsLoading(true);
+    const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -31,14 +32,21 @@ export default function LoginPage() {
         return;
     }
 
-    // Role-based routing
-    if (role === 'merchant') router.push('/merchant/dashboard');
-    else if (role === 'driver') router.push('/driver/dashboard');
+    // Role-based routing — check actual DB role, not the UI tab
+    const { data: publicUser } = await supabase.from('User').select('role').eq('id', data.user.id).maybeSingle();
+    const dbRole = publicUser?.role || 'CUSTOMER';
+
+    if (dbRole === 'MERCHANT') router.push('/merchant/dashboard');
+    else if (dbRole === 'DRIVER') router.push('/driver/dashboard');
+    else if (dbRole === 'ADMIN' || dbRole === 'QA_TESTER') router.push('/admin/dashboard');
     else router.push('/');
+
+    router.refresh();
   };
 
   const signInWithProvider = async (provider: 'google') => {
     setIsLoading(true);
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
