@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Share2, Menu, X } from "lucide-react";
+import { BadgeDollarSign, CarFront, Menu, Share2, Star, Store, UtensilsCrossed, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -196,11 +196,11 @@ export default function Home() {
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
               {[
-                { href:"/driver/signup", icon:"🚗", label:"For Drivers", sub:"Earn delivering food" },
-                { href:"/merchant/signup", icon:"🍽️", label:"For Merchants", sub:"List your restaurant" },
-                { href:"/restaurants", icon:"🛍️", label:"Order Food", sub:"Browse local restaurants" },
-                { href:"/rewards", icon:"⭐", label:"Rewards", sub:"Earn points on every order" },
-                { href:"/pricing", icon:"💲", label:"Pricing", sub:"Zero commission plans" },
+                { href:"/driver/signup", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
+                { href:"/merchant/signup", icon:Store, label:"For Merchants", sub:"List your restaurant" },
+                { href:"/restaurants", icon:UtensilsCrossed, label:"Order Food", sub:"Browse local restaurants" },
+                { href:"/rewards", icon:Star, label:"Rewards", sub:"Earn points on every order" },
+                { href:"/pricing", icon:BadgeDollarSign, label:"Pricing", sub:"Zero commission plans" },
               ].map(item => (
                 <Link
                   key={item.href}
@@ -208,8 +208,8 @@ export default function Home() {
                   onClick={() => setMenuOpen(false)}
                   style={{display:"flex",alignItems:"center",gap:16,padding:"14px 16px",borderRadius:14,border:"1px solid rgba(255,255,255,0.07)",background:"rgba(255,255,255,0.03)",color:"#fff",textDecoration:"none"}}
                 >
-                  <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,fontSize:22,borderRadius:12,background:"rgba(255,255,255,0.06)"}}>
-                    {item.icon}
+                  <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,borderRadius:12,background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.88)"}}>
+                    <item.icon size={20} strokeWidth={2.1} />
                   </span>
                   <div>
                     <div style={{fontWeight:700,fontSize:15,color:"#fff"}}>{item.label}</div>
