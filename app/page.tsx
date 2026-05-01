@@ -73,6 +73,72 @@ export default function Home() {
       icon: Share2,
     },
   ];
+  const howItWorks = [
+    {
+      step: "01",
+      title: "Drop your address",
+      detail: "Start with your delivery location so we can route you into the right market and handoff flow.",
+      icon: "📍",
+    },
+    {
+      step: "02",
+      title: "Place the order fast",
+      detail: "Move from search to checkout with a cleaner, lower-friction flow designed for repeat local ordering.",
+      icon: "⚡",
+    },
+    {
+      step: "03",
+      title: "Track every handoff",
+      detail: "See prep, driver movement, and support touchpoints in one place instead of guessing what happens next.",
+      icon: "📡",
+    },
+  ];
+  const platformPaths = [
+    {
+      title: "For Customers",
+      detail: "Save addresses, earn rewards, and track every order from kitchen to doorstep.",
+      href: userId ? accountHref : "/signup",
+      cta: userId ? "Open Account" : "Create Account",
+      icon: UtensilsCrossed,
+    },
+    {
+      title: "For Merchants",
+      detail: "Launch a branded storefront, share direct-order links, and give your team better operational tools.",
+      href: "/merchant/signup",
+      cta: "Grow With TrueServe",
+      icon: Store,
+    },
+    {
+      title: "For Drivers",
+      detail: "Onboard cleanly, upload docs, complete payout setup, and stay supported while you deliver.",
+      href: "/driver/signup",
+      cta: "Apply To Drive",
+      icon: CarFront,
+    },
+  ];
+  const utilityLinks = [
+    {
+      title: "Rewards",
+      detail: "Turn repeat orders into points, perks, and clearer membership tiers.",
+      href: "/rewards",
+      cta: "See Rewards",
+      icon: Star,
+    },
+    {
+      title: "Pricing",
+      detail: "Keep the value props transparent for customers and restaurant partners.",
+      href: "/pricing",
+      cta: "View Pricing",
+      icon: BadgeDollarSign,
+    },
+    {
+      title: "Support",
+      detail: "Get help fast if you need order, merchant, or onboarding assistance.",
+      href: "/contact",
+      cta: "Contact Us",
+      icon: Share2,
+    },
+  ];
 
   const revealTransition = shouldReduceMotion
     ? { duration: 0 }
@@ -422,6 +488,122 @@ export default function Home() {
             </motion.div>
           ))}
         </section>
+
+        <motion.section
+          className="mt-8"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={revealTransition}
+        >
+          <div className="mb-5">
+            <p className="food-kicker mb-2">How TrueServe works</p>
+            <h2 className="food-heading">A cleaner path from <span className="accent">search to delivery</span></h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {howItWorks.map((item, index) => (
+              <motion.div
+                key={item.step}
+                className="food-card"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.25 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+              >
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <span className="text-[12px] font-black uppercase tracking-[0.24em] text-white/35">{item.step}</span>
+                  <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-xl">
+                    {item.icon}
+                  </span>
+                </div>
+                <h3 className="mb-3 text-[28px] font-black uppercase tracking-[0.06em] text-white">{item.title}</h3>
+                <p className="text-sm leading-7 text-white/68">{item.detail}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          className="mt-8"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={revealTransition}
+        >
+          <div className="mb-5">
+            <p className="food-kicker mb-2">Built for every side</p>
+            <h2 className="food-heading">One platform for <span className="accent">customers, merchants, and drivers</span></h2>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-3">
+            {platformPaths.map((path, index) => {
+              const Icon = path.icon;
+              return (
+                <motion.div
+                  key={path.title}
+                  className="food-card"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.07 }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                >
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-[16px] border border-white/10 bg-white/5 text-white/80">
+                    <Icon size={22} strokeWidth={2.1} />
+                  </div>
+                  <h3 className="mb-3 text-[30px] font-black uppercase tracking-[0.06em] text-white">{path.title}</h3>
+                  <p className="mb-6 text-sm leading-7 text-white/68">{path.detail}</p>
+                  <Link href={path.href} className="portal-btn-outline portal-btn-outline-block">
+                    {path.cta}
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
+
+        <motion.section
+          className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_.7fr]"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={revealTransition}
+        >
+          <div className="food-card">
+            <p className="food-kicker mb-3">Why teams choose TrueServe</p>
+            <h2 className="food-heading !text-[42px] mb-4">Built to feel <span className="accent">local, premium, and direct</span></h2>
+            <p className="max-w-2xl text-sm leading-7 text-white/68">
+              We keep the homepage focused on trust, routing, and next actions. Then we move people into the right ordering, merchant, or driver flow instead of crowding the landing page with listing noise.
+            </p>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
+            {utilityLinks.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.title}
+                  className="food-card"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                >
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-white/80">
+                      <Icon size={18} strokeWidth={2.1} />
+                    </span>
+                    <div className="text-[24px] font-black uppercase tracking-[0.08em] text-white">{item.title}</div>
+                  </div>
+                  <p className="mb-4 text-sm leading-7 text-white/68">{item.detail}</p>
+                  <Link href={item.href} className="text-[11px] font-black uppercase tracking-[0.18em] text-[#f97316]">
+                    {item.cta}
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
 
 
         <footer className="mt-8 border-t border-white/5 px-2 pt-10 pb-12 text-center">
