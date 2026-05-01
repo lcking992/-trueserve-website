@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Logo from "@/components/Logo";
 import { createClient } from "@/lib/supabase/client";
+import { loginWithPassword } from "@/app/auth/actions";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,22 +21,20 @@ export default function LoginPage() {
     }
 
     setIsLoading(true);
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    });
 
-    if (error) {
-        alert(error.message);
-        setIsLoading(false);
-        return;
+    // Use the server action — sets userId cookie + Supabase session properly
+    const formData = new FormData();
+    formData.set('email', email);
+    formData.set('password', password);
+    const result = await loginWithPassword(formData);
+
+    if (result.error) {
+      alert(result.message);
+      setIsLoading(false);
+      return;
     }
 
-    // Role-based routing — check actual DB role, not the UI tab
-    const { data: publicUser } = await supabase.from('User').select('role').eq('id', data.user.id).maybeSingle();
-    const dbRole = publicUser?.role || 'CUSTOMER';
-
+    const dbRole = result.role || 'CUSTOMER';
     if (dbRole === 'MERCHANT') router.push('/merchant/dashboard');
     else if (dbRole === 'DRIVER') router.push('/driver/dashboard');
     else if (dbRole === 'ADMIN' || dbRole === 'QA_TESTER') router.push('/admin/dashboard');

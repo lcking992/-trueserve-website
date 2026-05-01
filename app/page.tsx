@@ -186,6 +186,11 @@ export default function Home() {
       const authUser = data.user;
       if (!authUser?.id) return;
 
+      // Fallback: set userId from Supabase session if cookie wasn't set
+      if (!document.cookie.match(new RegExp('(^| )userId=([^;]+)'))) {
+        setUserId(authUser.id);
+      }
+
       const { data: profile } = await supabase
         .from('User')
         .select('role')
