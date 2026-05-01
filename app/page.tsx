@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Share2, Menu, X } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -32,7 +33,26 @@ import {
 } from "@/lib/public-restaurants";
 import { getAccountHomeHref } from "@/lib/account-routing";
 
+const HERO_FALLBACK_VISUALS = [
+  {
+    title: "Late-night comfort",
+    detail: "Curated local kitchens",
+    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80",
+  },
+  {
+    title: "Fresh and fast",
+    detail: "Built for direct ordering",
+    image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80",
+  },
+  {
+    title: "Delivered local",
+    detail: "Real restaurants, real routes",
+    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80",
+  },
+];
+
 export default function Home() {
+  const shouldReduceMotion = useReducedMotion();
   const [userId, setUserId] = useState<string | null>(null);
   const [accountHref, setAccountHref] = useState("/account");
   const [hasAddress, setHasAddress] = useState(false);
@@ -63,6 +83,16 @@ export default function Home() {
       icon: Share2,
     },
   ];
+
+  const revealTransition = shouldReduceMotion
+    ? { duration: 0 }
+    : { duration: 0.62, ease: [0.22, 1, 0.36, 1] as const };
+
+  const heroVisuals = (featuredRestaurants.length > 0 ? featuredRestaurants.slice(0, 3).map((restaurant, index) => ({
+    title: restaurant.name,
+    detail: [restaurant.city, restaurant.state].filter(Boolean).join(", ") || "Local partner",
+    image: restaurant.imageUrl || HERO_FALLBACK_VISUALS[index % HERO_FALLBACK_VISUALS.length].image,
+  })) : HERO_FALLBACK_VISUALS);
 
   useEffect(() => {
     const match = document.cookie.match(new RegExp('(^| )userId=([^;]+)'));
@@ -206,31 +236,69 @@ export default function Home() {
           <div className="home-bg-img"></div>
           <div className="home-bg-grad"></div>
           <div className="food-hero-content">
-            <div className="space-y-6 ts-animate-fade-up">
+            <motion.div
+              className="space-y-6"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+              animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              transition={revealTransition}
+            >
               <div className="space-y-3">
-                <h1 className="food-title">What are you<br /><span className="accent">craving tonight?</span></h1>
-                <p className="food-subtitle">
+                <motion.h1
+                  className="food-title"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.05 }}
+                >
+                  What are you<br /><span className="accent">craving tonight?</span>
+                </motion.h1>
+                <motion.p
+                  className="food-subtitle"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.12 }}
+                >
                   Browse local favorites, place your order in seconds, and watch your food travel from kitchen to doorstep in real time.
-                </p>
+                </motion.p>
               </div>
 
-              <LandingSearch onAddressChange={setHasAddress} />
+              <motion.div
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.2 }}
+              >
+                <LandingSearch onAddressChange={setHasAddress} />
+              </motion.div>
 
-              <div className="food-chip-row">
+              <motion.div
+                className="food-chip-row"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.26 }}
+              >
                 {[
                   "Local restaurants",
                   "Live tracking",
                   "Avg. 30 min",
                 ].map((feature) => (
-                  <div key={feature} className="food-chip">
+                  <motion.div
+                    key={feature}
+                    className="food-chip"
+                    whileHover={shouldReduceMotion ? undefined : { y: -2, borderColor: "rgba(249,115,22,0.36)" }}
+                    transition={{ duration: 0.18 }}
+                  >
                     <span className="food-chip-dot" />
                     {feature}
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            <div className="food-panel food-hero-right flex-col gap-5 ts-animate-fade-up ts-animate-delay-1">
+            <motion.div
+              className="food-panel food-hero-right flex-col gap-5"
+              initial={shouldReduceMotion ? false : { opacity: 0, x: 22 }}
+              animate={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+              transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.16 }}
+            >
               <div className="space-y-4">
                 <p className="food-kicker">Ready to eat?</p>
                 <h2 className="food-heading">Pick a spot. <span className="accent">Dig in.</span></h2>
@@ -248,6 +316,30 @@ export default function Home() {
                   <strong>Verified</strong>
                   <span>Restaurant reviews come from Google</span>
                 </div>
+              </div>
+
+              <div className="hero-preview-grid">
+                {heroVisuals.map((visual, index) => (
+                  <motion.div
+                    key={`${visual.title}-${index}`}
+                    className={`hero-preview-card${index === 0 ? " hero-preview-card-lg" : ""}`}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }}
+                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.22 + index * 0.08 }}
+                    whileHover={shouldReduceMotion ? undefined : { y: -4, scale: 1.01 }}
+                  >
+                    <motion.div
+                      className="hero-preview-image"
+                      style={{ backgroundImage: `linear-gradient(180deg, rgba(8,10,14,.12), rgba(8,10,14,.76)), url('${visual.image}')` }}
+                      animate={shouldReduceMotion ? undefined : { scale: [1, 1.03, 1] }}
+                      transition={shouldReduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
+                    />
+                    <div className="hero-preview-copy">
+                      <div className="hero-preview-title">{visual.title}</div>
+                      <div className="hero-preview-detail">{visual.detail}</div>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -272,12 +364,18 @@ export default function Home() {
                   New here? Create an account to save addresses and track orders.
                 </p>
               ) : null}
-            </div>
+            </motion.div>
           </div>
         </section>
 
         {/* Trust bar */}
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", flexWrap:"wrap", gap:0, padding:"14px 24px 6px" }}>
+        <motion.div
+          style={{ display:"flex", alignItems:"center", justifyContent:"center", flexWrap:"wrap", gap:0, padding:"14px 24px 6px" }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={revealTransition}
+        >
           {([
             { icon:"📍", label:"Local Restaurants" },
             { icon:"📡", label:"Live Tracking" },
@@ -285,14 +383,17 @@ export default function Home() {
             { icon:"⭐", label:"Google Reviews" },
           ] as const).map((item, i, arr) => (
             <React.Fragment key={item.label}>
-              <div style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap" }}>
+              <motion.div
+                style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap" }}
+                whileHover={shouldReduceMotion ? undefined : { y: -1, color: "rgba(255,255,255,0.78)" }}
+              >
                 <span style={{ fontSize:14 }}>{item.icon}</span>
                 <span style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.14em", color:"rgba(255,255,255,0.45)" }}>{item.label}</span>
-              </div>
+              </motion.div>
               {i < arr.length - 1 && <div style={{ width:1, height:14, background:"rgba(255,255,255,0.1)", flexShrink:0 }} />}
             </React.Fragment>
           ))}
-        </div>
+        </motion.div>
 
         <section className="mt-8 grid gap-4 md:grid-cols-4">
           {[
@@ -317,15 +418,19 @@ export default function Home() {
               detail: "Review average across live restaurants on the platform",
             },
           ].map((stat, index) => (
-            <div
+            <motion.div
               key={stat.kicker}
-              className="food-card ts-reveal transition-transform hover:-translate-y-1"
-              style={{ animationDelay: `${index * 80}ms` }}
+              className="food-card"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
+              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
+              whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.01 }}
             >
               <p className="food-kicker mb-3">{stat.kicker}</p>
               <h2 className="food-heading !text-[38px] mb-3">{stat.value}</h2>
               <p className="text-sm leading-7">{stat.detail}</p>
-            </div>
+            </motion.div>
           ))}
         </section>
 

@@ -542,6 +542,63 @@ nav {
   overflow-wrap: anywhere;
 }
 
+.hero-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.hero-preview-card {
+  position: relative;
+  min-height: 124px;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
+}
+
+.hero-preview-card-lg {
+  grid-column: span 2;
+  min-height: 168px;
+}
+
+.hero-preview-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform-origin: center;
+}
+
+.hero-preview-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: end;
+  gap: 6px;
+  padding: 16px;
+}
+
+.hero-preview-title {
+  font-family: var(--font-bebas), sans-serif;
+  font-size: 24px;
+  line-height: 0.95;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.hero-preview-detail {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .food-stat-row {
   display: flex;
   flex-wrap: wrap;
@@ -1332,6 +1389,11 @@ nav {
   .food-title { font-size: 30px; line-height: 1; }
   .food-heading { font-size: 28px; line-height: 1.04; }
   .food-subtitle { line-height: 1.65; font-size: 14px; }
+  .hero-preview-grid { grid-template-columns: 1fr; }
+  .hero-preview-card,
+  .hero-preview-card-lg { grid-column: auto; min-height: 128px; }
+  .hero-preview-copy { padding: 14px; }
+  .hero-preview-title { font-size: 22px; }
   .rewards-chip-row {
     flex-wrap: wrap;
     overflow: visible;
