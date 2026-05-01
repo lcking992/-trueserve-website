@@ -5,6 +5,10 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+const IS_DEV = process.env.NODE_ENV === "development";
+const DEV_BYPASS_EMAIL = "driver@demo.test";
+const DEV_BYPASS_PASSWORD = "password123";
+
 export default function DriverLoginForm() {
     const supabase = createClient();
     const router = useRouter();
@@ -14,6 +18,24 @@ export default function DriverLoginForm() {
     const [step, setStep] = useState<"phone" | "otp">("phone");
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ text: string; error: boolean } | null>(null);
+
+    const handleDevBypass = async () => {
+        setIsLoading(true);
+        setMessage(null);
+        try {
+            const { error } = await supabase.auth.signInWithPassword({
+                email: DEV_BYPASS_EMAIL,
+                password: DEV_BYPASS_PASSWORD,
+            });
+            if (error) throw error;
+            router.push("/driver/dashboard");
+            router.refresh();
+        } catch (err: any) {
+            setMessage({ text: `Dev bypass failed: ${err.message}`, error: true });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const formatPhone = (val: string) => {
         let digits = val.replace(/\D/g, "");
@@ -129,6 +151,19 @@ export default function DriverLoginForm() {
                         <div className="text-center font-dm-sans text-[12px] text-[#555]">
                             New to the fleet? <Link href="/driver/signup" className="text-[#3dd68c] font-bold">Apply to partner</Link>
                         </div>
+                        {IS_DEV && (
+                            <div className="border-t border-dashed border-[#2a2f3a] pt-3">
+                                <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[#444] mb-2">Dev / QA Only</p>
+                                <button
+                                    type="button"
+                                    onClick={handleDevBypass}
+                                    disabled={isLoading}
+                                    className="w-full text-[11px] font-bold text-[#3dd68c] border border-[#3dd68c]/20 bg-[#3dd68c]/5 rounded-xl py-2.5 hover:bg-[#3dd68c]/10 transition-colors disabled:opacity-40"
+                                >
+                                    {isLoading ? "Signing in..." : "Sign in as Demo Driver →"}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </form>
             ) : (

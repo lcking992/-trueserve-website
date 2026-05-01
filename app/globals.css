@@ -662,6 +662,21 @@ nav {
   flex-shrink: 0;
 }
 
+.home-inline-cta,
+.home-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.home-text-link {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #f97316;
+}
+
 .food-chip-dot {
   width: 8px;
   height: 8px;
@@ -1389,6 +1404,97 @@ nav {
   .food-title { font-size: 30px; line-height: 1; }
   .food-heading { font-size: 28px; line-height: 1.04; }
   .food-subtitle { line-height: 1.65; font-size: 14px; }
+  .food-hero-card { padding: 22px 18px; }
+  .food-hero-content { gap: 20px; }
+  .food-chip-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+  }
+  .food-chip {
+    min-width: 0;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .food-chip:nth-child(3) {
+    grid-column: span 2;
+  }
+  .food-app-main > .mt-8 {
+    margin-top: 28px;
+  }
+  .food-app-main > div[style*="justify-content:center"] {
+    display: none !important;
+  }
+  .home-stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .home-stat-card {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.05);
+    box-shadow: none;
+  }
+  .home-stat-card .food-heading { font-size: 24px !important; margin-bottom: 8px; }
+  .home-stat-card p:last-child { font-size: 12px; line-height: 1.55; }
+  .home-steps-grid,
+  .home-utility-grid { gap: 12px; }
+  .home-step-card,
+  .home-utility-card {
+    background: transparent;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,.09);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 14px 0 0;
+  }
+  .home-step-card:hover,
+  .home-utility-card:hover { transform: none; }
+  .home-step-card > div:first-child,
+  .home-utility-card > div:first-child {
+    margin-bottom: 10px;
+  }
+  .home-step-card h3 { font-size: 22px; line-height: 1; margin-bottom: 8px; }
+  .home-step-card p,
+  .home-utility-card p { font-size: 13px; line-height: 1.6; }
+  .home-paths-grid { gap: 14px; }
+  .home-path-card {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .home-path-card > div:first-child {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+  }
+  .home-path-card h3 { font-size: 24px; line-height: 1; }
+  .home-path-card p { margin-bottom: 14px; }
+  .home-path-card .portal-btn-outline {
+    width: auto;
+    justify-content: flex-start;
+    padding: 0;
+    min-height: 0;
+    border: none;
+    background: transparent;
+    color: #f97316;
+    letter-spacing: .16em;
+  }
+  .home-why-card {
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border-radius: 20px;
+    padding: 18px;
+  }
+  .home-why-card .food-heading { font-size: 30px !important; line-height: 1; }
+  .home-why-card p { font-size: 13px; line-height: 1.65; }
+  .home-text-link {
+    font-size: 10px;
+    letter-spacing: .16em;
+  }
   .hero-preview-grid { grid-template-columns: 1fr; }
   .hero-preview-card,
   .hero-preview-card-lg { grid-column: auto; min-height: 128px; }
@@ -1420,6 +1526,11 @@ nav {
   .cuisine-card { padding: 16px 8px; gap: 8px; }
   .cuisine-emoji { font-size: 28px; }
   .food-hero-right { display: none; }
+  footer .flex.items-center.justify-center.gap-6 {
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    line-height: 1.7;
+  }
 }
 
 @media (min-width: 768px) {

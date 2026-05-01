@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
+import FadeInSection from '@/components/FadeInSection';
 
 export default function BenefitsPage() {
     const [selectedTier, setSelectedTier] = useState('Plus');
@@ -13,7 +14,7 @@ export default function BenefitsPage() {
             {/* Header */}
             <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-white/5 px-6 py-4 bg-black/50">
                 <div className="container flex justify-between items-center">
-                    <Logo size="md" showPlus={true} />
+                    <Logo size="md" />
                     <Link href="/restaurants" className="btn btn-outline border-white/10 text-xs py-2 px-6 hover:bg-white/5 transition-all">
                         Back to Ordering
                     </Link>
@@ -36,7 +37,7 @@ export default function BenefitsPage() {
                 </div>
 
                 {/* Tiered Membership Model - Fixed Clickability */}
-                <div className="mb-48 relative z-20">
+                <FadeInSection className="mb-48 relative z-20">
                     <h2 className="text-center text-3xl md:text-4xl font-black mb-16 tracking-tight uppercase">Choose Your Standard</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-12 max-w-6xl mx-auto px-4">
                         <PricingCard
@@ -85,10 +86,10 @@ export default function BenefitsPage() {
                             buttonLink="/login?premium=true"
                         />
                     </div>
-                </div>
+                </FadeInSection>
 
                 {/* Detailed Features Sections */}
-                <div className="space-y-40 mb-40">
+                <FadeInSection className="space-y-40 mb-40">
                     {/* 1. Restaurant-First Value */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                         <div>
@@ -147,16 +148,16 @@ export default function BenefitsPage() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </FadeInSection>
 
                 {/* Strategic Call to Action */}
-                <div className="text-center mb-40">
+                <FadeInSection className="text-center mb-40">
                     <h2 className="text-4xl font-black mb-6">Start Your Standard.</h2>
                     <p className="text-slate-400 mb-12">Launch features include Priority Dispatch, Order Protection, and 5% Restaurant Savings.</p>
                     <Link href="/login" className="btn btn-primary px-12 py-5 text-xl shadow-2xl shadow-primary/30 rounded-2xl">
                         Join {selectedTier} Today
                     </Link>
-                </div>
+                </FadeInSection>
 
             </main>
 

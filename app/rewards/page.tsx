@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Logo from "@/components/Logo";
+import FadeInSection from "@/components/FadeInSection";
 import { getAuthSession } from "@/app/auth/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { joinRewardsTier } from "./actions";
@@ -114,6 +115,12 @@ function MessageBanner({ update, tier }: { update?: string; tier?: string }) {
     );
 }
 
+const TIER_IMAGES: Record<string, string> = {
+    Basic: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=70",   // pizza
+    Plus: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70",        // grill
+    Premium: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=70",  // spread
+};
+
 function TierCard({
     tier,
     subtitle,
@@ -140,6 +147,14 @@ function TierCard({
     const isCurrent = currentPlan === tier;
     return (
         <article className={`food-card relative overflow-hidden ${isCurrent ? "border border-[#f97316]/50" : ""}`}>
+            {/* Tier photo banner */}
+            <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden rounded-t-[inherit] pointer-events-none">
+                <div
+                    className="absolute inset-0 bg-cover bg-center opacity-[0.18]"
+                    style={{ backgroundImage: `url('${TIER_IMAGES[tier]}')` }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#111614]" />
+            </div>
             <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_45%)]" />
             <div className="relative z-10">
                 <div className="mb-3 flex items-start justify-between gap-3">
@@ -225,18 +240,26 @@ export default async function RewardsPage({
                 <MessageBanner update={resolvedSearchParams?.update} tier={resolvedSearchParams?.tier} />
 
                 <section className="food-panel relative overflow-hidden">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
-                    <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+                    {/* Hero food imagery strip */}
+                    <div className="pointer-events-none absolute inset-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center opacity-[0.12]"
+                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80')" }}
+                        />
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0f0e]/90" />
+                    </div>
+                    <div className="relative z-10 flex flex-col gap-6 lg:grid lg:grid-cols-[1.2fr_0.8fr]">
                         <div className="min-w-0">
                             <p className="food-kicker mb-3">Customer Loyalty</p>
                             <h1 className="food-heading">TrueServe Rewards</h1>
                             <p className="food-subtitle mt-3 !max-w-none">
                                 Turn every order into perks. Earn points automatically, climb tiers, and unlock faster service plus stronger rewards over time.
                             </p>
-                            <div className="food-chip-row rewards-chip-row mt-5">
+                            <div className="mt-5 flex flex-wrap gap-2">
                                 <div className="food-chip"><span className="food-chip-dot" /> Points tracked in real-time</div>
                                 <div className="food-chip"><span className="food-chip-dot" /> Tier upgrades in one tap</div>
-                                <div className="food-chip"><span className="food-chip-dot" /> Rewards tied to real order activity</div>
+                                <div className="food-chip"><span className="food-chip-dot" /> Tied to real orders</div>
                             </div>
                             {!isSignedIn && (
                                 <div className="mt-5">
@@ -266,7 +289,7 @@ export default async function RewardsPage({
                     </div>
                 </section>
 
-                <section className="mt-4 grid grid-cols-1 divide-y divide-white/8 overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                <FadeInSection className="mt-4 grid grid-cols-3 divide-x divide-white/8 overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
                     <div className="px-5 py-4">
                         <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><Crown size={11} className="text-[#f97316]" />Tier</p>
                         <p className="text-2xl font-black text-white">{currentPlan}</p>
@@ -279,9 +302,9 @@ export default async function RewardsPage({
                         <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><TrendingUp size={11} className="text-[#f97316]" />Orders</p>
                         <p className="text-2xl font-black text-white">{snapshot ? snapshot.ordersCount : 0}</p>
                     </div>
-                </section>
+                </FadeInSection>
 
-                <section className="mt-8">
+                <FadeInSection className="mt-8" delay={0.05}>
                     <div className="food-section-head rewards-section-head">
                         <div>
                             <p className="food-kicker mb-2">Membership</p>
@@ -345,10 +368,11 @@ export default async function RewardsPage({
                             Add a payment method first to unlock Plus or Premium.
                         </p>
                     )}
-                </section>
+                </FadeInSection>
 
                 {/* HOW IT WORKS */}
-                <section className="mt-8 food-panel">
+                <FadeInSection className="mt-8" delay={0.05}>
+                <section className="food-panel">
                     <p className="food-kicker mb-1">How It Works</p>
                     <h2 className="food-heading !text-[26px] mb-6">Three steps to better perks</h2>
                     <div className="space-y-6">
@@ -374,9 +398,11 @@ export default async function RewardsPage({
                         ))}
                     </div>
                 </section>
+                </FadeInSection>
 
                 {/* FAQ */}
-                <section className="mt-8 food-panel">
+                <FadeInSection className="mt-8" delay={0.05}>
+                <section className="food-panel">
                     <p className="food-kicker mb-1">Questions</p>
                     <h2 className="food-heading !text-[26px] mb-6">Rewards FAQ</h2>
                     <div className="divide-y divide-white/6">
@@ -395,6 +421,7 @@ export default async function RewardsPage({
                         ))}
                     </div>
                 </section>
+                </FadeInSection>
             </main>
         </div>
     );

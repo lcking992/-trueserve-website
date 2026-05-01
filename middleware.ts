@@ -178,6 +178,7 @@ export async function middleware(request: NextRequest) {
       path === '/merchant/portal-preview' ||
       path === '/driver/portal-preview' ||
       path === '/merchant/signup' ||
+      path === '/merchant/setup' ||
       path === '/driver/signup' ||
       path === '/admin/login';
 

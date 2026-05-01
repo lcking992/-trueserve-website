@@ -3,7 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import FadeInSection from "@/components/FadeInSection";
+import { motion } from "motion/react";
 import { submitContactForm } from "./actions";
+import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Package, Store, Car, CreditCard } from "lucide-react";
 
 const ROLES = [
     { value: "customer", label: "Customer" },
@@ -15,10 +18,10 @@ const ROLES = [
 ];
 
 const FAQ_QUICK = [
-    { q: "How do I track my order?", a: "Log in and visit Orders — you'll see live status and a map.", href: "/orders" },
-    { q: "I'm a restaurant and want to join.", a: "Apply as a merchant — setup takes under 10 minutes.", href: "/merchant/signup" },
-    { q: "How do I sign up to drive?", a: "Complete the driver application and we'll review your docs.", href: "/driver/signup" },
-    { q: "Billing or payment issue?", a: "Email us directly and include your order number.", href: "mailto:support@trueserve.delivery" },
+    { q: "How do I track my order?", a: "Log in and visit Orders — you'll see live status and a map.", href: "/orders", icon: Package },
+    { q: "Want to list your restaurant?", a: "Apply as a merchant — setup takes under 10 minutes.", href: "/merchant/signup", icon: Store },
+    { q: "How do I sign up to drive?", a: "Complete the driver application and we'll review your docs.", href: "/driver/signup", icon: Car },
+    { q: "Billing or payment issue?", a: "Email us directly and include your order number.", href: "mailto:support@trueserve.delivery", icon: CreditCard },
 ];
 
 export default function ContactPage() {
@@ -48,7 +51,7 @@ export default function ContactPage() {
                     <Link href="/merchant/signup">For Merchants</Link>
                 </div>
                 <div className="flex gap-2">
-                    <Link href="/merchant/login" className="btn btn-ghost">Sign In</Link>
+                    <Link href="/login" className="btn btn-ghost">Sign In</Link>
                     <Link href="/merchant/signup" className="btn btn-gold">Get Started</Link>
                 </div>
             </nav>
@@ -56,56 +59,126 @@ export default function ContactPage() {
             <main className="food-app-main">
 
                 {/* HERO */}
-                <section className="food-panel relative overflow-hidden">
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(249,115,22,0.15),transparent_60%)]" />
-                    <div className="relative z-10 text-center max-w-2xl mx-auto py-4">
-                        <p className="food-kicker mb-4">Get in Touch</p>
-                        <h1 className="food-heading" style={{ fontSize: "clamp(40px, 7vw, 72px)", lineHeight: 0.95 }}>
-                            We&rsquo;re here<br /><span className="accent">to help.</span>
-                        </h1>
-                        <p className="food-subtitle mt-4 mx-auto" style={{ maxWidth: 460 }}>
-                            Questions about ordering, partnering as a restaurant, or joining as a driver — reach out and we&rsquo;ll get back to you within one business day.
-                        </p>
+                <motion.section
+                    className="food-panel relative overflow-hidden min-h-[220px] flex items-center justify-center"
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+                >
+                    {/* Background image */}
+                    <div className="pointer-events-none absolute inset-0">
+                        <div
+                            className="absolute inset-0 bg-cover bg-center opacity-[0.13]"
+                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80')" }}
+                        />
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(249,115,22,0.18),transparent_60%)]" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d0f0e]/80" />
                     </div>
-                </section>
+                    <div className="relative z-10 text-center w-full max-w-2xl mx-auto px-4 py-8">
+                        <motion.p
+                            className="food-kicker mb-4"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1, duration: 0.5 }}
+                        >
+                            Get in Touch
+                        </motion.p>
+                        <motion.h1
+                            className="food-heading"
+                            style={{ fontSize: "clamp(40px, 7vw, 72px)", lineHeight: 0.95 }}
+                            initial={{ opacity: 0, y: 14 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.16, duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            We&rsquo;re here<br /><span className="accent">to help.</span>
+                        </motion.h1>
+                        <motion.p
+                            className="food-subtitle mt-4 mx-auto"
+                            style={{ maxWidth: 460 }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.24, duration: 0.5 }}
+                        >
+                            Questions about ordering, partnering as a restaurant, or joining as a driver — reach out and we&rsquo;ll get back to you within one business day.
+                        </motion.p>
+
+                        {/* Contact badges */}
+                        <motion.div
+                            className="flex flex-wrap items-center justify-center gap-3 mt-6"
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3, duration: 0.5 }}
+                        >
+                            {[
+                                { icon: Clock, label: "Replies within 1 business day" },
+                                { icon: MessageCircle, label: "Friendly support team" },
+                                { icon: Mail, label: "support@trueserve.delivery" },
+                            ].map(({ icon: Icon, label }) => (
+                                <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] font-bold text-white/50">
+                                    <Icon size={11} className="text-[#f97316]" />
+                                    {label}
+                                </div>
+                            ))}
+                        </motion.div>
+                    </div>
+                </motion.section>
 
                 {/* QUICK LINKS */}
-                <section className="mt-6 grid gap-3 sm:grid-cols-2">
-                    {FAQ_QUICK.map((item) => (
-                        <Link
-                            key={item.q}
-                            href={item.href}
-                            className="food-card group flex items-start gap-4 hover:border-[rgba(249,115,22,0.3)] transition-colors"
-                        >
-                            <div className="shrink-0 mt-0.5 w-8 h-8 rounded-xl flex items-center justify-center bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] text-[#f97316] text-sm">→</div>
-                            <div>
-                                <p className="font-black text-white text-sm mb-1 group-hover:text-[#f97316] transition-colors">{item.q}</p>
-                                <p className="text-xs text-white/45 leading-relaxed">{item.a}</p>
-                            </div>
-                        </Link>
-                    ))}
-                </section>
+                <FadeInSection className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {FAQ_QUICK.map((item, i) => {
+                        const Icon = item.icon;
+                        return (
+                            <motion.div
+                                key={item.q}
+                                initial={{ opacity: 0, y: 18 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
+                            >
+                                <Link
+                                    href={item.href}
+                                    className="food-card group flex flex-col gap-3 h-full hover:border-[rgba(249,115,22,0.3)] transition-all hover:-translate-y-1"
+                                >
+                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
+                                        <Icon size={16} className="text-[#f97316]" />
+                                    </div>
+                                    <p className="font-black text-white text-sm group-hover:text-[#f97316] transition-colors leading-snug">{item.q}</p>
+                                    <p className="text-xs text-white/40 leading-relaxed mt-auto">{item.a}</p>
+                                    <div className="flex items-center gap-1 text-[11px] font-bold text-[#f97316]/60 group-hover:text-[#f97316] transition-colors mt-1">
+                                        Go <ArrowRight size={11} />
+                                    </div>
+                                </Link>
+                            </motion.div>
+                        );
+                    })}
+                </FadeInSection>
 
                 {/* CONTACT FORM + INFO */}
-                <section className="mt-6 grid gap-6 md:grid-cols-[1fr_320px]">
+                <FadeInSection className="mt-6 grid gap-6 md:grid-cols-[1fr_300px]">
 
                     {/* FORM */}
                     <div className="food-panel">
                         {status === "done" ? (
-                            <div className="text-center py-12">
-                                <div className="text-5xl mb-4">✅</div>
+                            <div className="text-center py-16">
+                                <motion.div
+                                    initial={{ scale: 0.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                    className="text-6xl mb-5"
+                                >
+                                    ✅
+                                </motion.div>
                                 <h2 className="food-heading !text-[32px] mb-2">Message sent!</h2>
                                 <p className="text-sm text-white/50 mb-6">We&rsquo;ll reply to your email within 1 business day.</p>
-                                <button
-                                    className="btn btn-gold"
-                                    onClick={() => setStatus("idle")}
-                                >
+                                <button className="btn btn-gold" onClick={() => setStatus("idle")}>
                                     Send another message
                                 </button>
                             </div>
                         ) : (
                             <form onSubmit={handleSubmit}>
-                                <h2 className="food-heading !text-[28px] mb-6">Send us a message</h2>
+                                <div className="mb-6">
+                                    <p className="food-kicker mb-1">Message Us</p>
+                                    <h2 className="food-heading !text-[28px]">Send us a message</h2>
+                                </div>
 
                                 <div className="grid gap-4 sm:grid-cols-2 mb-4">
                                     <div>
@@ -189,46 +262,59 @@ export default function ContactPage() {
 
                     {/* INFO SIDEBAR */}
                     <div className="flex flex-col gap-4">
+
+                        {/* Direct contact */}
                         <div className="food-panel">
                             <p className="food-kicker mb-3">Direct Contact</p>
                             <div className="space-y-4">
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1">Support</p>
-                                    <a href="mailto:support@trueserve.delivery" className="text-sm text-white hover:text-[#f97316] transition-colors font-semibold">
-                                        support@trueserve.delivery
-                                    </a>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1">Merchant Partnerships</p>
-                                    <a href="mailto:merchants@trueserve.delivery" className="text-sm text-white hover:text-[#f97316] transition-colors font-semibold">
-                                        merchants@trueserve.delivery
-                                    </a>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1">Response Time</p>
-                                    <p className="text-sm text-white/60">Within 1 business day</p>
+                                <a href="mailto:support@trueserve.delivery" className="flex items-start gap-3 group">
+                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
+                                        <Mail size={14} className="text-[#f97316]" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Support</p>
+                                        <p className="text-sm text-white group-hover:text-[#f97316] transition-colors font-semibold">support@trueserve.delivery</p>
+                                    </div>
+                                </a>
+                                <a href="mailto:merchants@trueserve.delivery" className="flex items-start gap-3 group">
+                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
+                                        <MessageCircle size={14} className="text-[#f97316]" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Merchant Partnerships</p>
+                                        <p className="text-sm text-white group-hover:text-[#f97316] transition-colors font-semibold">merchants@trueserve.delivery</p>
+                                    </div>
+                                </a>
+                                <div className="flex items-start gap-3">
+                                    <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
+                                        <Clock size={14} className="text-white/40" />
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Response Time</p>
+                                        <p className="text-sm text-white/60">Within 1 business day</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        {/* Service area */}
                         <div className="food-panel">
                             <p className="food-kicker mb-3">Service Area</p>
                             <div className="space-y-2">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-[#4dca80] shrink-0" />
-                                    <p className="text-sm text-white/70">Pineville, NC</p>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 rounded-full bg-[#4dca80] shrink-0" />
-                                    <p className="text-sm text-white/70">Rock Hill, SC</p>
-                                </div>
+                                {["Pineville, NC", "Rock Hill, SC"].map(city => (
+                                    <div key={city} className="flex items-center gap-3">
+                                        <MapPin size={13} className="text-[#4dca80] shrink-0" />
+                                        <p className="text-sm text-white/70">{city}</p>
+                                    </div>
+                                ))}
                                 <p className="text-xs text-white/30 mt-3 leading-relaxed">Pilot launch. More markets coming soon.</p>
                             </div>
                         </div>
 
+                        {/* Quick links */}
                         <div className="food-panel">
                             <p className="food-kicker mb-3">Quick Links</p>
-                            <div className="space-y-2">
+                            <div className="space-y-1">
                                 {[
                                     { label: "Order Food", href: "/restaurants" },
                                     { label: "Merchant Signup", href: "/merchant/signup" },
@@ -237,14 +323,15 @@ export default function ContactPage() {
                                     { label: "Privacy Policy", href: "/privacy" },
                                     { label: "Terms of Service", href: "/terms" },
                                 ].map(l => (
-                                    <Link key={l.href} href={l.href} className="flex items-center justify-between text-sm text-white/50 hover:text-[#f97316] transition-colors py-0.5">
-                                        {l.label} <span className="text-xs opacity-50">→</span>
+                                    <Link key={l.href} href={l.href} className="flex items-center justify-between text-sm text-white/50 hover:text-[#f97316] transition-colors py-1 group">
+                                        {l.label}
+                                        <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </Link>
                                 ))}
                             </div>
                         </div>
                     </div>
-                </section>
+                </FadeInSection>
 
             </main>
 

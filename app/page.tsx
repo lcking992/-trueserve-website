@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { BadgeDollarSign, CarFront, Menu, Share2, Star, Store, UtensilsCrossed, X } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { ArrowRight, BadgeDollarSign, CarFront, MapPin, Menu, Route, Share2, ShoppingBag, Star, Store, UtensilsCrossed, X } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion, useInView, animate, useMotionValue } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -45,6 +45,62 @@ const HERO_FALLBACK_VISUALS = [
   },
 ];
 
+const HERO_WORDS = ["craving", "ordering", "eating", "feeling"];
+
+function RotatingWord() {
+  const [index, setIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+    const id = setInterval(() => setIndex(i => (i + 1) % HERO_WORDS.length), 3000);
+    return () => clearInterval(id);
+  }, [shouldReduceMotion]);
+
+  const word = HERO_WORDS[index];
+
+  return (
+    <motion.span layout className="inline-block" style={{ position: "relative" }}>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={word}
+          className="accent"
+          style={{ display: "inline-block" }}
+          initial={shouldReduceMotion ? false : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
+          animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+          exit={shouldReduceMotion ? undefined : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {word}
+        </motion.span>
+      </AnimatePresence>
+    </motion.span>
+  );
+}
+
+function AnimatedCounter({ from = 0, to, prefix = "", suffix = "", duration = 1.4 }: {
+  from?: number; to: number; prefix?: string; suffix?: string; duration?: number;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.8 });
+  const motionVal = useMotionValue(from);
+  const [display, setDisplay] = useState(prefix + String(from) + suffix);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!isInView) return;
+    if (shouldReduceMotion) { setDisplay(prefix + String(to) + suffix); return; }
+    const controls = animate(motionVal, to, {
+      duration,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => setDisplay(prefix + Math.round(v).toString() + suffix),
+    });
+    return controls.stop;
+  }, [isInView, shouldReduceMotion]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
   const [userId, setUserId] = useState<string | null>(null);
@@ -78,19 +134,19 @@ export default function Home() {
       step: "01",
       title: "Drop your address",
       detail: "Start with your delivery location so we can route you into the right market and handoff flow.",
-      icon: "📍",
+      icon: MapPin,
     },
     {
       step: "02",
       title: "Place the order fast",
       detail: "Move from search to checkout with a cleaner, lower-friction flow designed for repeat local ordering.",
-      icon: "⚡",
+      icon: ShoppingBag,
     },
     {
       step: "03",
       title: "Track every handoff",
       detail: "See prep, driver movement, and support touchpoints in one place instead of guessing what happens next.",
-      icon: "📡",
+      icon: Route,
     },
   ];
   const platformPaths = [
@@ -114,29 +170,6 @@ export default function Home() {
       href: "/driver/signup",
       cta: "Apply To Drive",
       icon: CarFront,
-    },
-  ];
-  const utilityLinks = [
-    {
-      title: "Rewards",
-      detail: "Turn repeat orders into points, perks, and clearer membership tiers.",
-      href: "/rewards",
-      cta: "See Rewards",
-      icon: Star,
-    },
-    {
-      title: "Pricing",
-      detail: "Keep the value props transparent for customers and restaurant partners.",
-      href: "/pricing",
-      cta: "View Pricing",
-      icon: BadgeDollarSign,
-    },
-    {
-      title: "Support",
-      detail: "Get help fast if you need order, merchant, or onboarding assistance.",
-      href: "/contact",
-      cta: "Contact Us",
-      icon: Share2,
     },
   ];
 
@@ -304,7 +337,7 @@ export default function Home() {
                   animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.05 }}
                 >
-                  What are you<br /><span className="accent">craving tonight?</span>
+                  What are you<br /><RotatingWord /> tonight?
                 </motion.h1>
                 <motion.p
                   className="food-subtitle"
@@ -450,44 +483,38 @@ export default function Home() {
           ))}
         </motion.div>
 
-        <section className="mt-8 grid gap-4 md:grid-cols-4">
-          {[
-            {
-              kicker: "Live network",
-              value: networkStats.totalRestaurants ? `${networkStats.totalRestaurants}+` : "Growing",
-              detail: "Approved restaurant partners live on TrueServe",
-            },
-            {
-              kicker: "Verified kitchens",
-              value: networkStats.verifiedCount ? `${networkStats.verifiedCount}` : "Reviewing",
-              detail: "Operators showing strong health and compliance signals",
-            },
-            {
-              kicker: "Local markets",
-              value: networkStats.markets ? `${networkStats.markets}` : "Expanding",
-              detail: "Distinct city markets with active restaurant coverage",
-            },
-            {
-              kicker: "Average rating",
-              value: networkStats.averageRating ? `${networkStats.averageRating.toFixed(1)}★` : "Trusted",
-              detail: "Review average across live restaurants on the platform",
-            },
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.kicker}
-              className="food-card"
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
-              whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.01 }}
-            >
-              <p className="food-kicker mb-3">{stat.kicker}</p>
-              <h2 className="food-heading !text-[38px] mb-3">{stat.value}</h2>
-              <p className="text-sm leading-7">{stat.detail}</p>
-            </motion.div>
-          ))}
-        </section>
+        <motion.section
+          className="mt-8 food-panel overflow-hidden"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={revealTransition}
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
+            {[
+              { kicker: "Our commission", value: 15, suffix: "%", detail: "Flat. No monthly fees." },
+              { kicker: "Kitchen screening", value: 100, suffix: "%", detail: "Public health verified." },
+              { kicker: "Hidden fees", value: 0, prefix: "$", detail: "Price shown = price paid." },
+              { kicker: "Avg. delivery", value: 30, prefix: "~", suffix: " min", detail: "Kitchen to doorstep." },
+            ].map((stat, index) => (
+              <motion.div
+                key={stat.kicker}
+                className="flex flex-col items-center text-center px-4 py-6 gap-1"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.07 }}
+              >
+                <p className="food-kicker mb-2">{stat.kicker}</p>
+                <h2 className="food-heading !text-[36px] mb-1 tabular-nums">
+                  <AnimatedCounter from={0} to={stat.value} prefix={stat.prefix ?? ""} suffix={stat.suffix ?? ""} />
+                </h2>
+                <p className="text-xs text-white/40 font-medium leading-relaxed">{stat.detail}</p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
 
         <motion.section
           className="mt-8"
@@ -500,27 +527,30 @@ export default function Home() {
             <p className="food-kicker mb-2">How TrueServe works</p>
             <h2 className="food-heading">A cleaner path from <span className="accent">search to delivery</span></h2>
           </div>
-          <div className="grid gap-4 md:grid-cols-3">
-            {howItWorks.map((item, index) => (
-              <motion.div
-                key={item.step}
-                className="food-card"
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.25 }}
-                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
-                whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-              >
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="text-[12px] font-black uppercase tracking-[0.24em] text-white/35">{item.step}</span>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-xl">
-                    {item.icon}
-                  </span>
-                </div>
-                <h3 className="mb-3 text-[28px] font-black uppercase tracking-[0.06em] text-white">{item.title}</h3>
-                <p className="text-sm leading-7 text-white/68">{item.detail}</p>
-              </motion.div>
-            ))}
+          <div className="home-steps-grid grid gap-4 md:grid-cols-3">
+            {howItWorks.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.step}
+                  className="food-card home-step-card"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                >
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <span className="text-[12px] font-black uppercase tracking-[0.24em] text-white/35">{item.step}</span>
+                    <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-white/80">
+                      <Icon size={18} strokeWidth={2.1} />
+                    </span>
+                  </div>
+                  <h3 className="mb-3 text-[28px] font-black uppercase tracking-[0.06em] text-white">{item.title}</h3>
+                  <p className="text-sm leading-7 text-white/68">{item.detail}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.section>
 
@@ -535,13 +565,13 @@ export default function Home() {
             <p className="food-kicker mb-2">Built for every side</p>
             <h2 className="food-heading">One platform for <span className="accent">customers, merchants, and drivers</span></h2>
           </div>
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="home-paths-grid grid gap-4 lg:grid-cols-3">
             {platformPaths.map((path, index) => {
               const Icon = path.icon;
               return (
                 <motion.div
                   key={path.title}
-                  className="food-card"
+                  className="food-card home-path-card"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.25 }}
@@ -553,8 +583,9 @@ export default function Home() {
                   </div>
                   <h3 className="mb-3 text-[30px] font-black uppercase tracking-[0.06em] text-white">{path.title}</h3>
                   <p className="mb-6 text-sm leading-7 text-white/68">{path.detail}</p>
-                  <Link href={path.href} className="portal-btn-outline portal-btn-outline-block">
-                    {path.cta}
+                  <Link href={path.href} className="portal-btn-outline portal-btn-outline-block home-inline-cta">
+                    <span>{path.cta}</span>
+                    <ArrowRight size={15} strokeWidth={2.2} />
                   </Link>
                 </motion.div>
               );
@@ -562,46 +593,30 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* CTA strip replacing redundant utility cards */}
         <motion.section
-          className="mt-8 grid gap-4 lg:grid-cols-[1.3fr_.7fr]"
+          className="mt-8 food-panel"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={revealTransition}
         >
-          <div className="food-card">
-            <p className="food-kicker mb-3">Why teams choose TrueServe</p>
-            <h2 className="food-heading !text-[42px] mb-4">Built to feel <span className="accent">local, premium, and direct</span></h2>
-            <p className="max-w-2xl text-sm leading-7 text-white/68">
-              We keep the homepage focused on trust, routing, and next actions. Then we move people into the right ordering, merchant, or driver flow instead of crowding the landing page with listing noise.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-            {utilityLinks.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.title}
-                  className="food-card"
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
-                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                >
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-white/80">
-                      <Icon size={18} strokeWidth={2.1} />
-                    </span>
-                    <div className="text-[24px] font-black uppercase tracking-[0.08em] text-white">{item.title}</div>
-                  </div>
-                  <p className="mb-4 text-sm leading-7 text-white/68">{item.detail}</p>
-                  <Link href={item.href} className="text-[11px] font-black uppercase tracking-[0.18em] text-[#f97316]">
-                    {item.cta}
-                  </Link>
-                </motion.div>
-              );
-            })}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="food-kicker mb-2">Built for every side</p>
+              <h2 className="food-heading !text-[28px] md:!text-[34px]">Local. Direct. <span className="accent">Fair to everyone.</span></h2>
+            </div>
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <Link href="/rewards" className="portal-btn-outline flex items-center gap-2 whitespace-nowrap">
+                <Star size={14} /> Rewards
+              </Link>
+              <Link href="/pricing" className="portal-btn-outline flex items-center gap-2 whitespace-nowrap">
+                <BadgeDollarSign size={14} /> Pricing
+              </Link>
+              <Link href="/restaurants" className="portal-btn-gold flex items-center gap-2 whitespace-nowrap">
+                Order Now <ArrowRight size={14} />
+              </Link>
+            </div>
           </div>
         </motion.section>
 
