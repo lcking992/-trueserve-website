@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { BadgeDollarSign, CarFront, Menu, Share2, Star, Store, UtensilsCrossed, X } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -179,57 +179,80 @@ export default function Home() {
 
       </nav>
 
-      {menuOpen && (
-        <div
-          style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(4px)"}}
-          onClick={() => setMenuOpen(false)}
-        >
-          <div
-            style={{position:"absolute",top:0,left:0,right:0,background:"#0d0d10",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"0 16px 20px"}}
-            onClick={e => e.stopPropagation()}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={shouldReduceMotion ? undefined : { opacity: 1 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            style={{position:"fixed",inset:0,zIndex:1000,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(4px)"}}
+            onClick={() => setMenuOpen(false)}
           >
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",height:62}}>
-              <Logo size="sm" />
-              <button onClick={() => setMenuOpen(false)} style={{display:"flex",alignItems:"center",justifyContent:"center",width:38,height:38,borderRadius:10,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"rgba(255,255,255,0.8)",cursor:"pointer"}}>
-                <X size={20} />
-              </button>
-            </div>
-            <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
-              {[
-                { href:"/driver/signup", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
-                { href:"/merchant/signup", icon:Store, label:"For Merchants", sub:"List your restaurant" },
-                { href:"/restaurants", icon:UtensilsCrossed, label:"Order Food", sub:"Browse local restaurants" },
-                { href:"/rewards", icon:Star, label:"Rewards", sub:"Earn points on every order" },
-                { href:"/pricing", icon:BadgeDollarSign, label:"Pricing", sub:"Zero commission plans" },
-              ].map(item => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  style={{display:"flex",alignItems:"center",gap:16,padding:"14px 16px",borderRadius:14,border:"1px solid rgba(255,255,255,0.07)",background:"rgba(255,255,255,0.03)",color:"#fff",textDecoration:"none"}}
-                >
-                  <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,borderRadius:12,background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.88)"}}>
-                    <item.icon size={20} strokeWidth={2.1} />
-                  </span>
-                  <div>
-                    <div style={{fontWeight:700,fontSize:15,color:"#fff"}}>{item.label}</div>
-                    <div style={{fontSize:12,color:"rgba(255,255,255,0.4)",marginTop:2}}>{item.sub}</div>
-                  </div>
-                </Link>
-              ))}
-              <div style={{marginTop:4,borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:12}}>
-                <Link
-                  href={userId ? accountHref : "/login"}
-                  onClick={() => setMenuOpen(false)}
-                  style={{display:"block",textAlign:"center",padding:"13px",borderRadius:12,border:"1px solid rgba(255,255,255,0.15)",background:"transparent",color:"#fff",fontWeight:700,fontSize:14}}
-                >
-                  {userId ? "Account" : "Sign In"}
-                </Link>
+            <motion.div
+              initial={shouldReduceMotion ? false : { y: -22, opacity: 0 }}
+              animate={shouldReduceMotion ? undefined : { y: 0, opacity: 1 }}
+              exit={shouldReduceMotion ? undefined : { y: -18, opacity: 0 }}
+              transition={revealTransition}
+              style={{position:"absolute",top:0,left:0,right:0,background:"#0d0d10",borderBottom:"1px solid rgba(255,255,255,0.08)",padding:"0 16px 20px"}}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",height:62}}>
+                <Logo size="sm" />
+                <button onClick={() => setMenuOpen(false)} style={{display:"flex",alignItems:"center",justifyContent:"center",width:38,height:38,borderRadius:10,border:"1px solid rgba(255,255,255,0.1)",background:"rgba(255,255,255,0.05)",color:"rgba(255,255,255,0.8)",cursor:"pointer"}}>
+                  <X size={20} />
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+              <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
+                {[
+                  { href:"/driver/signup", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
+                  { href:"/merchant/signup", icon:Store, label:"For Merchants", sub:"List your restaurant" },
+                  { href:"/restaurants", icon:UtensilsCrossed, label:"Order Food", sub:"Browse local restaurants" },
+                  { href:"/rewards", icon:Star, label:"Rewards", sub:"Earn points on every order" },
+                  { href:"/pricing", icon:BadgeDollarSign, label:"Pricing", sub:"Zero commission plans" },
+                ].map((item, index) => (
+                  <motion.div
+                    key={item.href}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                    exit={shouldReduceMotion ? undefined : { opacity: 0, y: -8 }}
+                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.04 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      style={{display:"flex",alignItems:"center",gap:16,padding:"14px 16px",borderRadius:14,border:"1px solid rgba(255,255,255,0.07)",background:"rgba(255,255,255,0.03)",color:"#fff",textDecoration:"none"}}
+                    >
+                      <span style={{display:"flex",alignItems:"center",justifyContent:"center",width:44,height:44,flexShrink:0,borderRadius:12,background:"rgba(255,255,255,0.06)",color:"rgba(255,255,255,0.88)"}}>
+                        <item.icon size={20} strokeWidth={2.1} />
+                      </span>
+                      <div>
+                        <div style={{fontWeight:700,fontSize:15,color:"#fff"}}>{item.label}</div>
+                        <div style={{fontSize:12,color:"rgba(255,255,255,0.4)",marginTop:2}}>{item.sub}</div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+                <motion.div
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, y: -8 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.2 }}
+                  style={{marginTop:4,borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:12}}
+                >
+                  <Link
+                    href={userId ? accountHref : "/login"}
+                    onClick={() => setMenuOpen(false)}
+                    style={{display:"block",textAlign:"center",padding:"13px",borderRadius:12,border:"1px solid rgba(255,255,255,0.15)",background:"transparent",color:"#fff",fontWeight:700,fontSize:14}}
+                  >
+                    {userId ? "Account" : "Sign In"}
+                  </Link>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <main className="food-app-main">
         <section className="food-hero-card">
@@ -435,8 +458,16 @@ export default function Home() {
         </section>
 
 
+        <AnimatePresence mode="wait">
         {hasAddress && featuredRestaurants.length > 0 && (
-          <section className="mt-10">
+          <motion.section
+            className="mt-10"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 26 }}
+            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: -18 }}
+            transition={revealTransition}
+            layout
+          >
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
                 <p className="food-kicker mb-2">Now on TrueServe</p>
@@ -451,11 +482,20 @@ export default function Home() {
                 <RestaurantCard key={r.id} r={r} />
               ))}
             </div>
-          </section>
+          </motion.section>
         )}
+        </AnimatePresence>
 
+        <AnimatePresence mode="wait">
         {hasAddress && (
-          <section className="mt-10 food-panel">
+          <motion.section
+            className="mt-10 food-panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 26 }}
+            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: -18 }}
+            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.06 }}
+            layout
+          >
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
                 <p className="food-kicker mb-2">Explore by Cuisine</p>
@@ -482,11 +522,18 @@ export default function Home() {
                 </Link>
               ))}
             </div>
-          </section>
+          </motion.section>
         )}
+        </AnimatePresence>
 
         {collections.length > 0 && networkStats.totalRestaurants >= 5 && (
-          <section className="mt-10">
+          <motion.section
+            className="mt-10"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.18 }}
+            transition={revealTransition}
+          >
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
                 <p className="food-kicker mb-2">Pilot-ready discovery</p>
@@ -501,72 +548,92 @@ export default function Home() {
                 const heroRestaurant = collection.restaurants[0];
                 const isLastOdd = index === collections.length - 1 && collections.length % 2 !== 0;
                 return (
-                  <Link
+                  <motion.div
                     key={collection.key}
-                    href={collection.href}
-                    className={`food-card ts-reveal transition-transform hover:-translate-y-1${isLastOdd ? " lg:col-span-2" : ""}`}
-                    style={{ animationDelay: `${index * 80}ms` }}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
+                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.18 }}
+                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: Math.min(index * 0.08, 0.18) }}
+                    whileHover={shouldReduceMotion ? undefined : { y: -6 }}
+                    className={isLastOdd ? "lg:col-span-2" : undefined}
                   >
-                    <div
-                      style={{
-                        height: 220,
-                        borderRadius: 18,
-                        backgroundImage: `linear-gradient(180deg, rgba(10,12,16,.12), rgba(10,12,16,.84)), url('${heroRestaurant?.imageUrl || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80"}')`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        padding: 18,
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                      }}
+                    <Link
+                      href={collection.href}
+                      className="food-card ts-reveal block overflow-hidden"
+                      style={{ animationDelay: `${index * 80}ms` }}
                     >
-                      <div className="food-eyebrow">{collection.eyebrow}</div>
-                      <div>
-                        <h3 className="food-heading !text-[36px] mb-2">{collection.title}</h3>
-                        <p className="text-sm leading-6 text-white/75 max-w-[32rem]">{collection.description}</p>
-                      </div>
-                    </div>
-                    <div className="mt-5 grid gap-3">
-                      {collection.restaurants.map((restaurant) => (
-                        <div
-                          key={restaurant.id}
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr auto",
-                            gap: 12,
-                            alignItems: "center",
-                            padding: "14px 16px",
-                            borderRadius: 16,
-                            border: "1px solid rgba(255,255,255,0.08)",
-                            background: "rgba(255,255,255,0.03)",
-                          }}
-                        >
-                          <div>
-                            <div className="text-sm font-black uppercase tracking-[0.12em] text-white">{restaurant.name}</div>
-                            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-white/45">
-                              {[restaurant.city, restaurant.state].filter(Boolean).join(", ") || "Local partner"}
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-black text-[#f97316]">
-                              {Number(restaurant.rating || 0) > 0 ? `${Number(restaurant.rating).toFixed(1)}★` : "New"}
-                            </div>
-                            <div className="mt-1 text-[11px] uppercase tracking-[0.12em] text-white/45">
-                              {restaurant.healthGrade ? `Grade ${restaurant.healthGrade}` : "Live now"}
-                            </div>
-                          </div>
+                      <motion.div
+                        style={{
+                          height: 220,
+                          borderRadius: 18,
+                          backgroundImage: `linear-gradient(180deg, rgba(10,12,16,.12), rgba(10,12,16,.84)), url('${heroRestaurant?.imageUrl || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80"}')`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          padding: 18,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          transformOrigin: "center",
+                        }}
+                        whileHover={shouldReduceMotion ? undefined : { scale: 1.035 }}
+                        transition={shouldReduceMotion ? undefined : { duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <div className="food-eyebrow">{collection.eyebrow}</div>
+                        <div>
+                          <h3 className="food-heading !text-[36px] mb-2">{collection.title}</h3>
+                          <p className="text-sm leading-6 text-white/75 max-w-[32rem]">{collection.description}</p>
                         </div>
-                      ))}
-                    </div>
-                  </Link>
+                      </motion.div>
+                      <div className="mt-5 grid gap-3">
+                        {collection.restaurants.map((restaurant) => (
+                          <motion.div
+                            key={restaurant.id}
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "1fr auto",
+                              gap: 12,
+                              alignItems: "center",
+                              padding: "14px 16px",
+                              borderRadius: 16,
+                              border: "1px solid rgba(255,255,255,0.08)",
+                              background: "rgba(255,255,255,0.03)",
+                            }}
+                            whileHover={shouldReduceMotion ? undefined : { x: 2, borderColor: "rgba(249,115,22,0.2)" }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div>
+                              <div className="text-sm font-black uppercase tracking-[0.12em] text-white">{restaurant.name}</div>
+                              <div className="mt-1 text-xs uppercase tracking-[0.14em] text-white/45">
+                                {[restaurant.city, restaurant.state].filter(Boolean).join(", ") || "Local partner"}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-black text-[#f97316]">
+                                {Number(restaurant.rating || 0) > 0 ? `${Number(restaurant.rating).toFixed(1)}★` : "New"}
+                              </div>
+                              <div className="mt-1 text-[11px] uppercase tracking-[0.12em] text-white/45">
+                                {restaurant.healthGrade ? `Grade ${restaurant.healthGrade}` : "Live now"}
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
-          </section>
+          </motion.section>
         )}
 
         {menuMoments.length > 0 && (
-          <section className="mt-10">
+          <motion.section
+            className="mt-10"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.18 }}
+            transition={revealTransition}
+          >
             <div className="mb-5 flex items-end justify-between gap-4">
               <div>
                 <p className="food-kicker mb-2">Menu-aware discovery</p>
@@ -580,61 +647,74 @@ export default function Home() {
               {menuMoments.map((moment, index) => {
                 const hero = moment.entries[0];
                 return (
-                  <Link
+                  <motion.div
                     key={moment.key}
-                    href={moment.href}
-                    className="food-card ts-reveal transition-transform hover:-translate-y-1"
-                    style={{ animationDelay: `${index * 90}ms` }}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
+                    whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.18 }}
+                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: Math.min(index * 0.08, 0.18) }}
+                    whileHover={shouldReduceMotion ? undefined : { y: -6 }}
                   >
-                    <div
-                      style={{
-                        height: 180,
-                        borderRadius: 18,
-                        backgroundImage: `linear-gradient(180deg, rgba(10,12,16,.1), rgba(10,12,16,.88)), url('${hero?.imageUrl || "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80"}')`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        padding: 18,
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "space-between",
-                      }}
+                    <Link
+                      href={moment.href}
+                      className="food-card ts-reveal block overflow-hidden"
+                      style={{ animationDelay: `${index * 90}ms` }}
                     >
-                      <div className="food-eyebrow">{moment.eyebrow}</div>
-                      <div>
-                        <h3 className="food-heading !text-[34px] mb-2">{moment.title}</h3>
-                        <p className="text-sm leading-6 text-white/75">{moment.description}</p>
-                      </div>
-                    </div>
-                    <div className="mt-5 grid gap-3">
-                      {moment.entries.map((entry) => (
-                        <div
-                          key={entry.id}
-                          style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr auto",
-                            gap: 12,
-                            alignItems: "center",
-                            padding: "14px 16px",
-                            borderRadius: 16,
-                            border: "1px solid rgba(255,255,255,0.08)",
-                            background: "rgba(255,255,255,0.03)",
-                          }}
-                        >
-                          <div>
-                            <div className="text-sm font-black uppercase tracking-[0.12em] text-white">{entry.itemName}</div>
-                            <div className="mt-1 text-xs uppercase tracking-[0.14em] text-white/45">
-                              {entry.restaurantName} · {entry.cityLabel}
-                            </div>
-                          </div>
-                          <div className="text-sm font-black text-[#f97316]">{entry.priceLabel}</div>
+                      <motion.div
+                        style={{
+                          height: 180,
+                          borderRadius: 18,
+                          backgroundImage: `linear-gradient(180deg, rgba(10,12,16,.1), rgba(10,12,16,.88)), url('${hero?.imageUrl || "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80"}')`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          padding: 18,
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
+                          transformOrigin: "center",
+                        }}
+                        whileHover={shouldReduceMotion ? undefined : { scale: 1.035 }}
+                        transition={shouldReduceMotion ? undefined : { duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <div className="food-eyebrow">{moment.eyebrow}</div>
+                        <div>
+                          <h3 className="food-heading !text-[34px] mb-2">{moment.title}</h3>
+                          <p className="text-sm leading-6 text-white/75">{moment.description}</p>
                         </div>
-                      ))}
-                    </div>
-                  </Link>
+                      </motion.div>
+                      <div className="mt-5 grid gap-3">
+                        {moment.entries.map((entry) => (
+                          <motion.div
+                            key={entry.id}
+                            style={{
+                              display: "grid",
+                              gridTemplateColumns: "1fr auto",
+                              gap: 12,
+                              alignItems: "center",
+                              padding: "14px 16px",
+                              borderRadius: 16,
+                              border: "1px solid rgba(255,255,255,0.08)",
+                              background: "rgba(255,255,255,0.03)",
+                            }}
+                            whileHover={shouldReduceMotion ? undefined : { x: 2, borderColor: "rgba(249,115,22,0.2)" }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div>
+                              <div className="text-sm font-black uppercase tracking-[0.12em] text-white">{entry.itemName}</div>
+                              <div className="mt-1 text-xs uppercase tracking-[0.14em] text-white/45">
+                                {entry.restaurantName} · {entry.cityLabel}
+                              </div>
+                            </div>
+                            <div className="text-sm font-black text-[#f97316]">{entry.priceLabel}</div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
-          </section>
+          </motion.section>
         )}
 
         <footer className="mt-8 border-t border-white/5 px-2 pt-10 pb-12 text-center">

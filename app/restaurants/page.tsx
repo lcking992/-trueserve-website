@@ -3,6 +3,7 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Logo from "@/components/Logo";
 import { supabase } from "@/lib/supabase";
 import LandingSearch from "@/components/LandingSearch";
@@ -17,6 +18,7 @@ import {
 } from "@/lib/public-restaurants";
 
 function RestaurantFinderContent() {
+  const shouldReduceMotion = useReducedMotion();
   const searchParams = useSearchParams();
   const address = searchParams.get("address");
   const search = searchParams.get("search");
@@ -30,6 +32,9 @@ function RestaurantFinderContent() {
   const [userId, setUserId] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filterOpenNow, setFilterOpenNow] = useState(false);
+  const revealTransition = shouldReduceMotion
+    ? { duration: 0 }
+    : { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const };
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -92,6 +97,15 @@ function RestaurantFinderContent() {
     fetchRestaurants();
   }, [address, latParam, lngParam, search]);
 
+  const filteredRestaurants = restaurants.filter((r) => {
+    if (!filterOpenNow) return true;
+    const o = r.openTime?.slice(0, 5);
+    const c = r.closeTime?.slice(0, 5);
+    if (!o || !c) return true;
+    const now = new Date().toTimeString().slice(0, 5);
+    return now >= o && now <= c;
+  });
+
   return (
     <div className="food-app-shell">
       <nav className="food-app-nav">
@@ -127,27 +141,30 @@ function RestaurantFinderContent() {
           {loading ? (
             <div className="food-panel text-center py-20 opacity-60 font-bold text-[#f97316] animate-pulse">Loading nearby restaurants...</div>
           ) : (
-            <div className="rest-grid">
-              {restaurants.filter((r) => {
-                if (!filterOpenNow) return true;
-                const o = r.openTime?.slice(0, 5);
-                const c = r.closeTime?.slice(0, 5);
-                if (!o || !c) return true;
-                const now = new Date().toTimeString().slice(0, 5);
-                return now >= o && now <= c;
-              }).map((r) => (
-                <RestaurantCard
+            <motion.div layout className="rest-grid">
+              <AnimatePresence mode="popLayout">
+              {filteredRestaurants.map((r, index) => (
+                <motion.div
                   key={r.id}
-                  r={r}
-                  address={address}
-                  search={search}
-                  latParam={latParam}
-                  lngParam={lngParam}
-                  userId={userId}
-                  initialIsFavorited={favorites.includes(r.id)}
-                />
+                  layout
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 22, scale: 0.985 }}
+                  animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                  exit={shouldReduceMotion ? undefined : { opacity: 0, y: -18, scale: 0.98 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: Math.min(index * 0.04, 0.18) }}
+                >
+                  <RestaurantCard
+                    r={r}
+                    address={address}
+                    search={search}
+                    latParam={latParam}
+                    lngParam={lngParam}
+                    userId={userId}
+                    initialIsFavorited={favorites.includes(r.id)}
+                  />
+                </motion.div>
               ))}
-              {restaurants.length === 0 && !loading && (
+              </AnimatePresence>
+              {filteredRestaurants.length === 0 && !loading && (
                 <div className="food-panel col-span-full text-center py-16 px-8" style={{ opacity: 1 }}>
                   {hasLocationInput ? (
                     <>
@@ -177,7 +194,7 @@ function RestaurantFinderContent() {
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
           )}
         </div>
       </main>

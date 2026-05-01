@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { toggleFavorite } from "@/app/user/favorite-actions";
 
 function computeIsOpen(openTime?: string | null, closeTime?: string | null): boolean | null {
@@ -46,6 +47,7 @@ export default function RestaurantCard({
   userId,
   initialIsFavorited = false,
 }: RestaurantCardProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [isFav, setIsFav] = useState(initialIsFavorited);
   const [favPending, setFavPending] = useState(false);
 
@@ -80,8 +82,16 @@ export default function RestaurantCard({
   const colors = hasHealthGrade ? gradeToColor(r.healthGrade) : null;
 
   return (
-    <Link key={r.id} href={`/restaurants/${r.id}${menuQuery}`} className="rest-card">
-      <div
+    <Link key={r.id} href={`/restaurants/${r.id}${menuQuery}`} className="block">
+      <motion.article
+        className="rest-card"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+        whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={shouldReduceMotion ? undefined : { duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        whileHover={shouldReduceMotion ? undefined : { y: -6 }}
+      >
+      <motion.div
         className="rc-img"
         style={{
           backgroundImage: `url('${
@@ -89,6 +99,8 @@ export default function RestaurantCard({
           }')`,
           position: "relative",
         }}
+        whileHover={shouldReduceMotion ? undefined : { scale: 1.04 }}
+        transition={shouldReduceMotion ? undefined : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
       >
         {hasGHL && (
           <div
@@ -190,7 +202,7 @@ export default function RestaurantCard({
             {r.healthGrade}
           </div>
         )}
-      </div>
+      </motion.div>
 
       <div className="rc-info">
         <div className="rc-name">{r.name}</div>
@@ -272,6 +284,7 @@ export default function RestaurantCard({
           View Google Reviews
         </button>
       </div>
+      </motion.article>
     </Link>
   );
 }
