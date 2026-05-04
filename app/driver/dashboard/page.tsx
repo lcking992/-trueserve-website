@@ -12,6 +12,7 @@ import DriverRouteMap from "./DriverRouteMap";
 import DriverLocationTracker from "@/components/DriverLocationTracker";
 import WeatherCard from "@/components/WeatherCard";
 import { OrderTransparencyCard } from "./page-pilot-widgets";
+import InlineSupportEntry from "@/components/InlineSupportEntry";
 
 export const dynamic = "force-dynamic";
 
@@ -409,6 +410,16 @@ export default async function DriverDashboard() {
                 <span className="dd-stripe-connected">✓ Payouts Active</span>
             </div>
         )}
+
+        <InlineSupportEntry
+            kicker="Driver support"
+            title="Need help before or during a route?"
+            detail="Open support for payout questions, approval issues, route friction, or anything affecting an active delivery."
+            prefill={`Hi TrueServe Support — I need help with my driver account${driver?.name ? ` for ${driver.name}` : ""}.`}
+            primaryLabel="Open Support"
+            secondaryHref="/driver/dashboard/help"
+            secondaryLabel="Open Help Center"
+        />
 
         {/* MISSION + MAP */}
         <div className="dd-two-col">

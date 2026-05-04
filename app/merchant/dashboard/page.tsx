@@ -17,6 +17,7 @@ import LiveOrdersPanel from "@/app/merchant/dashboard/LiveOrdersPanel";
 import HoursPanel from "@/app/merchant/dashboard/HoursPanel";
 import CoverPhotoPanel from "@/app/merchant/dashboard/CoverPhotoPanel";
 import RevenueSparkline from "@/app/merchant/dashboard/RevenueSparkline";
+import InlineSupportEntry from "@/components/InlineSupportEntry";
 
 export const dynamic = "force-dynamic";
 
@@ -317,6 +318,16 @@ export default async function MerchantDashboard({
                     <span className="mch-stripe-connected-badge">✓ Payouts Active</span>
                 )}
             </div>
+
+            <InlineSupportEntry
+                kicker="Merchant support"
+                title="Need help getting your storefront live?"
+                detail="Reach TrueServe support for menu setup, Stripe payouts, direct-order tools, visibility updates, or launch-day questions."
+                prefill={`Hi TrueServe Support — I need help with the merchant dashboard for ${restaurant.name}.`}
+                primaryLabel="Open Support"
+                secondaryHref="/contact"
+                secondaryLabel="Contact Team"
+            />
 
             {/* LIVE ORDERS */}
             <LiveOrdersPanel
