@@ -188,11 +188,12 @@ export default function DriverLoginForm() {
                 <form onSubmit={handleVerifyOTP} className="space-y-6">
                     <div className="text-center">
                         <p className="text-[11px] text-[#555] font-bold uppercase tracking-widest mb-3">Verification code sent to <span className="text-[#3dd68c]">{phone}</span></p>
-                        <input 
+                        <input
                             type="text"
+                            inputMode="numeric"
                             maxLength={6}
                             placeholder="••••••"
-                            className="fi text-2xl font-bold tracking-[1em] text-center !text-[#3dd68c] h-15"
+                            className="fi text-2xl font-bold tracking-[0.5em] text-center !text-[#3dd68c] h-15"
                             value={token}
                             onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
                             disabled={isLoading}
@@ -225,7 +226,7 @@ export default function DriverLoginForm() {
                     </button>
 
                     <div className="text-center text-[11px] text-[#6a7280]">
-                        Changed your phone number? <Link href="/contact" className="font-bold text-[#3dd68c]">Contact support</Link> so we can update your driver login.
+                        Changed your phone number? <Link href="/driver/recover" className="font-bold text-[#3dd68c]">Request a login update</Link>.
                     </div>
                 </form>
             )}

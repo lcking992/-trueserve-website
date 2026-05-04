@@ -123,7 +123,7 @@ export default function MerchantLoginPage() {
 
             <Link
               href="/merchant/tutorial-preview"
-              className="ts-pill-btn ts-pill-btn-block mt-3"
+              className="portal-btn-outline portal-btn-outline-block mt-3"
             >
               View Animated Tutorial
             </Link>

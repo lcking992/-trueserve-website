@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CarFront, MapPin, Menu, Route, Share2, ShoppingBag, Star, Store, UtensilsCrossed, X } from "lucide-react";
+import { ArrowRight, CarFront, Clock, MapPin, Menu, Navigation, Route, Share2, ShoppingBag, Star, Store, UtensilsCrossed, X, Zap } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion, useInView, animate, useMotionValue } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -49,15 +49,21 @@ const HERO_WORDS = ["craving", "ordering", "eating", "feeling"];
 
 function RotatingWord() {
   const [index, setIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
-    const id = setInterval(() => setIndex(i => (i + 1) % HERO_WORDS.length), 3000);
+    setMounted(true);
+    const id = setInterval(() => setIndex(i => (i + 1) % HERO_WORDS.length), 2800);
     return () => clearInterval(id);
-  }, [shouldReduceMotion]);
+  }, []);
 
   const word = HERO_WORDS[index];
+
+  // On SSR / before hydration, render static to avoid mismatch
+  if (!mounted) {
+    return <span className="accent">{HERO_WORDS[0]}</span>;
+  }
 
   return (
     <motion.span layout className="inline-block" style={{ position: "relative" }}>
@@ -66,10 +72,10 @@ function RotatingWord() {
           key={word}
           className="accent"
           style={{ display: "inline-block" }}
-          initial={shouldReduceMotion ? false : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
-          animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-          exit={shouldReduceMotion ? undefined : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(8px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: -10, filter: "blur(8px)" }}
+          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           {word}
         </motion.span>
@@ -154,16 +160,19 @@ export default function Home() {
       title: "Direct and transparent",
       detail: "Cleaner checkout, fewer surprises, and pricing that stays easier to trust from first tap to final total.",
       icon: ShoppingBag,
+      image: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&q=80",
     },
     {
       title: "Built around merchants",
       detail: "Restaurants get branded storefront tools, direct-order support, and a platform that helps them keep more control.",
       icon: Store,
+      image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80",
     },
     {
       title: "Human support when it matters",
       detail: "Customers, drivers, and merchants all get clear status updates plus fast ways to reach real help when needed.",
       icon: Route,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
     },
   ];
   const platformPaths = [
@@ -510,17 +519,17 @@ export default function Home() {
           transition={revealTransition}
         >
           {([
-            { icon:"📍", label:"Local Restaurants" },
-            { icon:"📡", label:"Live Tracking" },
-            { icon:"⚡", label:"Avg. 30 min" },
-            { icon:"⭐", label:"Google Reviews" },
+            { icon: <MapPin size={13} />, label:"Local Restaurants" },
+            { icon: <Navigation size={13} />, label:"Live Tracking" },
+            { icon: <Zap size={13} />, label:"Avg. 30 min" },
+            { icon: <Star size={13} />, label:"Google Reviews" },
           ] as const).map((item, i, arr) => (
             <React.Fragment key={item.label}>
               <motion.div
                 style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap" }}
                 whileHover={shouldReduceMotion ? undefined : { y: -1, color: "rgba(255,255,255,0.78)" }}
               >
-                <span style={{ fontSize:14 }}>{item.icon}</span>
+                <span style={{ display:"flex", alignItems:"center", color:"rgba(255,255,255,0.45)" }}>{item.icon}</span>
                 <span style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.14em", color:"rgba(255,255,255,0.45)" }}>{item.label}</span>
               </motion.div>
               {i < arr.length - 1 && <div style={{ width:1, height:14, background:"rgba(255,255,255,0.1)", flexShrink:0 }} />}
@@ -537,163 +546,260 @@ export default function Home() {
         >
           <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
             {[
-              { kicker: "Our commission", value: 15, suffix: "%", detail: "Flat. No monthly fees." },
-              { kicker: "Kitchen screening", value: 100, suffix: "%", detail: "Public health verified." },
-              { kicker: "Hidden fees", value: 0, prefix: "$", detail: "Price shown = price paid." },
-              { kicker: "Avg. delivery", value: 30, prefix: "~", suffix: " min", detail: "Kitchen to doorstep." },
+              { label: "Our commission", display: "7%", detail: "Flat. No monthly fees." },
+              { label: "Kitchen screening", display: "100%", detail: "Public health verified." },
+              { label: "Hidden fees", display: "$0", detail: "Price shown = price paid." },
+              { label: "Avg. delivery", display: "~30 min", detail: "Kitchen to doorstep." },
             ].map((stat, index) => (
               <motion.div
-                key={stat.kicker}
+                key={stat.label}
                 className="flex flex-col items-center text-center px-4 py-6 gap-1"
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
                 transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.07 }}
               >
-                <p className="food-kicker mb-2">{stat.kicker}</p>
-                <h2 className="food-heading !text-[36px] mb-1 tabular-nums">
-                  <AnimatedCounter from={0} to={stat.value} prefix={stat.prefix ?? ""} suffix={stat.suffix ?? ""} />
-                </h2>
+                <p className="text-[10px] font-bold tracking-[0.16em] uppercase text-white/35 mb-2">{stat.label}</p>
+                <p className="food-heading !text-[36px] mb-1 tabular-nums">{stat.display}</p>
                 <p className="text-xs text-white/40 font-medium leading-relaxed">{stat.detail}</p>
               </motion.div>
             ))}
           </div>
         </motion.section>
 
+        {/* ── SOCIAL PROOF ── */}
         <motion.section
-          className="mt-8 food-panel"
+          className="mt-20 py-14 border-y border-white/[0.05]"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={revealTransition}
         >
-          <div className="mb-5">
-            <p className="food-kicker mb-2">The TrueServe way</p>
-            <h2 className="food-heading">Built to feel <span className="accent">clearer, fairer, and more supportive</span></h2>
+          <div className="mb-10 text-center">
+            <div className="flex items-center justify-center gap-1 mb-3">
+              {[0,1,2,3,4].map(i => (
+                <Star key={i} size={14} fill="#f97316" strokeWidth={0} className="text-[#f97316]" />
+              ))}
+            </div>
+            <p className="text-[13px] font-bold tracking-[0.14em] uppercase text-white/35">What customers are saying</p>
           </div>
-          <div className="grid gap-4">
+          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
+            {[
+              { quote: "Finally a delivery app that doesn't hide fees at checkout. What I see is what I pay.", name: "Marcus T.", location: "Charlotte, NC" },
+              { quote: "The order tracking actually works. I can see exactly where my food is at every step.", name: "Priya S.", location: "South End, CLT" },
+              { quote: "Switched from the big apps. The prices match the restaurant menu — that's the whole difference.", name: "James R.", location: "NoDa, Charlotte" },
+            ].map((item, index) => (
+              <motion.div
+                key={item.name}
+                className="flex flex-col gap-4 px-8 py-6"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.09 }}
+              >
+                <div className="flex gap-0.5">
+                  {[0,1,2,3,4].map(i => (
+                    <Star key={i} size={11} fill="#f97316" strokeWidth={0} className="text-[#f97316]" />
+                  ))}
+                </div>
+                <p className="text-[14px] leading-[1.75] text-white/65 italic">&ldquo;{item.quote}&rdquo;</p>
+                <div>
+                  <p className="text-[13px] font-bold text-white/55">{item.name}</p>
+                  <p className="text-[11px] text-white/30 mt-0.5">{item.location}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* ── THE TRUESERVE WAY ── open 3-col, no boxes */}
+        <motion.section
+          className="mt-24 py-4"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={revealTransition}
+        >
+          <div className="mb-12 text-center">
+            <p className="food-kicker mb-3">The TrueServe way</p>
+            <h2 className="food-heading !text-[36px] md:!text-[46px]">Built to feel <span className="accent">clearer, fairer,</span><br className="hidden md:block" /> and more supportive</h2>
+          </div>
+          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
             {trueServeWay.map((item, index) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={item.title}
-                  className="flex flex-col gap-4 rounded-[24px] border border-white/8 bg-white/[0.02] px-5 py-5 md:flex-row md:items-center md:justify-between"
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  className="flex flex-col overflow-hidden"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.05 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <div className="flex items-start gap-4">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[16px] border border-orange-500/20 bg-orange-500/10 text-orange-400">
-                      <Icon size={20} strokeWidth={2.1} />
-                    </span>
-                    <div>
-                      <h3 className="text-[22px] font-black uppercase tracking-[0.05em] text-white">{item.title}</h3>
-                      <p className="mt-2 max-w-3xl text-sm leading-7 text-white/62">{item.detail}</p>
-                    </div>
+                  <div className="relative h-44 w-full overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-[0.24em] text-white/32 md:pl-6">
-                    Why teams choose us
-                  </span>
+                  <div className="flex flex-col gap-3 px-8 py-7">
+                    <span className="text-orange-400">
+                      <Icon size={22} strokeWidth={2} />
+                    </span>
+                    <h3 className="text-[17px] font-bold text-white leading-snug">{item.title}</h3>
+                    <p className="text-[13px] leading-[1.75] text-white/50">{item.detail}</p>
+                  </div>
                 </motion.div>
               );
             })}
           </div>
         </motion.section>
 
-
+        {/* ── HOW IT WORKS ── open numbered steps, no boxes */}
         <motion.section
-          className="mt-8"
+          className="mt-28 py-4"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={revealTransition}
         >
-          <div className="mb-5">
-            <p className="food-kicker mb-2">How TrueServe works</p>
-            <h2 className="food-heading">A cleaner path from <span className="accent">address to arrival</span></h2>
+          <div className="mb-14 text-center">
+            <p className="food-kicker mb-3">How it works</p>
+            <h2 className="food-heading !text-[36px] md:!text-[46px]">From hungry to <span className="accent">delivered</span></h2>
           </div>
-          <div className="home-steps-grid grid gap-4 md:grid-cols-3">
+          <div className="relative grid gap-0 md:grid-cols-3">
+            {/* Connecting line — sits at the vertical center of the icon circles */}
+            <div className="hidden md:block absolute top-[54px] left-[calc(50%/3+24px)] right-[calc(50%/3+24px)] h-px bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-orange-500/20 pointer-events-none" />
             {howItWorks.map((item, index) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={item.step}
-                  className="food-card home-step-card"
+                  className="flex flex-col items-center text-center px-10 pb-10"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
-                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.1 }}
                 >
-                  <div className="mb-4 flex items-center justify-between gap-3">
-                    <span className="text-[12px] font-black uppercase tracking-[0.24em] text-white/35">{item.step}</span>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-white/80">
-                      <Icon size={18} strokeWidth={2.1} />
-                    </span>
+                  <div className="flex flex-col items-center gap-3 mb-7">
+                    <span className="text-[11px] font-black tracking-[0.25em] text-[#f97316]/55 uppercase">{item.step}</span>
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#f97316]/30 bg-[#f97316]/10 text-[#f97316]">
+                      <Icon size={20} strokeWidth={2} />
+                    </div>
                   </div>
-                  <h3 className="mb-3 text-[28px] font-black uppercase tracking-[0.06em] text-white">{item.title}</h3>
-                  <p className="text-sm leading-7 text-white/68">{item.detail}</p>
+                  <h3 className="mb-3 text-[18px] font-bold text-white">{item.title}</h3>
+                  <p className="text-[13px] leading-[1.75] text-white/50 max-w-[220px]">{item.detail}</p>
                 </motion.div>
               );
             })}
           </div>
         </motion.section>
 
+        {/* ── EDITORIAL BANNER ── full-width food photography break */}
         <motion.section
-          className="mt-8"
+          className="mt-20 relative overflow-hidden rounded-2xl"
+          style={{ height: 340 }}
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.25 }}
           transition={revealTransition}
         >
-          <div className="mb-5">
-            <p className="food-kicker mb-2">Built for every side</p>
-            <h2 className="food-heading">One platform for <span className="accent">customers, merchants, and drivers</span></h2>
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400&q=80')" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/55 to-black/15" />
+          <div className="relative h-full flex items-center px-10 md:px-16">
+            <div className="max-w-lg">
+              <p className="food-kicker mb-4">Local. Real. Delivered.</p>
+              <h2 className="food-heading !text-[38px] md:!text-[52px] leading-tight">
+                Real food.<br /><span className="accent">Real prices.</span>
+              </h2>
+              <p className="mt-4 text-[14px] text-white/55 max-w-[340px] leading-relaxed">
+                Every restaurant on TrueServe is a real local kitchen. Every price is exactly what they charge — nothing added on top.
+              </p>
+              <motion.div
+                className="mt-6"
+                whileHover={shouldReduceMotion ? undefined : { y: -2 }}
+                transition={{ duration: 0.18 }}
+              >
+                <Link href="/restaurants" className="portal-btn-gold inline-flex items-center gap-2 !text-sm !py-3 !px-6">
+                  Browse Restaurants <ArrowRight size={15} />
+                </Link>
+              </motion.div>
+            </div>
           </div>
-          <div className="home-paths-grid grid gap-4 lg:grid-cols-3">
-            {platformPaths.map((path, index) => {
-              const Icon = path.icon;
-              const isCustomer = index === 0;
+        </motion.section>
+
+        {/* ── ONE PLATFORM ── open columns, dividers only */}
+        <motion.section
+          className="mt-28 py-4"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={revealTransition}
+        >
+          <div className="mb-14 text-center">
+            <p className="food-kicker mb-3">Built for every side</p>
+            <h2 className="food-heading !text-[36px] md:!text-[46px]">One app. <span className="accent">Three ways to use it.</span></h2>
+          </div>
+          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
+            {([
+              {
+                title: "For Customers",
+                tagline: "Order with confidence",
+                bullets: ["Save addresses & reorder fast", "Live driver tracking", "No hidden fees at checkout", "Earn points on every order"],
+                href: userId ? accountHref : "/signup",
+                cta: userId ? "Open Account" : "Create Free Account",
+                icon: UtensilsCrossed,
+              },
+              {
+                title: "For Merchants",
+                tagline: "Keep more of what you earn",
+                bullets: ["Flat monthly rate, zero commission", "Real-time order dashboard", "POS & GHL integrations", "Rate locked for founding partners"],
+                href: "/merchant/signup",
+                cta: "Apply as Partner",
+                icon: Store,
+              },
+              {
+                title: "For Drivers",
+                tagline: "Earn more per mile",
+                bullets: ["Smart dispatch, fewer dead miles", "Next-day payouts", "Transparent pay breakdown", "Flexible hours, no minimums"],
+                href: "/driver/signup",
+                cta: "Apply to Drive",
+                icon: CarFront,
+              },
+            ] as const).map((col, index) => {
+              const Icon = col.icon;
               return (
                 <motion.div
-                  key={path.title}
-                  className="food-card home-path-card"
-                  style={isCustomer ? {
-                    border: "1px solid rgba(249,115,22,0.35)",
-                    background: "rgba(249,115,22,0.06)",
-                    position: "relative",
-                    overflow: "hidden",
-                  } : {}}
+                  key={col.title}
+                  className="flex flex-col gap-5 px-8 py-8 md:py-2"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.07 }}
-                  whileHover={shouldReduceMotion ? undefined : { y: -6, transition: { duration: 0.2 } }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  {isCustomer && (
-                    <motion.div
-                      style={{
-                        position: "absolute",
-                        top: 0, left: 0, right: 0,
-                        height: 3,
-                        background: "linear-gradient(90deg, #f97316, #fb923c)",
-                        borderRadius: "3px 3px 0 0",
-                      }}
-                      initial={shouldReduceMotion ? false : { scaleX: 0, transformOrigin: "left" }}
-                      whileInView={shouldReduceMotion ? undefined : { scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                  )}
-                  <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-[16px] border ${isCustomer ? "border-orange-500/30 bg-orange-500/10 text-orange-400" : "border-white/10 bg-white/5 text-white/80"}`}>
-                    <Icon size={22} strokeWidth={2.1} />
+                  <div className="flex items-center gap-3">
+                    <span className="text-orange-400"><Icon size={20} strokeWidth={2} /></span>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/35">{col.tagline}</p>
                   </div>
-                  <h3 className="mb-3 text-[30px] font-black uppercase tracking-[0.06em] text-white">{path.title}</h3>
-                  <p className="mb-6 text-sm leading-7 text-white/68">{path.detail}</p>
-                  <Link href={path.href} className={isCustomer ? "portal-btn-gold portal-btn-gold-block home-inline-cta" : "portal-btn-outline portal-btn-outline-block home-inline-cta"}>
-                    <span>{path.cta}</span>
-                    <ArrowRight size={15} strokeWidth={2.2} />
+                  <h3 className="text-[24px] font-black text-white leading-tight">{col.title}</h3>
+                  <ul className="space-y-3">
+                    {col.bullets.map(b => (
+                      <li key={b} className="flex items-start gap-3 text-[13px] text-white/55 leading-snug">
+                        <span className="mt-[3px] shrink-0 text-orange-400/70 text-[10px]">✦</span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link
+                    href={col.href}
+                    className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-bold text-[#f97316] hover:gap-3 transition-all duration-200"
+                  >
+                    {col.cta} <ArrowRight size={14} strokeWidth={2.5} />
                   </Link>
                 </motion.div>
               );
@@ -703,7 +809,7 @@ export default function Home() {
 
         {/* CTA strip */}
         <motion.section
-          className="mt-8"
+          className="mt-20"
           style={{
             background: "linear-gradient(135deg, rgba(249,115,22,0.12) 0%, rgba(249,115,22,0.04) 50%, rgba(255,255,255,0.02) 100%)",
             border: "1px solid rgba(249,115,22,0.2)",
