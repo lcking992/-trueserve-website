@@ -1,10 +1,1 @@
-import { H } from "@highlight-run/next/client";
-
-H.init(process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID!, {
-  serviceName: "trueserve-frontend",
-  tracingOrigins: true,
-  networkRecording: {
-    enabled: true,
-    recordHeadersAndBody: true,
-  },
-});
+// Error monitoring client initialised here when a provider is configured

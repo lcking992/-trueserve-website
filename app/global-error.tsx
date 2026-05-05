@@ -1,6 +1,5 @@
 "use client";
 
-import { H } from "@highlight-run/next/client";
 import { useEffect } from "react";
 
 export default function GlobalError({
@@ -11,7 +10,6 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    H.consumeError(error);
     console.error("Global Error Caught:", error);
   }, [error]);
 
