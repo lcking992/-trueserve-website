@@ -612,12 +612,10 @@ export default function Home() {
           viewport={{ once: true, amount: 0.1 }}
           transition={revealTransition}
         >
-          <div className="mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <p className="food-kicker mb-3">How it works</p>
-              <h2 className="food-heading !text-[36px] md:!text-[52px]">From hungry to <span className="accent">delivered</span></h2>
-            </div>
-            <p className="text-white/40 text-sm max-w-[260px] leading-relaxed">Three simple steps from search to doorstep.</p>
+          <div className="mb-14 max-w-3xl">
+            <p className="food-kicker mb-3">How it works</p>
+            <h2 className="food-heading !text-[34px] md:!text-[48px]">From hungry to <span className="accent">delivered</span></h2>
+            <p className="mt-4 text-white/40 text-sm max-w-[520px] leading-relaxed">Three simple steps from search to doorstep, with clearer updates at each handoff.</p>
           </div>
           <div className="border-t border-white/[0.07]">
             {howItWorks.map((item, index) => {
@@ -625,20 +623,18 @@ export default function Home() {
               return (
                 <motion.div
                   key={item.step}
-                  className="flex items-start gap-8 md:gap-16 py-10 border-b border-white/[0.07]"
+                  className="grid grid-cols-[24px_48px_1fr] md:grid-cols-[36px_64px_minmax(260px,420px)_minmax(280px,1fr)] items-start gap-5 md:gap-8 py-10 border-b border-white/[0.07]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.4 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <span className="text-[11px] font-black tracking-[0.2em] text-white/20 uppercase pt-1 w-6 shrink-0">{item.step}</span>
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full border border-[#f97316]/25 bg-[#f97316]/8 text-[#f97316] shrink-0">
+                  <span className="text-[11px] font-black tracking-[0.2em] text-white/20 uppercase pt-1">{item.step}</span>
+                  <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full border border-[#f97316]/25 bg-[#f97316]/8 text-[#f97316] shrink-0">
                     <Icon size={18} strokeWidth={2} />
                   </div>
-                  <div className="flex-1 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                    <h3 className="text-[22px] md:text-[26px] font-bold text-white leading-tight">{item.title}</h3>
-                    <p className="text-[14px] leading-relaxed text-white/45 md:max-w-[380px]">{item.detail}</p>
-                  </div>
+                  <h3 className="text-[22px] md:text-[24px] font-bold text-white leading-tight pt-1">{item.title}</h3>
+                  <p className="col-start-3 md:col-start-4 text-[14px] leading-relaxed text-white/45 md:pt-1">{item.detail}</p>
                 </motion.div>
               );
             })}
@@ -653,12 +649,10 @@ export default function Home() {
           viewport={{ once: true, amount: 0.1 }}
           transition={revealTransition}
         >
-          <div className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div>
-              <p className="food-kicker mb-3">Built for every side</p>
-              <h2 className="food-heading !text-[36px] md:!text-[52px]">One app. <span className="accent">Three ways</span><br className="hidden md:block" /> to use it.</h2>
-            </div>
-            <p className="text-white/40 text-sm max-w-[260px] leading-relaxed">Whether you're ordering, cooking, or driving — TrueServe works for you.</p>
+          <div className="mb-14 max-w-3xl">
+            <p className="food-kicker mb-3">Built for every side</p>
+            <h2 className="food-heading !text-[34px] md:!text-[48px]">One app. <span className="accent">Three ways</span><br className="hidden md:block" /> to use it.</h2>
+            <p className="mt-4 text-white/40 text-sm max-w-[560px] leading-relaxed">Whether you're ordering, cooking, or driving, each path should feel clear, consistent, and easy to act on.</p>
           </div>
           <div className="border-t border-white/[0.07]">
             {([
@@ -691,7 +685,7 @@ export default function Home() {
               return (
                 <motion.div
                   key={col.title}
-                  className="grid md:grid-cols-[1fr_1fr_auto] gap-6 md:gap-16 py-12 border-b border-white/[0.07] items-center"
+                  className="grid md:grid-cols-[minmax(280px,360px)_minmax(220px,1fr)_auto] gap-6 md:gap-10 py-12 border-b border-white/[0.07] items-center"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
@@ -704,7 +698,7 @@ export default function Home() {
                       <h3 className="text-[22px] font-black text-white leading-tight">{col.title}</h3>
                     </div>
                   </div>
-                  <ul className="space-y-2.5">
+                  <ul className="space-y-2.5 md:pr-4">
                     {col.bullets.map(b => (
                       <li key={b} className="flex items-start gap-3 text-[14px] text-white/50 leading-relaxed">
                         <span className="mt-1.5 shrink-0 w-1 h-1 rounded-full bg-orange-400/50" />
@@ -714,7 +708,7 @@ export default function Home() {
                   </ul>
                   <Link
                     href={col.href}
-                    className="inline-flex items-center gap-2 text-[13px] font-bold text-[#f97316] whitespace-nowrap hover:gap-4 transition-all duration-200"
+                    className="inline-flex items-center justify-self-start md:justify-self-end gap-2 text-[13px] font-bold text-[#f97316] whitespace-nowrap hover:gap-4 transition-all duration-200"
                   >
                     {col.cta} <ArrowRight size={13} strokeWidth={2.5} />
                   </Link>
