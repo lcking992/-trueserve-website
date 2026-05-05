@@ -4,7 +4,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
 const supabase = createClient(supabaseUrl, serviceKey);
 
-import { getFeatureFlag } from './launchdarkly';
+import { getFeatureFlag } from './posthog';
 
 export type ConfigKey = 
     | 'MAX_DELIVERY_RADIUS_MILES'
@@ -63,7 +63,7 @@ export async function getManyConfigs(keys: ConfigKey[]): Promise<Record<string, 
 }
 
 export async function isOrderingEnabled(): Promise<boolean> {
-    // 1. LaunchDarkly Remote Flag (Highest Priority)
+    // 1. PostHog Feature Flag (Highest Priority)
     const ldFlag = await getFeatureFlag('ordering-system-enabled', true);
     if (!ldFlag) return false;
 
@@ -75,7 +75,7 @@ export async function isOrderingEnabled(): Promise<boolean> {
 }
 
 /**
- * Feature-specific Checkers (LaunchDarkly + Supabase Fallbacks)
+ * Feature-specific Checkers (PostHog + Supabase Fallbacks)
  */
 export async function isAiScannerEnabled(): Promise<boolean> {
     const ld = await getFeatureFlag('ai-menu-onboarding', true);

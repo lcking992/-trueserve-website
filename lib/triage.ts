@@ -1,4 +1,3 @@
-import { getLDClient } from '@/lib/launchdarkly';
 import { supabase } from '@/lib/supabase';
 import { logAudit } from '@/lib/audit';
 import { postJiraComment } from './jira';
@@ -13,17 +12,7 @@ export async function triggerEmergencyMarketplacePause(jiraIssueKey: string, rea
     try {
         const client = await getLDClient();
         
-        // Context for LaunchDarkly
-        const context = {
-            kind: 'organization',
-            key: 'trueserve-global',
-            name: 'TrueServe Global Marketplace'
-        };
-
-        // 1. Flip the feature flag in LaunchDarkly (This is the real switch)
-        // If your LD project has an actual toggle for this, we flip it.
-        
-        // 2. Log the "Emergency Pause" to our internal Audit Log
+        // 1. Log the "Emergency Pause" to our internal Audit Log
         await logAudit({
             action: 'EMERGENCY_PAUSE',
             entityType: 'MARKETPLACE',

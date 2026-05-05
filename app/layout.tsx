@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Kalam, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import MobileNavWrapper from "@/components/MobileNavWrapper";
-import LaunchDarklyClientProvider from "@/components/LaunchDarklyClientProvider";
+import PostHogProvider from "@/components/PostHogProvider";
 import { Suspense } from "react";
 import DynamicBranding from "@/components/DynamicBranding";
 
@@ -39,13 +39,13 @@ export default function RootLayout({
         className={`${kalam.variable} ${playfair.variable} bg-black text-slate-200 antialiased pb-24 md:pb-0 font-sans overflow-x-hidden`}
         suppressHydrationWarning
       >
-        <LaunchDarklyClientProvider>
+        <PostHogProvider>
           <Suspense fallback={null}>
             <DynamicBranding />
           </Suspense>
           {children}
           <MobileNavWrapper />
-        </LaunchDarklyClientProvider>
+        </PostHogProvider>
 
         {/* Global Scroll Reveal Script */}
         <script dangerouslySetInnerHTML={{ __html: `
