@@ -170,7 +170,7 @@ export default function Home() {
     },
     {
       title: "Human support when it matters",
-      detail: "Customers, drivers, and merchants all get clear status updates plus fast ways to reach real help when needed.",
+      detail: "Drivers and merchants get clear status updates plus fast ways to reach real help when timing matters most.",
       icon: Route,
       image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80",
     },
@@ -567,54 +567,9 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* ── SOCIAL PROOF ── */}
-        <motion.section
-          className="mt-20 py-14 border-y border-white/[0.05]"
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={revealTransition}
-        >
-          <div className="mb-10 text-center">
-            <div className="flex items-center justify-center gap-1 mb-3">
-              {[0,1,2,3,4].map(i => (
-                <Star key={i} size={14} fill="#f97316" strokeWidth={0} className="text-[#f97316]" />
-              ))}
-            </div>
-            <p className="text-[13px] font-bold tracking-[0.14em] uppercase text-white/35">What customers are saying</p>
-          </div>
-          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
-            {[
-              { quote: "Finally a delivery app that doesn't hide fees at checkout. What I see is what I pay.", name: "Marcus T.", location: "Charlotte, NC" },
-              { quote: "The order tracking actually works. I can see exactly where my food is at every step.", name: "Priya S.", location: "South End, CLT" },
-              { quote: "Switched from the big apps. The prices match the restaurant menu — that's the whole difference.", name: "James R.", location: "NoDa, Charlotte" },
-            ].map((item, index) => (
-              <motion.div
-                key={item.name}
-                className="flex flex-col gap-4 px-8 py-6"
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
-                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.09 }}
-              >
-                <div className="flex gap-0.5">
-                  {[0,1,2,3,4].map(i => (
-                    <Star key={i} size={11} fill="#f97316" strokeWidth={0} className="text-[#f97316]" />
-                  ))}
-                </div>
-                <p className="text-[14px] leading-[1.75] text-white/65 italic">&ldquo;{item.quote}&rdquo;</p>
-                <div>
-                  <p className="text-[13px] font-bold text-white/55">{item.name}</p>
-                  <p className="text-[11px] text-white/30 mt-0.5">{item.location}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
         {/* ── THE TRUESERVE WAY ── open 3-col, no boxes */}
         <motion.section
-          className="mt-24 py-4"
+          className="mt-20 py-4"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
@@ -624,19 +579,19 @@ export default function Home() {
             <p className="food-kicker mb-3">The TrueServe way</p>
             <h2 className="food-heading !text-[36px] md:!text-[46px]">Built to feel <span className="accent">clearer, fairer,</span><br className="hidden md:block" /> and more supportive</h2>
           </div>
-          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
+          <div className="grid gap-5 md:grid-cols-3">
             {trueServeWay.map((item, index) => {
               const Icon = item.icon;
               return (
                 <motion.div
                   key={item.title}
-                  className="flex flex-col overflow-hidden"
+                  className="flex flex-col overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.02] shadow-[0_18px_45px_rgba(0,0,0,0.22)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <div className="relative h-44 w-full overflow-hidden">
+                  <div className="relative h-44 w-full overflow-hidden rounded-t-[30px]">
                     <img
                       src={item.image}
                       alt=""
