@@ -538,13 +538,13 @@ export default function Home() {
         </motion.div>
 
         <motion.section
-          className="mt-8 food-panel overflow-hidden"
+          className="mt-8 overflow-hidden rounded-[32px] border border-white/[0.07] bg-white/[0.02] shadow-[0_20px_55px_rgba(0,0,0,0.2)]"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={revealTransition}
         >
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 divide-y sm:divide-y-0 md:divide-x divide-white/5">
             {[
               { label: "Our commission", display: "7%", detail: "Flat. No monthly fees." },
               { label: "Kitchen screening", display: "100%", detail: "Public health verified." },
@@ -553,7 +553,7 @@ export default function Home() {
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
-                className="flex flex-col items-center text-center px-4 py-6 gap-1"
+                className="flex flex-col items-center text-center px-6 py-7 gap-1"
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                 whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.5 }}
@@ -624,7 +624,7 @@ export default function Home() {
             <p className="food-kicker mb-3">How it works</p>
             <h2 className="food-heading !text-[36px] md:!text-[46px]">From hungry to <span className="accent">delivered</span></h2>
           </div>
-          <div className="relative grid gap-0 md:grid-cols-3">
+          <div className="relative grid gap-10 md:grid-cols-3">
             {/* Connecting line — sits at the vertical center of the icon circles */}
             <div className="hidden md:block absolute top-[54px] left-[calc(50%/3+24px)] right-[calc(50%/3+24px)] h-px bg-gradient-to-r from-orange-500/20 via-orange-500/10 to-orange-500/20 pointer-events-none" />
             {howItWorks.map((item, index) => {
@@ -632,7 +632,7 @@ export default function Home() {
               return (
                 <motion.div
                   key={item.step}
-                  className="flex flex-col items-center text-center px-10 pb-10"
+                  className="flex flex-col items-center text-center rounded-[28px] border border-white/[0.06] bg-white/[0.015] px-8 py-8 md:border-0 md:bg-transparent md:px-10 md:pb-10 md:pt-0"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
@@ -688,7 +688,7 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* ── ONE PLATFORM ── open columns, dividers only */}
+        {/* ── ONE PLATFORM ── */}
         <motion.section
           className="mt-28 py-4"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
@@ -700,7 +700,7 @@ export default function Home() {
             <p className="food-kicker mb-3">Built for every side</p>
             <h2 className="food-heading !text-[36px] md:!text-[46px]">One app. <span className="accent">Three ways to use it.</span></h2>
           </div>
-          <div className="grid gap-0 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.06]">
+          <div className="grid gap-5 md:grid-cols-3">
             {([
               {
                 title: "For Customers",
@@ -731,7 +731,7 @@ export default function Home() {
               return (
                 <motion.div
                   key={col.title}
-                  className="flex flex-col gap-5 px-8 py-8 md:py-2"
+                  className="flex flex-col gap-5 rounded-[28px] border border-white/[0.08] bg-white/[0.02] px-8 py-8 shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
@@ -768,7 +768,7 @@ export default function Home() {
           style={{
             background: "linear-gradient(135deg, rgba(249,115,22,0.12) 0%, rgba(249,115,22,0.04) 50%, rgba(255,255,255,0.02) 100%)",
             border: "1px solid rgba(249,115,22,0.2)",
-            borderRadius: 20,
+            borderRadius: 30,
             padding: "40px 36px",
           }}
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
