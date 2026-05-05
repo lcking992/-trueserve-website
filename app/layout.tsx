@@ -5,6 +5,7 @@ import MobileNavWrapper from "@/components/MobileNavWrapper";
 import LaunchDarklyClientProvider from "@/components/LaunchDarklyClientProvider";
 import { Suspense } from "react";
 import DynamicBranding from "@/components/DynamicBranding";
+import { HighlightInit } from "@highlight-run/next/client";
 
 const kalam = Kalam({
   variable: "--font-kalam",
@@ -35,6 +36,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <HighlightInit
+        projectId={process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID!}
+        serviceName="trueserve-frontend"
+        tracingOrigins
+        networkRecording={{ enabled: true, recordHeadersAndBody: true }}
+      />
       <body
         className={`${kalam.variable} ${playfair.variable} bg-black text-slate-200 antialiased pb-24 md:pb-0 font-sans overflow-x-hidden`}
         suppressHydrationWarning

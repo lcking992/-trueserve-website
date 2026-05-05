@@ -1,13 +1,13 @@
-import * as Sentry from "@sentry/nextjs";
+import { highlightMiddleware } from "@highlight-run/next/server";
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    await import("./sentry.server.config");
-  }
-
-  if (process.env.NEXT_RUNTIME === "edge") {
-    await import("./sentry.edge.config");
+    const { registerHighlight } = await import("@highlight-run/next/server");
+    registerHighlight({
+      projectID: process.env.NEXT_PUBLIC_HIGHLIGHT_PROJECT_ID!,
+      serviceName: "trueserve-backend",
+    });
   }
 }
 
-export const onRequestError = Sentry.captureRequestError;
+export { highlightMiddleware as onRequestError };
