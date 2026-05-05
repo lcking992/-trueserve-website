@@ -585,13 +585,13 @@ export default function Home() {
               return (
                 <motion.div
                   key={item.title}
-                  className="flex h-full flex-col overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.02] shadow-[0_18px_45px_rgba(0,0,0,0.22)]"
+                  className="flex h-full min-w-0 flex-col overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.02] shadow-[0_18px_45px_rgba(0,0,0,0.22)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <div className="relative h-44 w-full overflow-hidden rounded-t-[30px]">
+                  <div className="relative h-40 w-full overflow-hidden rounded-t-[30px]">
                     <img
                       src={item.image}
                       alt=""
@@ -599,12 +599,12 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                   </div>
-                  <div className="flex flex-1 flex-col gap-4 px-8 py-8">
+                  <div className="flex flex-1 flex-col gap-3 px-7 py-7 min-w-0">
                     <span className="text-orange-400">
                       <Icon size={22} strokeWidth={2} />
                     </span>
-                    <h3 className="text-[17px] font-bold text-white leading-snug">{item.title}</h3>
-                    <p className="text-[13px] leading-[1.75] text-white/50">{item.detail}</p>
+                    <h3 className="text-[17px] font-bold text-white leading-snug break-words">{item.title}</h3>
+                    <p className="text-[13px] leading-[1.7] text-white/55 break-words">{item.detail}</p>
                   </div>
                 </motion.div>
               );
@@ -614,13 +614,13 @@ export default function Home() {
 
         {/* ── HOW IT WORKS ── open numbered steps, no boxes */}
         <motion.section
-          className="mt-28 py-6"
+          className="mt-20 py-6"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={revealTransition}
         >
-          <div className="mb-14 text-center">
+          <div className="mb-12 text-center">
             <p className="food-kicker mb-3">How it works</p>
             <h2 className="food-heading !text-[36px] md:!text-[46px]">From hungry to <span className="accent">delivered</span></h2>
           </div>
@@ -652,51 +652,15 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* ── EDITORIAL BANNER ── full-width food photography break */}
-        <motion.section
-          className="mt-20 relative overflow-hidden rounded-2xl"
-          style={{ height: 340 }}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={revealTransition}
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400&q=80')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/55 to-black/15" />
-          <div className="relative h-full flex items-center px-10 md:px-16">
-            <div className="max-w-lg">
-              <p className="food-kicker mb-4">Local. Real. Delivered.</p>
-              <h2 className="food-heading !text-[38px] md:!text-[52px] leading-tight">
-                Real food.<br /><span className="accent">Real prices.</span>
-              </h2>
-              <p className="mt-4 text-[14px] text-white/55 max-w-[340px] leading-relaxed">
-                Every restaurant on TrueServe is a real local kitchen. Every price is exactly what they charge — nothing added on top.
-              </p>
-              <motion.div
-                className="mt-6"
-                whileHover={shouldReduceMotion ? undefined : { y: -2 }}
-                transition={{ duration: 0.18 }}
-              >
-                <Link href="/restaurants" className="portal-btn-gold inline-flex items-center gap-2 !text-sm !py-3 !px-6">
-                  Browse Restaurants <ArrowRight size={15} />
-                </Link>
-              </motion.div>
-            </div>
-          </div>
-        </motion.section>
-
         {/* ── ONE PLATFORM ── */}
         <motion.section
-          className="mt-28 py-4"
+          className="mt-20 py-4"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={revealTransition}
         >
-          <div className="mb-14 text-center">
+          <div className="mb-12 text-center">
             <p className="food-kicker mb-3">Built for every side</p>
             <h2 className="food-heading !text-[36px] md:!text-[46px]">One app. <span className="accent">Three ways to use it.</span></h2>
           </div>
@@ -705,7 +669,7 @@ export default function Home() {
               {
                 title: "For Customers",
                 tagline: "Order with confidence",
-                bullets: ["Save addresses & reorder fast", "Live driver tracking", "No hidden fees at checkout", "Earn points on every order"],
+                bullets: ["Save addresses & reorder fast", "Live driver tracking", "No hidden fees at checkout"],
                 href: userId ? accountHref : "/signup",
                 cta: userId ? "Open Account" : "Create Free Account",
                 icon: UtensilsCrossed,
@@ -713,7 +677,7 @@ export default function Home() {
               {
                 title: "For Merchants",
                 tagline: "Keep more of what you earn",
-                bullets: ["Flat monthly rate, zero commission", "Real-time order dashboard", "POS & GHL integrations", "Rate locked for founding partners"],
+                bullets: ["Flat monthly rate, zero commission", "Real-time order dashboard", "Locked rate for founding partners"],
                 href: "/merchant/signup",
                 cta: "Apply as Partner",
                 icon: Store,
@@ -721,7 +685,7 @@ export default function Home() {
               {
                 title: "For Drivers",
                 tagline: "Earn more per mile",
-                bullets: ["Smart dispatch, fewer dead miles", "Next-day payouts", "Transparent pay breakdown", "Flexible hours, no minimums"],
+                bullets: ["Smart dispatch, fewer dead miles", "Next-day payouts", "Flexible hours, no minimums"],
                 href: "/driver/signup",
                 cta: "Apply to Drive",
                 icon: CarFront,
@@ -731,21 +695,21 @@ export default function Home() {
               return (
                 <motion.div
                   key={col.title}
-                  className="flex h-full flex-col rounded-[28px] border border-white/[0.08] bg-white/[0.02] px-8 py-8 shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
+                  className="flex h-full min-w-0 flex-col rounded-[28px] border border-white/[0.08] bg-white/[0.02] px-7 py-7 shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <div className="flex flex-1 flex-col gap-5">
+                  <div className="flex flex-1 flex-col gap-4 min-w-0">
                     <div className="flex items-center gap-3">
                       <span className="text-orange-400"><Icon size={20} strokeWidth={2} /></span>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/35">{col.tagline}</p>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/35 break-words">{col.tagline}</p>
                     </div>
-                    <h3 className="text-[24px] font-black text-white leading-tight">{col.title}</h3>
-                    <ul className="space-y-3">
+                    <h3 className="text-[22px] font-black text-white leading-tight break-words">{col.title}</h3>
+                    <ul className="space-y-2.5">
                       {col.bullets.map(b => (
-                        <li key={b} className="flex items-start gap-3 text-[13px] text-white/55 leading-snug">
+                        <li key={b} className="flex items-start gap-3 text-[13px] text-white/55 leading-snug break-words">
                           <span className="mt-[3px] shrink-0 text-orange-400/70 text-[10px]">✦</span>
                           <span>{b}</span>
                         </li>
@@ -766,7 +730,7 @@ export default function Home() {
 
         {/* CTA strip */}
         <motion.section
-          className="mt-20"
+          className="mt-16"
           style={{
             background: "linear-gradient(135deg, rgba(249,115,22,0.12) 0%, rgba(249,115,22,0.04) 50%, rgba(255,255,255,0.02) 100%)",
             border: "1px solid rgba(249,115,22,0.2)",
