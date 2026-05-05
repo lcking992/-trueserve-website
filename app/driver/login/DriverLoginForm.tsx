@@ -130,7 +130,7 @@ export default function DriverLoginForm() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in relative z-10 w-full overflow-hidden">
+        <div className="space-y-7 animate-fade-in relative z-10 w-full overflow-hidden">
             {message && (
                 <div className={`p-4 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center gap-3 border ${
                     message.error ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-[#3dd68c]/10 border-[#3dd68c]/20 text-[#3dd68c]'
@@ -140,7 +140,7 @@ export default function DriverLoginForm() {
             )}
 
             {step === "phone" ? (
-                <form onSubmit={handleSendOTP} className="space-y-6">
+                <form onSubmit={handleSendOTP} className="space-y-7">
                     <div>
                         <label className="fl">Mobile Identifier (US Only)</label>
                         <div className="flex gap-[1px] bg-[#1c1f28] border border-[#2a2f3a] rounded-[12px] overflow-hidden">
@@ -165,12 +165,12 @@ export default function DriverLoginForm() {
                         {isLoading ? "UPLINKING..." : "Request Access Code →"}
                     </button>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-4 pt-1">
                         <div className="text-center font-dm-sans text-[12px] text-[#555]">
                             New to the fleet? <Link href="/driver/signup" className="text-[#3dd68c] font-bold">Apply to partner</Link>
                         </div>
                         {IS_DEV && (
-                            <div className="border-t border-dashed border-[#2a2f3a] pt-3">
+                            <div className="border-t border-dashed border-[#2a2f3a] pt-4">
                                 <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[#444] mb-2">Dev / QA Only</p>
                                 <button
                                     type="button"
@@ -185,7 +185,7 @@ export default function DriverLoginForm() {
                     </div>
                 </form>
             ) : (
-                <form onSubmit={handleVerifyOTP} className="space-y-6">
+                <form onSubmit={handleVerifyOTP} className="space-y-7">
                     <div className="text-center">
                         <p className="text-[11px] text-[#555] font-bold uppercase tracking-widest mb-3">Verification code sent to <span className="text-[#3dd68c]">{phone}</span></p>
                         <input
