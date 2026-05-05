@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useEffect, useState, Suspense } from "react";
+import { useActionState, useEffect, useRef, useState, Suspense } from "react";
 import Logo from "@/components/Logo";
 import { signupWithPassword } from "@/app/auth/actions";
 import { normalizePhoneNumber } from "@/lib/phoneUtils";
+import { capturePostHogEvent } from "@/lib/posthog-events";
 
 const MIN_PASSWORD_LENGTH = 8;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -26,13 +27,23 @@ function SignupForm() {
   const [deliveryNotes, setDeliveryNotes] = useState("");
   const [step1Error, setStep1Error] = useState("");
   const [stateData, formAction, isPending] = useActionState(signupWithPassword, { message: "" });
+  const hasTrackedSubmission = useRef(false);
 
   useEffect(() => {
     if (stateData?.success) {
+      if (!hasTrackedSubmission.current) {
+        capturePostHogEvent("customer_signup_submitted", {
+          has_phone: Boolean(normalizedPhone),
+          has_delivery_notes: Boolean(deliveryNotes.trim()),
+          city: city.trim() || null,
+          referred_signup: Boolean(refCode),
+        });
+        hasTrackedSubmission.current = true;
+      }
       router.push("/restaurants");
       router.refresh();
     }
-  }, [stateData?.success, router]);
+  }, [city, deliveryNotes, normalizedPhone, refCode, router, stateData?.success]);
 
   const normalizedPhone = normalizePhoneNumber(phone);
   const hasValidEmail = EMAIL_PATTERN.test(email.trim());
@@ -62,6 +73,10 @@ function SignupForm() {
       return;
     }
 
+    capturePostHogEvent("customer_signup_started", {
+      has_phone: Boolean(normalizedPhone),
+      referred_signup: Boolean(refCode),
+    });
     setStep1Error("");
     setStep(2);
   };

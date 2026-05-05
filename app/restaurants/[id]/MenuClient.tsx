@@ -10,6 +10,7 @@ import CheckoutForm from "@/components/CheckoutForm";
 import OrderConfirmAnimation from "@/components/OrderConfirmAnimation";
 import AddressInput from "@/components/AddressInput";
 import MapWithDirections from "@/components/MapWithDirections";
+import { capturePostHogEvent } from "@/lib/posthog-events";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -78,6 +79,7 @@ export default function MenuClient({
     const [redeemPoints, setRedeemPoints] = useState(false);
     const [checkoutEta, setCheckoutEta] = useState<string>("Calculating...");
     const [checkoutDistance, setCheckoutDistance] = useState<string>("");
+    const [paymentIntentError, setPaymentIntentError] = useState<string | null>(null);
     
     // GHL State
     const [isGHLOpen, setIsGHLOpen] = useState(false);
@@ -179,6 +181,12 @@ export default function MenuClient({
 
             if (res.clientSecret) {
                 setClientSecret(res.clientSecret);
+                setPaymentIntentError(null);
+            } else if (res.error) {
+                setClientSecret(null);
+                setPaymentIntentError(
+                    typeof res.error === "string" ? res.error : "Unable to initialize checkout. Please try again."
+                );
             }
         };
 
@@ -455,8 +463,19 @@ export default function MenuClient({
             giftPrefix + deliveryInstructions,
             redeemPoints ? pointsValue : 0
         );
-        if (res.success && res.orderId) setPendingOrderId(res.orderId);
-        else alert(res.message || "Failed to place order");
+        if (res.success && res.orderId) {
+            capturePostHogEvent("order_placed", {
+                restaurant_id: restaurant.id,
+                restaurant_name: restaurant.name,
+                item_count: cartItems.reduce((sum, [, qty]) => sum + qty, 0),
+                subtotal: Number(subtotal.toFixed(2)),
+                tip_amount: Number(tip.toFixed(2)),
+                total_amount: Number(total.toFixed(2)),
+                points_redeemed: redeemPoints ? pointsValue : 0,
+                is_gift: isGift,
+            });
+            setPendingOrderId(res.orderId);
+        } else alert(res.message || "Failed to place order");
         setIsSubmitting(false);
     };
 
@@ -480,6 +499,7 @@ export default function MenuClient({
             {/* Closed Banner */}
             {!isOpen && (
                 <div style={{
+                    gridColumn: '1 / -1',
                     background: 'rgba(248,113,113,0.08)',
                     border: '1px solid rgba(248,113,113,0.25)',
                     borderRadius: 10,
@@ -794,6 +814,10 @@ export default function MenuClient({
                                     <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
                                         <CheckoutForm totalAmount={total} onSuccess={handlePaymentSuccess} disabled={isSubmitting || !deliveryAddress} />
                                     </Elements>
+                                </div>
+                            ) : paymentIntentError ? (
+                                <div style={{ marginTop: '20px', padding: '12px 14px', borderRadius: 8, background: 'rgba(248,113,113,0.07)', border: '1px solid rgba(248,113,113,0.2)', fontSize: '12px', color: '#f87171', fontWeight: 600 }}>
+                                    {paymentIntentError}
                                 </div>
                             ) : (
                                 <div style={{ marginTop: '20px', textAlign: 'center', opacity: 0.5, fontSize: '12px' }}>Preparing secure checkout...</div>

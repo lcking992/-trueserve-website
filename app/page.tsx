@@ -569,7 +569,7 @@ export default function Home() {
 
         {/* ── THE TRUESERVE WAY ── open 3-col, no boxes */}
         <motion.section
-          className="mt-20 py-4"
+          className="mt-20 py-6"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
@@ -585,7 +585,7 @@ export default function Home() {
               return (
                 <motion.div
                   key={item.title}
-                  className="flex flex-col overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.02] shadow-[0_18px_45px_rgba(0,0,0,0.22)]"
+                  className="flex h-full flex-col overflow-hidden rounded-[30px] border border-white/[0.08] bg-white/[0.02] shadow-[0_18px_45px_rgba(0,0,0,0.22)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
@@ -599,7 +599,7 @@ export default function Home() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
                   </div>
-                  <div className="flex flex-col gap-3 px-8 py-7">
+                  <div className="flex flex-1 flex-col gap-4 px-8 py-8">
                     <span className="text-orange-400">
                       <Icon size={22} strokeWidth={2} />
                     </span>
@@ -614,7 +614,7 @@ export default function Home() {
 
         {/* ── HOW IT WORKS ── open numbered steps, no boxes */}
         <motion.section
-          className="mt-28 py-4"
+          className="mt-28 py-6"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.15 }}
@@ -731,28 +731,30 @@ export default function Home() {
               return (
                 <motion.div
                   key={col.title}
-                  className="flex flex-col gap-5 rounded-[28px] border border-white/[0.08] bg-white/[0.02] px-8 py-8 shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
+                  className="flex h-full flex-col rounded-[28px] border border-white/[0.08] bg-white/[0.02] px-8 py-8 shadow-[0_18px_45px_rgba(0,0,0,0.18)]"
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
                   whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.2 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.08 }}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-orange-400"><Icon size={20} strokeWidth={2} /></span>
-                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/35">{col.tagline}</p>
+                  <div className="flex flex-1 flex-col gap-5">
+                    <div className="flex items-center gap-3">
+                      <span className="text-orange-400"><Icon size={20} strokeWidth={2} /></span>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-white/35">{col.tagline}</p>
+                    </div>
+                    <h3 className="text-[24px] font-black text-white leading-tight">{col.title}</h3>
+                    <ul className="space-y-3">
+                      {col.bullets.map(b => (
+                        <li key={b} className="flex items-start gap-3 text-[13px] text-white/55 leading-snug">
+                          <span className="mt-[3px] shrink-0 text-orange-400/70 text-[10px]">✦</span>
+                          <span>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <h3 className="text-[24px] font-black text-white leading-tight">{col.title}</h3>
-                  <ul className="space-y-3">
-                    {col.bullets.map(b => (
-                      <li key={b} className="flex items-start gap-3 text-[13px] text-white/55 leading-snug">
-                        <span className="mt-[3px] shrink-0 text-orange-400/70 text-[10px]">✦</span>
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
                   <Link
                     href={col.href}
-                    className="mt-2 inline-flex items-center gap-1.5 text-[13px] font-bold text-[#f97316] hover:gap-3 transition-all duration-200"
+                    className="mt-6 inline-flex items-center gap-1.5 text-[13px] font-bold text-[#f97316] hover:gap-3 transition-all duration-200"
                   >
                     {col.cta} <ArrowRight size={14} strokeWidth={2.5} />
                   </Link>

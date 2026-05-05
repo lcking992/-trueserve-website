@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
 import { submitDriverApplication } from "@/app/driver/actions";
 import DriverEarningsCalc from "@/components/DriverEarningsCalc";
+import { capturePostHogEvent } from "@/lib/posthog-events";
 
 const MIN_DRIVER_AGE = 18;
 
@@ -25,12 +26,20 @@ export default function DriverSignupPage() {
   const [geoMessage, setGeoMessage] = useState("");
   const [step1Error, setStep1Error] = useState("");
   const [stateData, formAction, isPending] = useActionState(submitDriverApplication, { message: "" });
+  const hasTrackedSubmission = useRef(false);
 
   useEffect(() => {
     if (stateData?.success) {
+      if (!hasTrackedSubmission.current) {
+        capturePostHogEvent("driver_application_submitted", {
+          vehicle_type: vehicleType,
+          has_location: Boolean(lat && lng),
+        });
+        hasTrackedSubmission.current = true;
+      }
       setStep(3);
     }
-  }, [stateData?.success]);
+  }, [lat, lng, stateData?.success, vehicleType]);
 
   const useCurrentLocation = () => {
     setGeoMessage("");
@@ -81,6 +90,10 @@ export default function DriverSignupPage() {
       return;
     }
 
+    capturePostHogEvent("driver_application_started", {
+      vehicle_type: vehicleType,
+      driver_age: getDriverAge(dob),
+    });
     setStep1Error("");
     setStep(2);
   };
