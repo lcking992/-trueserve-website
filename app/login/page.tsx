@@ -103,10 +103,17 @@ export default function LoginPage() {
       <main className="food-auth-wrap">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
-            <div
-              className="food-auth-image"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80')" }}
-            />
+            <video
+              className="food-auth-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src="/brand/brand_login_hero.mp4" type="video/mp4" />
+            </video>
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Customer and team access</div>
               <div className="mt-5 space-y-4">

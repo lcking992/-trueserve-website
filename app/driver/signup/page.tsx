@@ -107,7 +107,17 @@ export default function DriverSignupPage() {
       <main className="food-auth-wrap">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
-            <div className="food-auth-image" style={{ backgroundImage: "url('/diverse_drivers.png')" }} />
+            <video
+              className="food-auth-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src="/brand/brand_driver_thumb_car.mp4" type="video/mp4" />
+            </video>
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Driver onboarding</div>
               <div className="mt-5 space-y-4">
@@ -144,7 +154,7 @@ export default function DriverSignupPage() {
           </section>
 
           <section className="food-panel food-auth-form">
-            <Link href="/" className="su-back">← Back to Home</Link>
+            <Link href="/" className="back">← Back to Home</Link>
             <p className="food-kicker mb-3">Driver account</p>
             <h1 className="food-heading !text-[36px]">Join the Fleet</h1>
             <p className="lead mt-2">Submit your profile and documents to unlock OTP login access.</p>

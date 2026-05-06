@@ -110,7 +110,7 @@ export default function ContactPage() {
                     <div className="pointer-events-none absolute inset-0">
                         <div
                             className="absolute inset-0 bg-cover bg-center opacity-[0.13]"
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80')" }}
+                            style={{ backgroundImage: "url('/brand/brand_contact_hero.jpg')" }}
                         />
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(249,115,22,0.18),transparent_60%)]" />
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d0f0e]/80" />

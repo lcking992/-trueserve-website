@@ -107,7 +107,17 @@ export default function MerchantSignupPage() {
       <main className="food-auth-wrap">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
-            <div className="food-auth-image" style={{ backgroundImage: "url('/merchant_hero.png')" }} />
+            <video
+              className="food-auth-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src="/brand/brand_merchant_hero.mp4" type="video/mp4" />
+            </video>
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">🤝 Founding Partner Program</div>
               <div className="mt-5 space-y-4">
@@ -143,7 +153,7 @@ export default function MerchantSignupPage() {
           </section>
 
           <section className="food-panel food-auth-form">
-            <Link href="/" className="su-back">← Back to Home</Link>
+            <Link href="/" className="back">← Back to Home</Link>
             <p className="food-kicker mb-3">🤝 Founding Partner Application</p>
             <h1 className="food-heading !text-[36px]">Apply as a Founding Partner</h1>
             <p className="lead mt-2">First 30 days free · Rate locked forever · Zero commission.</p>
@@ -159,16 +169,16 @@ export default function MerchantSignupPage() {
             )}
             
             <div className="food-auth-gallery">
-              <div className="food-auth-thumb"><img src="/merchant_hero.png" alt="Restaurant kitchen operations" /></div>
-              <div className="food-auth-thumb"><img src="/merchant_section.png" alt="Restaurant owner working" /></div>
-              <div className="food-auth-thumb"><img src="/merchant_login_bg_restaurant.png" alt="Restaurant storefront and dining area" /></div>
+              <div className="food-auth-thumb"><img src="/brand/brand_merchant_thumb_kitchen.jpg" alt="Restaurant kitchen operations" /></div>
+              <div className="food-auth-thumb"><img src="/brand/brand_merchant_thumb_storefront.jpg" alt="Restaurant owner working" /></div>
+              <div className="food-auth-thumb"><img src="/brand/brand_merchant_thumb_packaging.jpg" alt="Restaurant storefront and dining area" /></div>
             </div>
             
             <div className="prog mt-6">
               <div className={`prog-s ${step >= 1 ? 'on' : ''}`}></div>
               <div className={`prog-s ${step >= 2 ? 'on' : ''}`}></div>
               <div className={`prog-s ${step >= 3 ? 'on' : ''}`}></div>
-              <span className="prog-label">{step < 4 ? `Step ${step} of 3` : 'Complete'}</span>
+              <span className="prog-label">{`Step ${Math.min(step, 3)} of 3`}</span>
             </div>
 
             <form action={formAction}>

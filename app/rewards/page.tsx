@@ -116,9 +116,9 @@ function MessageBanner({ update, tier }: { update?: string; tier?: string }) {
 }
 
 const TIER_IMAGES: Record<string, string> = {
-    Basic: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=70",   // pizza
-    Plus: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70",        // grill
-    Premium: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=70",  // spread
+    Basic: "/brand/brand_rewards_tier_1.jpg",
+    Plus: "/brand/brand_rewards_tier_2.jpg",
+    Premium: "/brand/brand_rewards_tier_3.jpg",
 };
 
 function TierCard({
@@ -242,10 +242,17 @@ export default async function RewardsPage({
                 <section className="food-panel relative overflow-hidden">
                     {/* Hero food imagery strip */}
                     <div className="pointer-events-none absolute inset-0">
-                        <div
-                            className="absolute inset-0 bg-cover bg-center opacity-[0.12]"
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80')" }}
-                        />
+                        <video
+                            className="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            aria-hidden="true"
+                        >
+                            <source src="/brand/brand_rewards_hero.mp4" type="video/mp4" />
+                        </video>
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0f0e]/90" />
                     </div>

@@ -28,6 +28,8 @@ function SignupForm() {
   const [step1Error, setStep1Error] = useState("");
   const [stateData, formAction, isPending] = useActionState(signupWithPassword, { message: "" });
   const hasTrackedSubmission = useRef(false);
+  const normalizedPhone = normalizePhoneNumber(phone);
+  const hasValidPhone = !phone.trim() || normalizedPhone.length === 12;
 
   useEffect(() => {
     if (stateData?.success) {
@@ -44,11 +46,6 @@ function SignupForm() {
       router.refresh();
     }
   }, [city, deliveryNotes, normalizedPhone, refCode, router, stateData?.success]);
-
-  const normalizedPhone = normalizePhoneNumber(phone);
-  const hasValidEmail = EMAIL_PATTERN.test(email.trim());
-  const hasValidPassword = password.length >= MIN_PASSWORD_LENGTH;
-  const hasValidPhone = !phone.trim() || normalizedPhone.length === 12;
 
   const handleContinue = () => {
     const trimmedEmail = email.trim();
@@ -90,10 +87,17 @@ function SignupForm() {
       <main className="food-auth-wrap">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
-            <div
-              className="food-auth-image"
-              style={{ backgroundImage: "url('/hero_food_delivery.png')" }}
-            />
+            <video
+              className="food-auth-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src="/brand/brand_customer_signup_hero.mp4" type="video/mp4" />
+            </video>
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Customer onboarding</div>
               <div className="mt-5 space-y-4">

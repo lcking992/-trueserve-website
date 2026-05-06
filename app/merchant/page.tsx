@@ -1,10 +1,100 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+import FadeInSection from "@/components/FadeInSection";
 import Logo from "@/components/Logo";
-import { Menu, X } from "lucide-react";
+import { ArrowRight, BadgeDollarSign, CheckCircle2, Menu, ShieldCheck, Store, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+
+const navItems = [
+  { href: "/restaurants", label: "Order Food" },
+  { href: "/about", label: "About" },
+  { href: "/driver", label: "For Drivers" },
+  { href: "/contact", label: "Contact" },
+];
+
+const merchantCards = [
+  {
+    icon: BadgeDollarSign,
+    kicker: "Keep More",
+    title: "Zero commission, flat monthly pricing",
+    desc: "TrueServe stays out of the way of your margins so growth actually improves your economics.",
+  },
+  {
+    icon: Store,
+    kicker: "Stay In Control",
+    title: "Storefront and ordering tools built around your brand",
+    desc: "Launch a direct-order experience, sync menus, and guide customers back to your own channel.",
+  },
+  {
+    icon: ShieldCheck,
+    kicker: "Launch Cleanly",
+    title: "Onboarding support without the usual platform friction",
+    desc: "Integrations, compliance, menu setup, and rollout all move through one clearer path.",
+  },
+];
+
+const merchantSteps = [
+  {
+    step: "01",
+    title: "Apply as a founding partner",
+    detail: "Share your restaurant details, team contact, and operating basics so we can review the fit quickly.",
+  },
+  {
+    step: "02",
+    title: "Set up your menu and storefront",
+    detail: "Sync with Toast, Square, or Clover, connect direct-order tools, and get your branded surface ready.",
+  },
+  {
+    step: "03",
+    title: "Go live with a calmer ops flow",
+    detail: "Orders, prep visibility, support, and delivery handoff all start from one simpler dashboard.",
+  },
+];
+
+const merchantProof = [
+  {
+    label: "Partnership model",
+    title: "Founding partner terms that feel direct",
+    detail: "First 30 days free, a locked rate, and no surprise take-rate growth as volume increases.",
+  },
+  {
+    label: "Operator support",
+    title: "Built for the team actually running the store",
+    detail: "Less marketplace noise, cleaner workflows, and tools that help staff move faster under pressure.",
+  },
+  {
+    label: "Brand protection",
+    title: "A delivery layer that strengthens your identity",
+    detail: "Your restaurant stays front and center instead of being flattened into a generic marketplace listing.",
+  },
+];
+
+const merchantLandingBenefits = [
+  {
+    icon: "✓",
+    title: "Operator-first setup",
+    detail: "Apply, connect your tools, and launch through one guided merchant path instead of scattered handoffs.",
+  },
+  {
+    icon: "★",
+    title: "Brand-led ordering",
+    detail: "Keep your storefront, direct-order flow, and customer relationship closer to your own business.",
+  },
+  {
+    icon: "→",
+    title: "Cleaner daily ops",
+    detail: "Move from onboarding into a calmer dashboard experience with fewer unnecessary platform layers.",
+  },
+];
+
+const merchantLandingStats = [
+  { value: "0%", label: "Commission on orders" },
+  { value: "30", label: "Days free to start" },
+  { value: "1", label: "Merchant path from launch to ops" },
+  { value: "Locked", label: "Founding rate for life" },
+];
 
 export default function MerchantLanding() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,22 +104,29 @@ export default function MerchantLanding() {
     : { duration: 0.56, ease: [0.22, 1, 0.36, 1] as const };
 
   return (
-    <div className="food-app-shell" style={{ minHeight: "100vh", background: "#09090c" }}>
+    <div className="food-app-shell">
       <nav className="food-app-nav">
         <Logo size="sm" />
         <div className="nav-links hidden md:flex">
-          <Link href="/restaurants">Order Food</Link>
-          <Link href="/about">About</Link>
-          <Link href="/driver">For Drivers</Link>
-          <Link href="/contact">Contact</Link>
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
         </div>
-        <div className="hidden md:flex nav-r">
+        <div className="hidden md:flex gap-2">
           <Link href="/merchant/login" className="btn btn-ghost">Sign In</Link>
+          <Link href="/merchant/signup" className="btn btn-gold">Apply</Link>
         </div>
-        <button className="md:hidden p-2 text-white/70 hover:text-white transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
+        <button
+          className="md:hidden p-2 text-white/70 hover:text-white transition-colors"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+        >
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </nav>
+
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -39,13 +136,7 @@ export default function MerchantLanding() {
             transition={{ duration: 0.2 }}
             className="md:hidden bg-[#111] border-b border-white/10 px-4 py-3 flex flex-col gap-1 z-40"
           >
-            {[
-              { href: "/restaurants", label: "Order Food" },
-              { href: "/about", label: "About" },
-              { href: "/driver", label: "For Drivers" },
-              { href: "/contact", label: "Contact" },
-              { href: "/merchant/login", label: "Sign In" },
-            ].map((item, index) => (
+            {[...navItems, { href: "/merchant/login", label: "Sign In" }, { href: "/merchant/signup", label: "Apply" }].map((item, index) => (
               <motion.div
                 key={item.href}
                 initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
@@ -53,8 +144,11 @@ export default function MerchantLanding() {
                 exit={shouldReduceMotion ? undefined : { opacity: 0, y: -4 }}
                 transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.03 }}
               >
-                <Link href={item.href} onClick={() => setMenuOpen(false)}
-                  className="block py-2.5 px-3 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                <Link
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block py-2.5 px-3 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                >
                   {item.label}
                 </Link>
               </motion.div>
@@ -64,171 +158,266 @@ export default function MerchantLanding() {
       </AnimatePresence>
 
       <main className="food-app-main">
-
-        {/* ── FOUNDING PARTNER BADGE ── */}
-        <motion.div
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.04 }}
-          style={{
-          marginBottom: 24, padding: "12px 20px", borderRadius: 10, textAlign: "center",
-          background: "rgba(249,115,22,0.07)", border: "1px solid rgba(249,115,22,0.25)",
-        }}>
-          <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
-            🤝 <strong style={{ color: "#f97316" }}>Founding Partner Program —</strong>{" "}
-            Join now for <strong style={{ color: "#fff" }}>30 days free</strong> and get your rate{" "}
-            <strong style={{ color: "#fff" }}>locked forever.</strong>
-          </p>
-        </motion.div>
-
-        {/* ── HERO ── */}
-        <motion.section
-          style={{ padding: "48px 0 40px", textAlign: "center" }}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={revealTransition}
-        >
-          <motion.p className="food-kicker" style={{ marginBottom: 16, color: "#f97316" }}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+        <section className="food-auth-grid merchant-landing-grid">
+          <motion.section
+            className="food-hero-card food-auth-hero merchant-landing-hero"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
             animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.08 }}
-          >For Restaurant Partners</motion.p>
-          <motion.h1 className="food-title" style={{ marginBottom: 20, maxWidth: 800, margin: "0 auto 20px" }}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.14 }}
+            transition={revealTransition}
           >
-            Grow your restaurant<br /><span className="accent">with TrueServe</span>
-          </motion.h1>
-          <motion.p className="food-subtitle" style={{ maxWidth: 560, margin: "0 auto 36px", textAlign: "center" }}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.2 }}
-          >
-            Reach more local customers, manage orders in real time, and keep 100% of every dollar you earn — flat monthly rate, zero commission.
-          </motion.p>
-          <motion.div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.26 }}
-          >
-            <motion.div whileHover={shouldReduceMotion ? undefined : { y: -2 }} transition={{ duration: 0.18 }}>
-            <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
-              Apply as Founding Partner →
-            </Link>
-            </motion.div>
-          </motion.div>
-        </motion.section>
-
-        {/* ── FEATURE CARDS ── */}
-        <section className="grid gap-6 md:grid-cols-3" style={{ marginBottom: 56 }}>
-          {[
-            {
-              icon: "💳",
-              kicker: "Zero Commission",
-              title: "Keep everything you earn",
-              desc: "TrueServe charges a flat monthly fee — not a cut of every order. The more you sell, the more you keep.",
-            },
-            {
-              icon: "📊",
-              kicker: "Real-Time Control",
-              title: "Live order dashboard",
-              desc: "See every order the moment it comes in, track prep timing, monitor your driver, and view daily revenue — all in one place.",
-            },
-            {
-              icon: "🔒",
-              kicker: "Rate Lock Guarantee",
-              title: "Your price, locked forever",
-              desc: "Founding partners lock in today's rate permanently. Even as TrueServe grows and pricing increases, your rate never changes.",
-            },
-          ].map((card, index) => (
-            <motion.div
-              key={card.title}
-              className="food-card"
-              style={{ padding: 28 }}
-              initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
-              whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-              whileHover={shouldReduceMotion ? undefined : { y: -3 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+            <video
+              className="food-auth-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
             >
-              <div style={{ fontSize: 32, marginBottom: 12 }}>{card.icon}</div>
-              <p className="food-kicker" style={{ marginBottom: 8 }}>{card.kicker}</p>
-              <h3 className="food-heading" style={{ fontSize: 26, marginBottom: 10 }}>{card.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.65)" }}>{card.desc}</p>
-            </motion.div>
-          ))}
+              <source src="/brand/brand_merchant_hero.mp4" type="video/mp4" />
+            </video>
+            <div className="food-auth-hero-inner">
+              <div className="food-eyebrow">Founding Partner Program</div>
+              <div className="mt-5 space-y-4">
+                <h1 className="food-heading !text-[56px]">
+                  Grow the restaurant.
+                  <span className="accent"> Keep the brand close.</span>
+                </h1>
+                <p className="food-subtitle !max-w-[560px]">
+                  TrueServe gives restaurant partners a calmer launch path, direct-order tools, and a delivery model designed to protect margins instead of taxing growth.
+                </p>
+              </div>
+
+              <ul className="food-auth-list">
+                {merchantLandingBenefits.map((benefit) => (
+                  <li key={benefit.title}>
+                    <div className="food-auth-icon">{benefit.icon}</div>
+                    <div>
+                      <div className="font-extrabold">{benefit.title}</div>
+                      <div className="text-sm text-white/65">{benefit.detail}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="food-auth-gallery merchant-landing-gallery">
+                <div className="food-auth-thumb">
+                  <img src="/brand/brand_merchant_thumb_kitchen.jpg" alt="Merchant portal preview" />
+                </div>
+                <div className="food-auth-thumb">
+                  <img src="/brand/brand_merchant_thumb_storefront.jpg" alt="Storefront preview" />
+                </div>
+                <div className="food-auth-thumb">
+                  <img src="/brand/brand_merchant_thumb_packaging.jpg" alt="Operations preview" />
+                </div>
+              </div>
+            </div>
+          </motion.section>
+
+          <motion.section
+            className="food-panel food-auth-form merchant-landing-panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 18 }}
+            animate={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.08 }}
+          >
+            <p className="food-kicker mb-3">Merchant onboarding</p>
+            <h2 className="food-heading !text-[38px]">Apply with a clearer path.</h2>
+            <p className="lead mt-2">
+              The merchant side should feel structured from the first application step through launch and daily operations.
+            </p>
+
+            <div className="merchant-offer-banner">
+              <p className="merchant-offer-label">Founding partner offer</p>
+              <p className="merchant-offer-copy">First 30 days free, zero commission orders, and a rate locked for life.</p>
+            </div>
+
+            <div className="merchant-stat-grid">
+              {merchantLandingStats.map((stat) => (
+                <div key={stat.label} className="merchant-stat-card">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="merchant-next-steps">
+              <div className="merchant-next-steps-head">
+                <CheckCircle2 size={18} />
+                <span>What happens next</span>
+              </div>
+              <div className="merchant-next-step">
+                <span className="merchant-next-step-number">01</span>
+                <p>Submit your restaurant details and team contact information.</p>
+              </div>
+              <div className="merchant-next-step">
+                <span className="merchant-next-step-number">02</span>
+                <p>We review fit, coordinate setup, and help prepare your storefront and menu flow.</p>
+              </div>
+              <div className="merchant-next-step">
+                <span className="merchant-next-step-number">03</span>
+                <p>You launch into one merchant dashboard built to support daily operations, not just sign-up.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 mt-7">
+              <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block flex items-center justify-center gap-2">
+                Apply As Founding Partner <ArrowRight size={16} />
+              </Link>
+              <Link href="/merchant/login" className="portal-btn-outline portal-btn-outline-block flex items-center justify-center">
+                Merchant Login
+              </Link>
+            </div>
+
+            <div className="food-auth-note">
+              Already onboarded? <Link href="/merchant/login" className="text-[#f97316] font-bold">Sign in</Link>
+            </div>
+          </motion.section>
         </section>
 
-        {/* ── HOW IT WORKS ── */}
-        <motion.section
-          className="food-panel"
-          style={{ marginBottom: 56, padding: 40 }}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={revealTransition}
-        >
-          <p className="food-kicker" style={{ marginBottom: 12 }}>How It Works</p>
-          <h2 className="food-heading" style={{ marginBottom: 32 }}>Up and running <span className="accent">in minutes</span></h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              { step: "01", title: "Apply online",    desc: "Fill out a quick form with your restaurant info. We review and approve within 24 hours." },
-              { step: "02", title: "Build your menu", desc: "Sync with Toast, Square, or Clover — or use our AI menu scanner to import your menu in seconds." },
-              { step: "03", title: "Start earning",   desc: "Orders flow directly to your dashboard. Drivers are dispatched automatically. You get paid next day." },
-            ].map((item, index) => (
+        <FadeInSection className="mt-24">
+          <div className="merchant-box-section">
+            <div className="merchant-box-head">
+              <div>
+                <p className="food-kicker mb-3">Merchant Path</p>
+                <h2 className="food-heading">
+                  One cleaner set of boxes.
+                  <span className="accent"> One clearer story.</span>
+                </h2>
+              </div>
+              <p className="text-sm leading-relaxed text-white/42 max-w-[360px]">
+                This section now reads as one system: what merchants get, how launch works, and why the partnership is worth it.
+              </p>
+            </div>
+
+            <div className="merchant-box-grid">
               <motion.div
-                key={item.step}
-                style={{ display: "flex", gap: 16 }}
-                initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                className="merchant-box merchant-box-feature"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
                 whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={revealTransition}
               >
-                <div style={{ fontFamily: "var(--font-bebas), sans-serif", fontSize: 40, lineHeight: 1, color: "rgba(249,115,22,0.25)", flexShrink: 0, minWidth: 48 }}>{item.step}</div>
-                <div>
-                  <h4 style={{ fontFamily: "var(--font-bebas), sans-serif", fontSize: 20, letterSpacing: "0.04em", textTransform: "uppercase", color: "#fff", marginBottom: 6 }}>{item.title}</h4>
-                  <p style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,0.6)" }}>{item.desc}</p>
+                <p className="merchant-box-label">Built Around Merchants</p>
+                <h3 className="merchant-box-title">The platform should feel like a business partner.</h3>
+                <p className="merchant-box-copy">
+                  We are trying to reduce friction at the exact points where restaurant operators usually lose time, margin, or control.
+                </p>
+                <div className="merchant-box-list">
+                  {merchantCards.map((card) => {
+                    const Icon = card.icon;
+                    return (
+                      <div key={card.title} className="merchant-box-list-item">
+                        <div className="merchant-box-icon">
+                          <Icon size={18} />
+                        </div>
+                        <div>
+                          <p className="merchant-box-item-kicker">{card.kicker}</p>
+                          <h4 className="merchant-box-item-title">{card.title}</h4>
+                          <p className="merchant-box-item-copy">{card.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </motion.div>
-            ))}
-          </div>
-        </motion.section>
 
-        {/* ── FOUNDING PARTNER CTA ── */}
-        <motion.section
-          style={{ textAlign: "center", padding: "40px 0 64px" }}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={revealTransition}
-        >
-          <p className="food-kicker" style={{ marginBottom: 10, color: "#f97316" }}>Founding Partner Program</p>
-          <h2 className="food-heading" style={{ marginBottom: 12 }}>Limited spots available.</h2>
-          <p className="food-subtitle" style={{ maxWidth: 460, margin: "0 auto 10px" }}>
-            First 30 days free. Rate locked for life. Direct line to our team during onboarding.
-          </p>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 28 }}>Month-to-month · Cancel with 30 days notice</p>
-          <motion.div whileHover={shouldReduceMotion ? undefined : { y: -2 }} transition={{ duration: 0.18 }}>
-            <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", display: "inline-flex", padding: "16px 40px", fontSize: 15 }}>
-              Apply as Founding Partner →
-            </Link>
-          </motion.div>
-        </motion.section>
+              <motion.div
+                className="merchant-box merchant-box-offer"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.06 }}
+              >
+                <p className="merchant-box-label">Founding Partner Offer</p>
+                <h3 className="merchant-box-title">Simple economics from day one.</h3>
+                <div className="merchant-mini-stats">
+                  {merchantLandingStats.map((stat) => (
+                    <div key={stat.label} className="merchant-mini-stat">
+                      <strong>{stat.value}</strong>
+                      <span>{stat.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
 
-        <footer className="mt-4 border-t border-white/5 px-2 pt-8 pb-10 text-center">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4">
-            <Logo size="md" />
-            <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/about" className="hover:text-[#f97316] transition-colors">About</Link>
-              <Link href="/driver" className="hover:text-[#f97316] transition-colors">For Drivers</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+              {merchantSteps.map((step, index) => (
+                <motion.div
+                  key={step.step}
+                  className="merchant-box merchant-box-step"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.1 + index * 0.05 }}
+                >
+                  <p className="merchant-box-number">{step.step}</p>
+                  <h3 className="merchant-box-title">{step.title}</h3>
+                  <p className="merchant-box-copy">{step.detail}</p>
+                </motion.div>
+              ))}
+
+              {merchantProof.map((row, index) => (
+                <motion.div
+                  key={row.title}
+                  className="merchant-box merchant-box-proof"
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.24 + index * 0.05 }}
+                >
+                  <p className="merchant-box-label">{row.label}</p>
+                  <h3 className="merchant-box-title">{row.title}</h3>
+                  <p className="merchant-box-copy">{row.detail}</p>
+                </motion.div>
+              ))}
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
-              © {new Date().getFullYear()} TrueServe · Bringing local flavor to your doorstep.
+          </div>
+        </FadeInSection>
+
+        <FadeInSection className="mt-24">
+          <div className="home-closing-cta">
+            <div className="text-center md:text-left">
+              <p className="food-kicker mb-3">Ready To Partner?</p>
+              <h2 className="food-heading !text-[34px] md:!text-[42px]">
+                Bring your storefront over.
+                <span className="accent"> We&apos;ll keep the path clear.</span>
+              </h2>
+              <p className="mt-3 max-w-[470px] text-sm text-white/52 leading-7">
+                Apply today, lock the founding rate, and launch with a delivery layer that keeps more control with your team.
+              </p>
+            </div>
+            <div className="flex flex-col items-start md:items-end gap-3 shrink-0 w-full md:w-auto">
+              <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block flex items-center justify-center gap-2 whitespace-nowrap !text-base !py-4 !px-8">
+                Apply Now <ArrowRight size={16} />
+              </Link>
+              <Link href="/merchant/login" className="text-sm font-bold text-white/50 hover:text-[#f97316] transition-colors">
+                Already onboarded? Sign in
+              </Link>
+            </div>
+          </div>
+        </FadeInSection>
+
+        <footer className="home-footer">
+          <div className="home-footer-brand">
+            <Logo size="md" />
+            <p className="home-footer-copy">
+              Merchant tools, direct-order support, and a calmer launch path for restaurants that want more control over delivery.
             </p>
+          </div>
+          <div className="home-footer-links">
+            <div className="home-footer-nav">
+              <Link href="/restaurants" className="hover:text-[#f97316] transition-colors">Order Food</Link>
+              <Link href="/about" className="hover:text-[#f97316] transition-colors">About</Link>
+              <Link href="/driver" className="hover:text-[#f97316] transition-colors">Drivers</Link>
+              <Link href="/contact" className="hover:text-[#f97316] transition-colors">Contact</Link>
+              <Link href="/merchant/login" className="hover:text-[#f97316] transition-colors">Sign In</Link>
+            </div>
+            <div className="home-footer-meta">
+              <span>&copy; {new Date().getFullYear()} TrueServe</span>
+              <div className="home-footer-legal">
+                <Link href="/privacy" className="hover:text-[#f97316] transition-colors">Privacy</Link>
+                <Link href="/terms" className="hover:text-[#f97316] transition-colors">Terms</Link>
+              </div>
+            </div>
           </div>
         </footer>
       </main>
