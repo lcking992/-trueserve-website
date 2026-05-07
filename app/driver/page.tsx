@@ -19,21 +19,57 @@ export default function DriverLanding() {
 
       <main className="food-app-main">
         {/* Hero */}
-        <section style={{ padding: "64px 0 48px", textAlign: "center" }}>
-          <p className="food-kicker" style={{ marginBottom: 16, color: "#f97316" }}>For Drivers</p>
-          <h1 className="food-title" style={{ marginBottom: 20, maxWidth: 700, margin: "0 auto 20px" }}>
-            Earn on<br /><span className="accent">your terms</span>
-          </h1>
-          <p className="food-subtitle" style={{ maxWidth: 520, margin: "0 auto 36px", textAlign: "center" }}>
-            Deliver when you want, keep what you earn, and get paid fast — no shift requirements, no boss, no waiting.
-          </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/driver/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
-              Apply to Drive →
-            </Link>
-            <Link href="/driver/login" className="portal-btn-outline portal-btn-outline-block" style={{ width: "auto", padding: "14px 28px", fontSize: 14 }}>
-              Sign In
-            </Link>
+        <section style={{ padding: "48px 0 56px" }}>
+          {/* Image */}
+          <div style={{
+            position: "relative",
+            width: "100%",
+            borderRadius: 24,
+            overflow: "hidden",
+            marginBottom: 48,
+            aspectRatio: "16/7",
+            minHeight: 280,
+          }}>
+            <img
+              src="/driver_hero_real.png"
+              alt="TrueServe driver on the road at dusk with delivery bag"
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }}
+            />
+            {/* gradient overlay so text below doesn't need extra contrast */}
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to top, rgba(9,9,12,0.72) 0%, rgba(9,9,12,0.1) 60%, transparent 100%)"
+            }} />
+            {/* bottom-left badge on the image */}
+            <div style={{
+              position: "absolute", bottom: 20, left: 24,
+              display: "flex", alignItems: "center", gap: 8,
+              background: "rgba(9,9,12,0.75)", backdropFilter: "blur(8px)",
+              border: "1px solid rgba(249,115,22,0.3)", borderRadius: 10,
+              padding: "8px 14px",
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#f97316", flexShrink: 0, boxShadow: "0 0 6px #f97316" }} />
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "#f97316" }}>Now accepting drivers</span>
+            </div>
+          </div>
+
+          {/* Text + CTAs */}
+          <div style={{ textAlign: "center" }}>
+            <p className="food-kicker" style={{ marginBottom: 16, color: "#f97316" }}>For Drivers</p>
+            <h1 className="food-title" style={{ marginBottom: 20, maxWidth: 700, margin: "0 auto 20px" }}>
+              Earn on<br /><span className="accent">your terms</span>
+            </h1>
+            <p className="food-subtitle" style={{ maxWidth: 520, margin: "0 auto 36px", textAlign: "center" }}>
+              Deliver when you want, keep what you earn, and get paid fast — no shift requirements, no boss, no waiting.
+            </p>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              <Link href="/driver/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
+                Apply to Drive →
+              </Link>
+              <Link href="/driver/login" className="portal-btn-outline portal-btn-outline-block" style={{ width: "auto", padding: "14px 28px", fontSize: 14 }}>
+                Sign In
+              </Link>
+            </div>
           </div>
         </section>
 

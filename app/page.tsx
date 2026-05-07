@@ -20,6 +20,7 @@ const FacebookIcon = ({ className }: { className?: string }) => (
 );
 import Logo from "@/components/Logo";
 import LandingSearch from "@/components/LandingSearch";
+import ThreeHandoffs from "@/components/ThreeHandoffs";
 import { supabase } from "@/lib/supabase";
 import {
   getLiveRestaurants,
@@ -528,35 +529,7 @@ export default function Home() {
           viewport={{ once: true, amount: 0.2 }}
           transition={revealTransition}
         >
-          <div className="mb-5">
-            <p className="food-kicker mb-2">How TrueServe works</p>
-            <h2 className="food-heading">A cleaner path from <span className="accent">search to delivery</span></h2>
-          </div>
-          <div className="home-steps-grid grid gap-4 md:grid-cols-3">
-            {howItWorks.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <motion.div
-                  key={item.step}
-                  className="food-card home-step-card"
-                  initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
-                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
-                  whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-                >
-                  <div className="mb-4 flex items-center justify-between gap-3">
-                    <span className="text-[12px] font-black uppercase tracking-[0.24em] text-white/35">{item.step}</span>
-                    <span className="flex h-10 w-10 items-center justify-center rounded-[14px] border border-white/10 bg-white/5 text-white/80">
-                      <Icon size={18} strokeWidth={2.1} />
-                    </span>
-                  </div>
-                  <h3 className="mb-3 text-[28px] font-black uppercase tracking-[0.06em] text-white">{item.title}</h3>
-                  <p className="text-sm leading-7 text-white/68">{item.detail}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+          <ThreeHandoffs />
         </motion.section>
 
         <motion.section
