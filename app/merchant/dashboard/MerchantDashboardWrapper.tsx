@@ -4,24 +4,38 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/app/auth/actions';
+import {
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Menu as MenuIcon,
+  Network,
+  Plug,
+  ShieldCheck,
+  Store,
+  UtensilsCrossed,
+} from 'lucide-react';
 
 interface MerchantDashboardWrapperProps {
   restaurantName: string;
+  hasMultipleLocations?: boolean;
   children: React.ReactNode;
 }
 
-export default function MerchantDashboardWrapper({ restaurantName, children }: MerchantDashboardWrapperProps) {
+export default function MerchantDashboardWrapper({ restaurantName, hasMultipleLocations = false, children }: MerchantDashboardWrapperProps) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const navItems = [
-    { href: '/merchant/dashboard',             label: 'Dashboard',    icon: '📊', dotColor: '#f97316', tour: 'merchant-nav-dashboard'    },
-    { href: '/merchant/dashboard/menu',        label: 'Menu',         icon: '🍽️', dotColor: '#f97316', tour: 'merchant-nav-menu'         },
-    { href: '/merchant/dashboard/compliance',  label: 'Compliance',   icon: '✅', dotColor: '#4dca80', tour: 'merchant-nav-compliance'   },
-    { href: '/merchant/dashboard/integrations',label: 'Integrations', icon: '🔗', dotColor: '#555',    tour: 'merchant-nav-integrations' },
-    { href: '/merchant/dashboard/storefront',  label: 'Storefront',   icon: '🛍️', dotColor: '#555',    tour: 'merchant-nav-storefront'   },
-    { href: '/merchant/dashboard/franchise',   label: 'Franchise',    icon: '🏪', dotColor: '#555',    tour: 'merchant-nav-franchise'    },
-    { href: '/merchant/dashboard/billing',     label: 'Billing',      icon: '💳', dotColor: '#a78bfa', tour: 'merchant-nav-billing'      },
+    { href: '/merchant/dashboard',             label: 'Dashboard',    icon: LayoutDashboard, dotColor: '#f97316', tour: 'merchant-nav-dashboard'    },
+    { href: '/merchant/dashboard/menu',        label: 'Menu',         icon: UtensilsCrossed, dotColor: '#f97316', tour: 'merchant-nav-menu'         },
+    { href: '/merchant/dashboard/compliance',  label: 'Compliance',   icon: ShieldCheck,     dotColor: '#4dca80', tour: 'merchant-nav-compliance'   },
+    { href: '/merchant/dashboard/integrations',label: 'Integrations', icon: Plug,            dotColor: '#555',    tour: 'merchant-nav-integrations' },
+    { href: '/merchant/dashboard/storefront',  label: 'Storefront',   icon: Store,           dotColor: '#555',    tour: 'merchant-nav-storefront'   },
+    ...(hasMultipleLocations
+      ? [{ href: '/merchant/dashboard/franchise', label: 'Franchise', icon: Network, dotColor: '#555', tour: 'merchant-nav-franchise' }]
+      : []),
+    { href: '/merchant/dashboard/billing',     label: 'Billing',      icon: CreditCard,      dotColor: '#a78bfa', tour: 'merchant-nav-billing'      },
   ];
 
   useEffect(() => {
@@ -110,8 +124,9 @@ export default function MerchantDashboardWrapper({ restaurantName, children }: M
           border-radius: 50% !important;
           flex-shrink: 0 !important;
         }
-        .mch-nav-emoji {
-          font-size: 13px !important;
+        .mch-nav-icon {
+          width: 15px !important;
+          height: 15px !important;
           flex-shrink: 0 !important;
         }
         .mch-sidebar-footer {
@@ -327,6 +342,7 @@ export default function MerchantDashboardWrapper({ restaurantName, children }: M
             <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               {navItems.map((item) => {
                 const isActive = pathname === item.href;
+                const Icon = item.icon;
                 return (
                   <Link
                     key={item.href}
@@ -334,7 +350,7 @@ export default function MerchantDashboardWrapper({ restaurantName, children }: M
                     data-tour={item.tour}
                     className={`mch-nav-item${isActive ? ' mch-active' : ''}`}
                   >
-                    <span className="mch-nav-emoji">{item.icon}</span>
+                    <Icon className="mch-nav-icon" aria-hidden="true" />
                     {item.label}
                   </Link>
                 );
@@ -348,7 +364,7 @@ export default function MerchantDashboardWrapper({ restaurantName, children }: M
               </button>
               <form action={logout}>
                 <button type="submit" className="mch-logout-btn">
-                  🚪 Log Out
+                  <LogOut size={14} aria-hidden="true" /> Log Out
                 </button>
               </form>
             </div>
@@ -359,7 +375,7 @@ export default function MerchantDashboardWrapper({ restaurantName, children }: M
         <main className="mch-main">
           <div className="mch-mobile-topbar">
             <button className="mch-mobile-nav-btn" aria-label="Open navigation" onClick={() => setMobileNavOpen(true)}>
-              ☰
+              <MenuIcon size={20} aria-hidden="true" />
             </button>
             <div className="mch-mobile-topbar-copy">
               <div className="mch-mobile-eyebrow">Merchant Portal</div>

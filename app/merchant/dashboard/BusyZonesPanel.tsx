@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CalendarClock, Clock3, Plus, Trash2 } from "lucide-react";
 import { upsertBusyZone, deleteBusyZone } from "../actions";
 
 interface BusyZonesPanelProps {
@@ -36,77 +37,134 @@ export default function BusyZonesPanel({ restaurantId, schedules: initialSchedul
     return (
         <>
             <style>{`
-                .bz-panel { background: #0f1219; padding: 18px 20px; }
-                .bz-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-                .bz-title { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
-                .bz-add-btn {
-                    font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-                    color: #f97316; background: transparent; border: 1px solid #3a2800;
-                    padding: 5px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+                .bz-panel {
+                    background: linear-gradient(180deg, #111713 0%, #0d110f 100%);
+                    border: 1px solid #202a24;
+                    border-radius: 14px;
+                    padding: 18px;
+                    min-height: 100%;
+                    box-shadow: 0 16px 40px rgba(0,0,0,.18);
                 }
-                .bz-add-btn:hover { background: #1a1200; }
-                .bz-desc { font-size: 12px; color: #444; margin-bottom: 16px; line-height: 1.5; }
+                .bz-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+                .bz-title-row { display: flex; align-items: flex-start; gap: 12px; }
+                .bz-icon {
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 10px;
+                    border: 1px solid rgba(249,115,22,.24);
+                    background: rgba(249,115,22,.1);
+                    color: #f97316;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-shrink: 0;
+                }
+                .bz-kicker {
+                    margin: 0 0 4px;
+                    color: #7d867f;
+                    font-size: 10px;
+                    font-weight: 900;
+                    letter-spacing: .14em;
+                    text-transform: uppercase;
+                }
+                .bz-title { margin: 0; font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -0.01em; }
+                .bz-add-btn {
+                    min-height: 38px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    border-radius: 10px;
+                    font-size: 10px; font-weight: 900; letter-spacing: 0.11em; text-transform: uppercase;
+                    color: #071009; background: #f97316; border: 1px solid #f97316;
+                    padding: 0 13px; cursor: pointer; font: inherit;
+                    white-space: nowrap;
+                }
+                .bz-add-btn:hover { background: #ff8a35; }
+                .bz-desc { font-size: 13px; color: #a3aca6; margin: 0 0 16px; line-height: 1.55; max-width: 620px; }
                 .bz-empty {
-                    background: #0c0e13; border: 1px solid #1c1f28; padding: 24px;
-                    text-align: center; font-size: 11px; font-weight: 600;
-                    letter-spacing: 0.1em; text-transform: uppercase; color: #2a2f3a;
+                    min-height: 104px;
+                    background: rgba(255,255,255,.025); border: 1px dashed #2a342e; border-radius: 12px; padding: 18px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: #8c968f;
+                    font-size: 13px;
+                    line-height: 1.45;
                 }
                 .bz-zone-list { display: flex; flex-direction: column; gap: 8px; }
                 .bz-zone-item {
-                    background: #0c0e13; border: 1px solid #1c1f28; padding: 10px 14px;
-                    display: flex; align-items: center; justify-content: space-between;
+                    background: rgba(255,255,255,.025); border: 1px solid #202a24; border-radius: 12px; padding: 12px 13px;
+                    display: flex; align-items: center; justify-content: space-between; gap: 12px;
                 }
-                .bz-zone-info { font-size: 12px; color: #ccc; }
-                .bz-zone-day { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #f97316; margin-bottom: 2px; }
+                .bz-zone-info { display: flex; align-items: center; gap: 7px; font-size: 13px; color: #dce2df; }
+                .bz-zone-day { font-size: 10px; font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; color: #f97316; margin-bottom: 4px; }
                 .bz-zone-del {
-                    background: none; border: 1px solid #2a2f3a; color: #555;
-                    width: 24px; height: 24px; cursor: pointer; font-size: 12px;
+                    background: rgba(255,255,255,.035); border: 1px solid #2a342e; color: #909991;
+                    width: 34px; height: 34px; border-radius: 10px; cursor: pointer;
                     display: flex; align-items: center; justify-content: center;
                 }
                 .bz-zone-del:hover { border-color: #e24b4a; color: #e24b4a; }
 
                 /* Add zone modal */
-                .bz-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.8); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
-                .bz-modal { background: #0f1219; border: 1px solid #2a2f3a; padding: 28px; width: 100%; max-width: 420px; position: relative; }
-                .bz-modal-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 20px; letter-spacing: -0.01em; }
+                .bz-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.78); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+                .bz-modal { background: #101611; border: 1px solid #28342d; border-radius: 14px; padding: 24px; width: 100%; max-width: 440px; position: relative; box-shadow: 0 24px 80px rgba(0,0,0,.4); }
+                .bz-modal-title { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 20px; letter-spacing: -0.01em; }
                 .bz-field { margin-bottom: 14px; }
-                .bz-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; font-style: italic; text-transform: uppercase; color: #555; display: block; margin-bottom: 6px; }
+                .bz-label { font-size: 10px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; color: #7d867f; display: block; margin-bottom: 7px; }
                 .bz-input, .bz-select {
-                    width: 100%; background: #0c0e13; border: 1px solid #2a2f3a; color: #ccc;
-                    font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 8px 10px; outline: none;
+                    width: 100%; min-height: 44px; border-radius: 10px; background: #090d0b; border: 1px solid #28342d; color: #eef2ef;
+                    font: inherit; font-size: 13px; padding: 0 12px; outline: none;
                 }
                 .bz-input:focus, .bz-select:focus { border-color: #f97316; }
                 .bz-actions { display: flex; gap: 8px; margin-top: 20px; }
                 .bz-cancel {
-                    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-                    padding: 9px 18px; background: transparent; border: 1px solid #2a2f3a; color: #888;
-                    cursor: pointer; font-family: 'DM Sans', sans-serif;
+                    min-height: 44px; border-radius: 10px; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
+                    padding: 0 18px; background: rgba(255,255,255,.04); border: 1px solid #28342d; color: #d7dfda;
+                    cursor: pointer; font: inherit;
                 }
                 .bz-submit {
-                    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-                    padding: 9px 18px; background: #f97316; border: none; color: #000;
-                    cursor: pointer; flex: 1; font-family: 'DM Sans', sans-serif;
+                    min-height: 44px; border-radius: 10px; font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase;
+                    padding: 0 18px; background: #f97316; border: none; color: #071009;
+                    cursor: pointer; flex: 1; font: inherit;
+                }
+                @media (max-width: 680px) {
+                    .bz-panel { padding: 16px; }
+                    .bz-hd { flex-direction: column; }
+                    .bz-add-btn { width: 100%; }
                 }
             `}</style>
 
             <div className="bz-panel">
                 <div className="bz-hd">
-                    <div className="bz-title">Recurring Busy Zones</div>
-                    <button className="bz-add-btn" onClick={() => setIsAdding(true)}>+ Add Zone</button>
+                    <div className="bz-title-row">
+                        <div className="bz-icon"><CalendarClock size={19} /></div>
+                        <div>
+                            <p className="bz-kicker">Rush planning</p>
+                            <h2 className="bz-title">Busy hour schedule</h2>
+                        </div>
+                    </div>
+                    <button className="bz-add-btn" onClick={() => setIsAdding(true)}>
+                        <Plus size={15} />
+                        Add zone
+                    </button>
                 </div>
-                <div className="bz-desc">Proactively manage known rush hours (e.g. Friday nights).</div>
+                <p className="bz-desc">Add repeat windows for dinner rushes, weekend spikes, or catering blocks so prep times adjust before orders pile up.</p>
 
                 {schedules.length === 0 ? (
-                    <div className="bz-empty">No scheduled busy zones yet.</div>
+                    <div className="bz-empty">
+                        <Clock3 size={18} />
+                        No busy windows are scheduled yet. Add one for predictable rush periods.
+                    </div>
                 ) : (
                     <div className="bz-zone-list">
                         {schedules.map((zone) => (
                             <div key={zone.id} className="bz-zone-item">
                                 <div>
                                     <div className="bz-zone-day">{DAYS[zone.dayOfWeek]}s</div>
-                                    <div className="bz-zone-info">{zone.startTime?.slice(0, 5)} – {zone.endTime?.slice(0, 5)}</div>
+                                    <div className="bz-zone-info"><Clock3 size={14} /> {zone.startTime?.slice(0, 5)} – {zone.endTime?.slice(0, 5)}</div>
                                 </div>
-                                <button className="bz-zone-del" onClick={() => handleDelete(zone.id)} aria-label="Delete zone">✕</button>
+                                <button className="bz-zone-del" onClick={() => handleDelete(zone.id)} aria-label="Delete zone"><Trash2 size={15} /></button>
                             </div>
                         ))}
                     </div>

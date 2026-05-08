@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
 import { getAuthSession } from "@/app/auth/actions";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import Link from "next/link";
 import MerchantRealtime from "@/components/MerchantRealtime";
 import WelcomeAnimation from "@/components/WelcomeAnimation";
@@ -17,6 +17,8 @@ import LiveOrdersPanel from "@/app/merchant/dashboard/LiveOrdersPanel";
 import HoursPanel from "@/app/merchant/dashboard/HoursPanel";
 import CoverPhotoPanel from "@/app/merchant/dashboard/CoverPhotoPanel";
 import RevenueSparkline from "@/app/merchant/dashboard/RevenueSparkline";
+import MerchantPortalRecovery from "./MerchantPortalRecovery";
+import { ArrowRight, CheckCircle2, CreditCard, DollarSign, Package, UtensilsCrossed } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +28,7 @@ export default async function MerchantDashboard({
     searchParams?: Promise<{ mode?: string; stripe_connect?: string }>;
 }) {
     const params = searchParams ? await searchParams : undefined;
+    const stripeConnectState = params?.stripe_connect;
     const cookieStore = await cookies();
     const isPreview = cookieStore.get("preview_mode")?.value === "true";
     const cookieUserId = cookieStore.get("userId")?.value;
@@ -53,8 +56,7 @@ export default async function MerchantDashboard({
             schedules: [],
         };
     } else {
-        const supabase = await createClient();
-        const { data: restaurants, error } = await supabase
+        const { data: restaurants, error } = await supabaseAdmin
             .from("Restaurant")
             .select(`
                 *,
@@ -66,7 +68,7 @@ export default async function MerchantDashboard({
 
         if (error || !restaurants || restaurants.length === 0) {
             console.error("Dashboard Fetch Error:", error);
-            redirect("/merchant/signup");
+            return <MerchantPortalRecovery />;
         }
 
         restaurant = restaurants[0];
@@ -80,7 +82,17 @@ export default async function MerchantDashboard({
         .filter((o: any) => o.status === "DELIVERED" || o.status === "READY_FOR_PICKUP" || o.status === "PICKED_UP")
         .reduce((sum: number, o: any) => sum + Number(o.total || 0), 0);
 
-    const hasStripe = Boolean(restaurant.stripeAccountId);
+    const hasStripeAccount = Boolean(restaurant.stripeAccountId);
+    const hasStripe = Boolean(restaurant.stripeOnboardingComplete);
+    const hasHours = Boolean(restaurant.openTime && restaurant.closeTime);
+    const hasPos = Boolean(
+        (restaurant.posSystem && restaurant.posSystem !== "None") ||
+        (restaurant.posType && restaurant.posType !== "None") ||
+        restaurant.posClientId
+    );
+    const hasTestOrder = (restaurant.orders || []).some((o: any) =>
+        ["PENDING", "PREPARING", "READY_FOR_PICKUP", "PICKED_UP", "DELIVERED"].includes(String(o.status || "").toUpperCase())
+    );
 
     return (
         <>
@@ -111,7 +123,7 @@ export default async function MerchantDashboard({
                     background: #0f1210;
                     border: 1px solid #1e2420;
                     display: flex; align-items: center; justify-content: center;
-                    font-size: 11px;
+                    color: #f97316;
                 }
                 .mch-stat-value {
                     font-size: 27px;
@@ -120,57 +132,77 @@ export default async function MerchantDashboard({
                     letter-spacing: -0.5px;
                 }
                 .mch-stripe-banner {
-                    background: #141a18;
-                    border: 1px solid #1e2420;
-                    border-radius: 8px;
-                    padding: 13px 16px;
+                    background: linear-gradient(180deg, #111713 0%, #0d110f 100%);
+                    border: 1px solid #202a24;
+                    border-radius: 14px;
+                    padding: 16px;
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
                     margin-bottom: 14px;
-                    gap: 12px;
+                    gap: 16px;
+                    box-shadow: 0 16px 40px rgba(0,0,0,.18);
                 }
                 .mch-stripe-banner.connected {
-                    border-color: #1e3a2a;
-                    background: #0f1a14;
+                    border-color: rgba(61,214,140,.28);
+                    background: linear-gradient(180deg, #101913 0%, #0d140f 100%);
                 }
-                .mch-stripe-left { display: flex; align-items: center; gap: 10px; }
+                .mch-stripe-banner.pending {
+                    border-color: rgba(249,115,22,.28);
+                    background: linear-gradient(180deg, #18130f 0%, #0f100d 100%);
+                }
+                .mch-stripe-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
                 .mch-stripe-icon {
-                    width: 22px; height: 15px;
-                    border-radius: 3px;
-                    background: #635bff;
+                    width: 40px; height: 40px;
+                    border-radius: 10px;
+                    background: rgba(99,91,255,.13);
+                    border: 1px solid rgba(99,91,255,.3);
+                    color: #b8b5ff;
                     flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
-                .mch-stripe-icon.connected { background: #1e3a2a; }
+                .mch-stripe-icon.connected { background: rgba(61,214,140,.1); border-color: rgba(61,214,140,.28); color: #3dd68c; }
+                .mch-stripe-icon.pending { background: rgba(249,115,22,.1); border-color: rgba(249,115,22,.28); color: #f97316; }
                 .mch-stripe-title {
                     display: block;
                     color: #fff;
-                    font-weight: 700;
-                    font-size: 12px;
-                    margin-bottom: 2px;
+                    font-weight: 900;
+                    font-size: 15px;
+                    margin-bottom: 4px;
                 }
-                .mch-stripe-sub { font-size: 11px; color: #aab4c8; }
+                .mch-stripe-sub { display: block; font-size: 12px; line-height: 1.45; color: #a5aea8; max-width: 520px; }
                 .mch-stripe-connect-btn {
                     background: #f97316;
-                    color: #000;
+                    color: #071009;
                     border: none;
-                    border-radius: 8px;
-                    padding: 7px 16px;
-                    font-size: 12px;
-                    font-weight: 800;
+                    border-radius: 10px;
+                    min-height: 42px;
+                    padding: 0 16px;
+                    font-size: 11px;
+                    font-weight: 900;
                     cursor: pointer;
                     white-space: nowrap;
                     flex-shrink: 0;
                     transition: background 0.15s;
                     text-transform: uppercase;
-                    letter-spacing: 0.1em;
+                    letter-spacing: 0.11em;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
                 }
                 .mch-stripe-connect-btn:hover { background: #ea6c10; }
                 .mch-stripe-connected-badge {
                     font-size: 11px;
-                    color: #4dca80;
-                    font-weight: 800;
+                    color: #3dd68c;
+                    font-weight: 900;
+                    letter-spacing: .1em;
+                    text-transform: uppercase;
                     white-space: nowrap;
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 7px;
                 }
                 .mch-section-head {
                     font-size: 10px;
@@ -260,9 +292,12 @@ export default async function MerchantDashboard({
 
             <OnboardingChecklist
                 hasMenuItems={(restaurant.menuItems || []).length > 0}
-                hasStripe={Boolean(restaurant.stripeAccountId)}
+                hasStripe={hasStripe}
                 hasImage={Boolean(restaurant.imageUrl)}
                 isVisible={restaurant.visibility === "VISIBLE"}
+                hasHours={hasHours}
+                hasPos={hasPos || restaurant.posSystem === "None" || restaurant.posType === "None"}
+                hasTestOrder={hasTestOrder}
                 restaurantId={restaurant.id}
             />
 
@@ -270,21 +305,21 @@ export default async function MerchantDashboard({
             <div className="mch-stat-grid">
                 <div className="mch-stat-card">
                     <div className="mch-stat-label">
-                        <div className="mch-stat-icon">📦</div>
+                        <div className="mch-stat-icon"><Package size={12} aria-hidden="true" /></div>
                         Incoming Orders
                     </div>
                     <div className="mch-stat-value">{pendingOrders.length}</div>
                 </div>
                 <div className="mch-stat-card">
                     <div className="mch-stat-label">
-                        <div className="mch-stat-icon">🍽️</div>
+                        <div className="mch-stat-icon"><UtensilsCrossed size={12} aria-hidden="true" /></div>
                         Menu Items
                     </div>
                     <div className="mch-stat-value">{(restaurant.menuItems || []).length}</div>
                 </div>
                 <div className="mch-stat-card">
                     <div className="mch-stat-label">
-                        <div className="mch-stat-icon">💵</div>
+                        <div className="mch-stat-icon"><DollarSign size={12} aria-hidden="true" /></div>
                         Net Revenue
                     </div>
                     <div className="mch-stat-value">${netRevenue.toFixed(2)}</div>
@@ -295,27 +330,63 @@ export default async function MerchantDashboard({
             <RevenueSparkline orders={restaurant.orders || []} />
 
             {/* STRIPE BANNER */}
-            <div className={`mch-stripe-banner${hasStripe ? ' connected' : ''}`}>
+            {stripeConnectState === "setup_required" && (
+                <div style={{ marginBottom: 14, border: "1px solid rgba(249,115,22,0.28)", background: "rgba(249,115,22,0.08)", borderRadius: 10, padding: "13px 15px", color: "#f5c7a6", fontSize: 12, lineHeight: 1.55 }}>
+                    <strong style={{ color: "#f97316" }}>TrueServe needs Stripe Connect enabled first.</strong>{" "}
+                    The button is reaching Stripe, but Stripe will not create merchant payout accounts until the TrueServe Stripe dashboard is enrolled in Connect at dashboard.stripe.com/connect.
+                </div>
+            )}
+            {stripeConnectState === "error" && (
+                <div style={{ marginBottom: 14, border: "1px solid rgba(239,68,68,0.28)", background: "rgba(239,68,68,0.08)", borderRadius: 10, padding: "13px 15px", color: "#fecaca", fontSize: 12, lineHeight: 1.55 }}>
+                    <strong style={{ color: "#f87171" }}>Stripe connection failed.</strong>{" "}
+                    Please try again or contact TrueServe support before taking live orders.
+                </div>
+            )}
+            <div className={`mch-stripe-banner${hasStripe ? ' connected' : hasStripeAccount ? ' pending' : ''}`}>
                 <div className="mch-stripe-left">
-                    <div className={`mch-stripe-icon${hasStripe ? ' connected' : ''}`} />
+                    <div className={`mch-stripe-icon${hasStripe ? ' connected' : hasStripeAccount ? ' pending' : ''}`}>
+                        {hasStripe ? <CheckCircle2 size={19} /> : <CreditCard size={19} />}
+                    </div>
                     <div>
                         <span className="mch-stripe-title">
-                            {hasStripe ? '✓ Stripe Connected' : 'Connect Stripe'}
+                            {hasStripe ? 'Stripe connected' : hasStripeAccount ? 'Finish Stripe setup' : 'Connect Stripe'}
                         </span>
                         <span className="mch-stripe-sub">
                             {hasStripe
-                                ? 'Your payouts are active. Funds are deposited on a rolling basis.'
-                                : 'To start receiving payouts, connect your Stripe account.'}
+                                ? 'Payouts are active. Funds deposit to the restaurant bank account on Stripe’s schedule.'
+                                : hasStripeAccount
+                                    ? 'Stripe started the account, but onboarding is not complete yet. Continue setup to activate payouts.'
+                                    : 'Connect Stripe so payouts can go directly to the restaurant bank account.'}
                         </span>
                     </div>
                 </div>
                 {!hasStripe ? (
                     <form action={createStripeAccount}>
-                        <button type="submit" className="mch-stripe-connect-btn">Connect →</button>
+                        <button type="submit" className="mch-stripe-connect-btn">
+                            {hasStripeAccount ? "Continue setup" : "Connect"}
+                            <ArrowRight size={15} />
+                        </button>
                     </form>
                 ) : (
-                    <span className="mch-stripe-connected-badge">✓ Payouts Active</span>
+                    <span className="mch-stripe-connected-badge"><CheckCircle2 size={15} /> Payouts active</span>
                 )}
+            </div>
+
+            <div style={{
+                marginBottom: 14,
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(255,255,255,0.035)",
+                borderRadius: 10,
+                padding: "13px 15px",
+                display: "grid",
+                gap: 6,
+            }}>
+                <div style={{ fontSize: 10, color: "#f97316", fontWeight: 900, letterSpacing: ".14em", textTransform: "uppercase" }}>
+                    Launch support
+                </div>
+                <div style={{ color: "rgba(255,255,255,.72)", fontSize: 12, lineHeight: 1.55 }}>
+                    Need help with Stripe, Toast, menu setup, or a test order? Keep this portal open during onboarding and TrueServe can walk the restaurant through each step before going live.
+                </div>
             </div>
 
             {/* LIVE ORDERS */}

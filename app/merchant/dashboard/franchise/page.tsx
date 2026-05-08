@@ -2,9 +2,10 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuthSession } from "@/app/auth/actions";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { calculateFranchiseMetrics, generateFranchiseInsights } from "@/lib/franchiseAnalytics";
 import type { RestaurantComplianceMetrics } from "@/lib/complianceAnalytics";
+import { AlertTriangle, BarChart3, Building2, CheckCircle2, Flag, MapPin, Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -22,25 +23,25 @@ function gradeToColor(grade: string): { bg: string; text: string; border: string
     }
 }
 
-function getTrendEmoji(trend?: string): string {
+function getTrendLabel(trend?: string): string {
     switch (trend) {
         case "improving":
-            return "🔺";
+            return "Improving";
         case "declining":
-            return "🔻";
+            return "Declining";
         default:
-            return "➡️";
+            return "Stable";
     }
 }
 
-function getStatusEmoji(status?: string): string {
+function getStatusLabel(status?: string): string {
     switch (status) {
         case "PASS":
-            return "✅";
+            return "Passing";
         case "IN_REVIEW":
-            return "⚠️";
+            return "In review";
         case "FLAGGED":
-            return "🚨";
+            return "Flagged";
         default:
             return "—";
     }
@@ -103,8 +104,7 @@ export default async function FranchiseDashboard() {
             },
         ];
     } else {
-        const supabase = await createClient();
-        const { data } = await supabase
+        const { data } = await supabaseAdmin
             .from("Restaurant")
             .select(
                 "id, name, city, state, complianceScore, healthGrade, complianceStatus, lastInspectionAt"
@@ -128,9 +128,9 @@ export default async function FranchiseDashboard() {
         }
     }
 
-    // If only one restaurant, redirect to compliance-score page
+    // Franchise tools are only relevant when a merchant owns multiple locations.
     if (restaurants.length === 1 && !isPreview) {
-        redirect("/merchant/dashboard/compliance-score");
+        redirect("/merchant/dashboard");
     }
 
     const franchiseMetrics = calculateFranchiseMetrics(restaurants);
@@ -146,14 +146,14 @@ export default async function FranchiseDashboard() {
             {/* Franchise-Level Metrics — mch-stat-card style */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 14 }}>
                 {[
-                    { label: 'Locations',     icon: '🏪', value: String(franchiseMetrics.locationCount),                                    color: '#f97316'                                                      },
-                    { label: 'Avg Score',     icon: '📊', value: `${franchiseMetrics.averageScore}/100`,                                    color: '#3dd68c'                                                      },
-                    { label: 'Pass Rate',     icon: '✅', value: `${franchiseMetrics.passRate}%`,                                           color: franchiseMetrics.passRate >= 80 ? '#3dd68c' : '#e24b4a'        },
-                    { label: 'Flagged',       icon: '🚩', value: String(franchiseMetrics.flaggedCount),                                     color: franchiseMetrics.flaggedCount > 0 ? '#e24b4a' : '#3dd68c'      },
-                ].map(({ label, icon, value, color }) => (
+                    { label: 'Locations',     Icon: Building2,    value: String(franchiseMetrics.locationCount), color: '#f97316' },
+                    { label: 'Avg Score',     Icon: BarChart3,    value: `${franchiseMetrics.averageScore}/100`, color: '#3dd68c' },
+                    { label: 'Pass Rate',     Icon: CheckCircle2, value: `${franchiseMetrics.passRate}%`, color: franchiseMetrics.passRate >= 80 ? '#3dd68c' : '#e24b4a' },
+                    { label: 'Flagged',       Icon: Flag,         value: String(franchiseMetrics.flaggedCount), color: franchiseMetrics.flaggedCount > 0 ? '#e24b4a' : '#3dd68c' },
+                ].map(({ label, Icon, value, color }) => (
                     <div key={label} style={{ background: '#141a18', border: '1px solid #1e2420', borderRadius: 8, padding: 14 }}>
                         <div style={{ fontSize: 11, color: '#777', marginBottom: 7, display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ width: 18, height: 18, borderRadius: 4, background: '#0f1210', border: '1px solid #1e2420', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10 }}>{icon}</span>
+                            <span style={{ width: 18, height: 18, borderRadius: 4, background: '#0f1210', border: '1px solid #1e2420', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f97316' }}><Icon size={12} aria-hidden="true" /></span>
                             {label}
                         </div>
                         <div style={{ fontSize: 27, fontWeight: 700, color, letterSpacing: '-0.5px' }}>{value}</div>
@@ -207,7 +207,8 @@ export default async function FranchiseDashboard() {
                                         <td style={{ padding: "10px 12px", fontWeight: "600", color: "#ccc" }}>
                                             <div>{location.name}</div>
                                             <div style={{ fontSize: "11px", color: "#555", marginTop: "3px" }}>
-                                                📍 {location.city}, {location.state}
+                                                <MapPin size={11} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} />
+                                                {location.city}, {location.state}
                                             </div>
                                         </td>
                                         <td style={{ padding: "10px 12px", textAlign: "center", fontWeight: "700", color: "#f97316" }}>
@@ -230,10 +231,12 @@ export default async function FranchiseDashboard() {
                                             </div>
                                         </td>
                                         <td style={{ padding: "10px 12px", textAlign: "center", fontSize: "11px", color: "#888" }}>
-                                            {getStatusEmoji(location.complianceStatus)} {location.complianceStatus}
+                                            {location.complianceStatus === "PASS" ? <CheckCircle2 size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} /> : location.complianceStatus === "FLAGGED" ? <AlertTriangle size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} /> : <Minus size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} />}
+                                            {getStatusLabel(location.complianceStatus)}
                                         </td>
                                         <td style={{ padding: "10px 12px", textAlign: "center", fontSize: "11px", color: "#888" }}>
-                                            {getTrendEmoji(location.trend)} {location.trend}
+                                            {location.trend === "improving" ? <TrendingUp size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} /> : location.trend === "declining" ? <TrendingDown size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} /> : <Minus size={12} aria-hidden="true" style={{ display: "inline", marginRight: 4 }} />}
+                                            {getTrendLabel(location.trend)}
                                         </td>
                                         <td style={{ padding: "10px 12px", textAlign: "center", fontSize: "11px", color: "#555" }}>
                                             {lastInspectionDate}
@@ -313,8 +316,8 @@ export default async function FranchiseDashboard() {
                 </p>
                 <div style={{ display: 'grid', gap: 8 }}>
                     {[
-                        { icon: '📧', label: 'Email support', value: 'support@trueserve.delivery' },
-                        { icon: '📱', label: 'Phone support', value: '1-800-TRUESERVE' },
+                        { icon: '', label: 'Email support', value: 'support@trueserve.delivery' },
+                        { icon: '', label: 'Phone support', value: '1-800-TRUESERVE' },
                     ].map(({ icon, label, value }) => (
                         <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0f1210', border: '1px solid #1e2420', borderRadius: 6, padding: '8px 12px' }}>
                             <span style={{ fontSize: 12, color: '#888' }}>{icon} {label}</span>

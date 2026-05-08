@@ -1,5 +1,5 @@
 import { getAuthSession } from "@/app/auth/actions";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import SupportWidget from "@/components/SupportWidget";
@@ -21,22 +21,24 @@ export default async function MerchantDashboardLayout({ children }: { children: 
     }
 
     let restaurantName = "";
+    let hasMultipleLocations = false;
 
     if (isPreview) {
         restaurantName = "Pilot Kitchen";
+        hasMultipleLocations = true;
     } else {
-        const supabase = await createClient();
-        const { data: allRestaurants } = await supabase
+        const { data: allRestaurants } = await supabaseAdmin
             .from('Restaurant')
             .select('id, name')
             .eq('ownerId', activeUserId)
             .order('createdAt', { ascending: true });
 
         restaurantName = (allRestaurants || [{}])[0]?.name || "";
+        hasMultipleLocations = (allRestaurants || []).length > 1;
     }
 
     return (
-        <MerchantDashboardWrapper restaurantName={restaurantName}>
+        <MerchantDashboardWrapper restaurantName={restaurantName} hasMultipleLocations={hasMultipleLocations}>
             {children}
             <SupportWidget role="MERCHANT" />
             <PortalTour portal="MERCHANT" />
