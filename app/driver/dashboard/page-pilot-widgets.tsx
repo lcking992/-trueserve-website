@@ -4,7 +4,8 @@
 /* global CSS injected once for responsive pay-grid */
 const PAY_GRID_CSS = `
   .otc-pay-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  @media (max-width: 480px) { .otc-pay-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .otc-pay-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .otc-care-grid { grid-template-columns: 1fr !important; } }
 `;
 let _injected = false;
 function injectCss() {
@@ -16,6 +17,7 @@ function injectCss() {
 }
 
 import { useState } from 'react';
+import { Clock3, Route, ShieldCheck, TrendingUp } from 'lucide-react';
 
 interface RestaurantTrustScore {
     packagingRating: number;   // 0-5
@@ -57,6 +59,9 @@ export function OrderTransparencyCard({ order, trustScore, acceptAction }: Order
     const perHourEst = totalPay > 0
         ? (totalPay / Math.max((distanceMi / 15) + 0.3, 0.2)).toFixed(2)
         : '—';
+    const payPerMile = totalPay > 0 ? totalPay / Math.max(distanceMi, 0.1) : 0;
+    const routeQuality = payPerMile >= 4 ? 'Strong route' : payPerMile >= 2.5 ? 'Fair route' : 'Review route';
+    const waitRisk = trustScore?.avgWaitMinutes ? trustScore.avgWaitMinutes : distanceMi > 3 ? 8 : 5;
 
     return (
         <div style={{
@@ -90,7 +95,7 @@ export function OrderTransparencyCard({ order, trustScore, acceptAction }: Order
                         { label: `${distanceMi.toFixed(1)} mi`,  value: `$${distancePay.toFixed(2)}`,  color: '#e0e0e0' },
                         { label: 'Tip',       value: tipKnown ? `$${tip.toFixed(2)}` : 'Locked',
                           color: tipKnown ? '#3ecf6e' : '#f97316',
-                          note: tipKnown ? '100% yours' : 'DoorDash hides this' },
+                          note: tipKnown ? '100% yours' : 'Revealed when confirmed' },
                         { label: 'Total',     value: `$${totalPay.toFixed(2)}`,    color: '#f97316', bold: true },
                     ].map(col => (
                         <div key={col.label} style={{
@@ -118,6 +123,21 @@ export function OrderTransparencyCard({ order, trustScore, acceptAction }: Order
                 </div>
             </div>
 
+            <div className="otc-care-grid" style={{ padding: '11px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 7 }}>
+                {[
+                    { Icon: TrendingUp, label: routeQuality, detail: `$${payPerMile.toFixed(2)}/mi`, color: payPerMile >= 2.5 ? '#3ecf6e' : '#f97316' },
+                    { Icon: Clock3, label: 'Wait protection', detail: `${waitRisk}+ min monitored`, color: '#f97316' },
+                    { Icon: Route, label: 'Route notes', detail: 'Issues can be reviewed', color: '#5bcfd4' },
+                ].map(({ Icon, label, detail, color }) => (
+                    <div key={label} style={{ background: '#141a18', border: '1px solid #1e2420', borderRadius: 8, padding: '8px 9px', minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, color, fontSize: 9, fontWeight: 900, letterSpacing: '.09em', textTransform: 'uppercase', marginBottom: 3 }}>
+                            <Icon size={12} /> {label}
+                        </div>
+                        <div style={{ color: '#8e9993', fontSize: 10, fontWeight: 700, lineHeight: 1.35 }}>{detail}</div>
+                    </div>
+                ))}
+            </div>
+
             {/* Restaurant trust score */}
             {trustScore && (
                 <div style={{ padding: '10px 16px', borderBottom: '1px solid rgba(255,255,255,0.04)', display: 'flex', gap: 16, alignItems: 'center' }}>
@@ -126,7 +146,7 @@ export function OrderTransparencyCard({ order, trustScore, acceptAction }: Order
                     </div>
                     <div style={{ display: 'flex', gap: 12 }}>
                         <span style={{ fontSize: 10, color: '#e0e0e0', fontWeight: 700 }}>
-                            📦 {trustScore.packagingRating.toFixed(1)} packaging
+                            {trustScore.packagingRating.toFixed(1)} packaging
                         </span>
                         <span style={{ fontSize: 10, color: trustScore.avgWaitMinutes <= 5 ? '#3ecf6e' : '#f97316', fontWeight: 700 }}>
                             ⏱ ~{trustScore.avgWaitMinutes} min wait
@@ -145,8 +165,10 @@ export function OrderTransparencyCard({ order, trustScore, acceptAction }: Order
                     background: isCompliant ? 'rgba(62,207,110,0.1)' : 'rgba(232,64,64,0.1)',
                     border: isCompliant ? '1px solid rgba(62,207,110,0.25)' : '1px solid rgba(232,64,64,0.25)',
                     color: isCompliant ? '#3ecf6e' : '#e84040',
+                    display: 'inline-flex', alignItems: 'center', gap: 5,
                 }}>
-                    {isCompliant ? `✓ Compliant · ${complianceScore}` : '⚠ Flagged'}
+                    <ShieldCheck size={11} />
+                    {isCompliant ? `Compliant · ${complianceScore}` : 'Flagged'}
                 </span>
                 <div style={{ flex: 1 }} />
                 <form action={acceptAction}>

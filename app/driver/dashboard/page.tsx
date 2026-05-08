@@ -12,6 +12,7 @@ import DriverRouteMap from "./DriverRouteMap";
 import DriverLocationTracker from "@/components/DriverLocationTracker";
 import WeatherCard from "@/components/WeatherCard";
 import { OrderTransparencyCard } from "./page-pilot-widgets";
+import DriverCarePanel from "./DriverCarePanel";
 
 export const dynamic = "force-dynamic";
 
@@ -406,9 +407,18 @@ export default async function DriverDashboard() {
                         <span className="dd-stripe-sub">Your payouts are active and rolling to your bank.</span>
                     </div>
                 </div>
-                <span className="dd-stripe-connected">✓ Payouts Active</span>
+                <span className="dd-stripe-connected">Payouts Active</span>
             </div>
         )}
+
+        <DriverCarePanel
+            balance={Number(driver.balance || 0)}
+            totalEarnings={stats.totalEarnings}
+            trips={stats.trips}
+            rating={stats.rating}
+            activeOrder={primaryOrder}
+            availableCount={availableOrders.length}
+        />
 
         {/* MISSION + MAP */}
         <div className="dd-two-col">
