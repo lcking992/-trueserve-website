@@ -19,8 +19,17 @@ import CoverPhotoPanel from "@/app/merchant/dashboard/CoverPhotoPanel";
 import RevenueSparkline from "@/app/merchant/dashboard/RevenueSparkline";
 import MerchantPortalRecovery from "./MerchantPortalRecovery";
 import { ArrowRight, CheckCircle2, CreditCard, DollarSign, Package, UtensilsCrossed } from "lucide-react";
+import LaunchCenter from "@/app/merchant/dashboard/LaunchCenter";
 
 export const dynamic = "force-dynamic";
+
+function buildSlug(value: string) {
+    return value
+        .toLowerCase()
+        .replace(/['']/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+}
 
 export default async function MerchantDashboard({
     searchParams,
@@ -93,6 +102,17 @@ export default async function MerchantDashboard({
     const hasTestOrder = (restaurant.orders || []).some((o: any) =>
         ["PENDING", "PREPARING", "READY_FOR_PICKUP", "PICKED_UP", "DELIVERED"].includes(String(o.status || "").toUpperCase())
     );
+    const storefrontSlug = restaurant.slug || buildSlug(restaurant.name || "restaurant") || restaurant.id;
+    const storefrontPath = `/restaurants/${storefrontSlug}`;
+    const storefrontUrl = `https://trueserve.delivery${storefrontPath}`;
+    const launchReadyItems = [
+        { label: "Menu", done: (restaurant.menuItems || []).length > 0 },
+        { label: "Stripe", done: hasStripe },
+        { label: "Hours", done: hasHours },
+        { label: "POS", done: hasPos || restaurant.posSystem === "None" || restaurant.posType === "None" },
+        { label: "Photo", done: Boolean(restaurant.imageUrl) },
+        { label: "Live", done: restaurant.visibility === "VISIBLE" },
+    ];
 
     return (
         <>
@@ -299,6 +319,13 @@ export default async function MerchantDashboard({
                 hasPos={hasPos || restaurant.posSystem === "None" || restaurant.posType === "None"}
                 hasTestOrder={hasTestOrder}
                 restaurantId={restaurant.id}
+            />
+
+            <LaunchCenter
+                restaurantName={restaurant.name}
+                storefrontUrl={storefrontUrl}
+                storefrontPath={storefrontPath}
+                readyItems={launchReadyItems}
             />
 
             {/* KPI CARDS */}
