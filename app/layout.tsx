@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import { Barlow_Condensed, DM_Sans, DM_Mono, Bebas_Neue } from "next/font/google";
 import "./globals.css";
+import MobileTabBar from "@/components/MobileTabBar";
 
 const bebasNeue = Bebas_Neue({
   variable: "--font-bebas",
@@ -50,6 +51,7 @@ export default function RootLayout({
     <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable} ${dmMono.variable} ${barlowCond.variable}`}>
       <body className="antialiased">
         {children}
+        <MobileTabBar />
       </body>
     </html>
   );

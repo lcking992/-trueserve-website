@@ -139,7 +139,18 @@ function RestaurantFinderContent() {
           </section>
 
           {loading ? (
-            <div className="food-panel text-center py-20 opacity-60 font-bold text-[#f97316] animate-pulse">Loading nearby restaurants...</div>
+            <div className="rest-grid">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="rest-card rest-card-skeleton">
+                  <div className="rc-img rc-img-skeleton" />
+                  <div className="rc-info" style={{ gap: 10 }}>
+                    <div className="skeleton-line" style={{ width: "70%", height: 22 }} />
+                    <div className="skeleton-line" style={{ width: "50%", height: 14 }} />
+                    <div className="skeleton-line" style={{ width: "40%", height: 12, marginTop: 4 }} />
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <motion.div layout className="rest-grid">
               <AnimatePresence mode="popLayout">

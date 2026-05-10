@@ -23,6 +23,15 @@ interface RestaurantCardProps {
   initialIsFavorited?: boolean;
 }
 
+function estimateEta(distanceMiles: number | null | undefined): string {
+  if (distanceMiles == null) return "~25 min";
+  if (distanceMiles <= 1) return "15–20 min";
+  if (distanceMiles <= 2) return "20–28 min";
+  if (distanceMiles <= 3.5) return "25–35 min";
+  if (distanceMiles <= 5) return "35–45 min";
+  return "45–55 min";
+}
+
 function gradeToColor(grade: string): { bg: string; text: string; border: string } {
   switch (grade?.toUpperCase()) {
     case "A":
@@ -211,11 +220,13 @@ export default function RestaurantCard({
             <span>★</span> {r.rating || "4.9"}
           </div>
           <div>•</div>
-          <div>
-            {typeof r.distanceMiles === "number"
-              ? `${r.distanceMiles.toFixed(1)} mi`
-              : "18-24 mins"}
-          </div>
+          <div>{estimateEta(r.distanceMiles)}</div>
+          {typeof r.distanceMiles === "number" && (
+            <>
+              <div>•</div>
+              <div>{r.distanceMiles.toFixed(1)} mi</div>
+            </>
+          )}
           <div>•</div>
           <div>
             {r.city}, {r.state}
