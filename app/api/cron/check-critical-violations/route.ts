@@ -156,7 +156,7 @@ export async function GET(request: Request) {
 
         // Flag restaurant as having critical violations
         if (emailSent || smsSent) {
-          const { error: updateError } = await supabaseAdmin
+          const { error: updateError } = await getSupabaseAdmin()
             .from('Restaurant')
             .update({
               hasCriticalViolations: true,

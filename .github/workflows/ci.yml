@@ -36,25 +36,19 @@ jobs:
         run: npx tsc --noEmit || true
 
       - name: Run Tests
-        run: pnpm test -- --passWithNoTests
+        run: pnpm test
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets['NEXT_PUBLIC_SUPABASE_URL'] || vars['NEXT_PUBLIC_SUPABASE_URL'] }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || vars['NEXT_PUBLIC_SUPABASE_ANON_KEY'] }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets['SUPABASE_SERVICE_ROLE_KEY'] }}
-
-      # Optional: Uncomment if you want GitHub Actions to build the Next.js app to catch build compilation errors
-      # - name: Build Next.js App
-      #   run: npm run build
-      #   env:
-      #     NEXT_PUBLIC_SUPABASE_URL: ${{ secrets['NEXT_PUBLIC_SUPABASE_URL'] || vars['NEXT_PUBLIC_SUPABASE_URL'] }}
-      #     SUPABASE_SERVICE_ROLE_KEY: ${{ secrets['SUPABASE_SERVICE_ROLE_KEY'] }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://mock.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'mock-anon-key' }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || 'mock-service-key' }}
 
   e2e_tests:
     name: Playwright E2E Tests
     runs-on: ubuntu-latest
-    # Run after the build/test job is successful
     needs: build_and_test
-    
+    # Only run E2E tests when real Supabase credentials are available
+    if: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL != '' && secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -79,7 +73,6 @@ jobs:
       - name: Run E2E Tests
         run: pnpm run test:e2e
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets['NEXT_PUBLIC_SUPABASE_URL'] || vars['NEXT_PUBLIC_SUPABASE_URL'] }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || vars['NEXT_PUBLIC_SUPABASE_ANON_KEY'] }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets['SUPABASE_SERVICE_ROLE_KEY'] }}
-
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

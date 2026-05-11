@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     try {
         // Verify authentication
         const session = await getAuthSession();
-        if (!session?.adminId) {
+        if (!session?.userId) {
             return Response.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         const month = url.searchParams.get("month");
         const checkAnomalies = url.searchParams.get("checkAnomalies") === "true";
 
-        console.log(`[Cost Sync API] Admin ${session.adminId} initiated sync. Month: ${month || "current"}, Check anomalies: ${checkAnomalies}`);
+        console.log(`[Cost Sync API] Admin ${session.userId} initiated sync. Month: ${month || "current"}, Check anomalies: ${checkAnomalies}`);
 
         // Sync costs
         const syncResult = await syncAllServiceCosts(month || undefined);

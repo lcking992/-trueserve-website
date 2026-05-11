@@ -33,7 +33,7 @@ export default function AdminLogin() {
                 return;
             }
 
-            if (result.success) {
+            if ('success' in result && result.success) {
                 window.location.href = "/admin/dashboard";
             }
         } catch (err: any) {
