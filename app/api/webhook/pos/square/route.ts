@@ -1,42 +1,60 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import crypto from 'crypto';
 
-/**
- * Square Webhook Handler
- * ----------------------
- * To obtain this Webhook URL:
- * 1. Log in to your Square Developer Dashboard.
- * 2. Select 'Webhook Settings' -> 'Add Subscription'.
- * 3. Add your production URL: https://www.trueserve.delivery/api/webhook/pos/square
- * 4. Select event: 'order.created', 'order.updated'
- */
+const SQUARE_WEBHOOK_URL = 'https://trueserve.delivery/api/webhook/pos/square';
+
+function validateSquareSignature(rawBody: string, signature: string | null, secret: string | undefined): boolean {
+  if (!signature || !secret) return false;
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(SQUARE_WEBHOOK_URL + rawBody);
+  return hmac.digest('base64') === signature;
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const signature = req.headers.get('X-Square-Signature');
+    const rawBody = await req.text();
+    const signature = req.headers.get('x-square-hmacsha256-signature');
 
-    // 1. (Security) Validate the signature
-    // if (!validateSquareSignature(body, signature, process.env.SQUARE_SIGNATURE_KEY)) {
-    //   return NextResponse.json({ error: 'Invalid Signature' }, { status: 401 });
-    // }
-
-    const supabase = await createClient();
-
-    // 2. Map Square Order Event to TrueServe
-    if (body.type === 'order.created') {
-        const squareOrder = body.data.object.order_created;
-        const { error } = await supabase.from('Order').insert({
-            id: squareOrder.order_id,
-            status: 'PENDING',
-            total: squareOrder.amount_money.amount,
-            posReference: `SQUARE-${squareOrder.order_id}`,
-            restaurantId: body.merchant_id, // Needs lookup matching
-            createdAt: body.created_at
-        });
-        if (error) throw error;
+    if (!validateSquareSignature(rawBody, signature, process.env.SQUARE_WEBHOOK_SIGNATURE_KEY)) {
+      console.warn('[Square Webhook] Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    return NextResponse.json({ success: true, message: 'Square Webhook Processed' });
+    const body = JSON.parse(rawBody);
+    const supabase = await createClient();
+
+    if (body.type === 'order.created') {
+      const squareOrder = body.data?.object?.order_created;
+      if (squareOrder) {
+        const { data: restaurant } = await supabase
+          .from('Restaurant')
+          .select('id')
+          .eq('squareMerchantId', body.merchant_id)
+          .single();
+
+        await supabase.from('Order').insert({
+          status: 'PENDING',
+          totalAmount: (squareOrder.total_money?.amount ?? 0) / 100,
+          posReference: `SQUARE-${squareOrder.order_id}`,
+          restaurantId: restaurant?.id ?? null,
+          createdAt: body.created_at ?? new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    if (body.type === 'order.updated') {
+      const updated = body.data?.object?.order_updated;
+      if (updated?.order_id) {
+        await supabase
+          .from('Order')
+          .update({ updatedAt: new Date().toISOString() })
+          .eq('posReference', `SQUARE-${updated.order_id}`);
+      }
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('[Square Webhook Error]', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
