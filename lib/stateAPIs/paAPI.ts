@@ -71,15 +71,15 @@ export class PennsylvaniaAPI extends BaseStateAPI {
       return {
         externalId: record.id || record.inspectionId || '',
         establishmentName: record.establishmentName || record.name || 'Unknown',
-        establishmentAddress: record.address || record.streetAddress,
+        establishmentAddress: record.address || record.streetAddress || '',
         inspectionDate,
-        inspectorName: record.inspectorName || record.inspector,
+        inspectorName: record.inspectorName || record.inspector || '',
         violations: this.parseViolations(record.violations || record.findings),
-        score: this.parseScore(record.score || record.points),
-        grade: this.parseGrade(record.grade || record.rating),
+        score: this.parseScore(record.score || record.points) ?? 0,
+        grade: this.parseGrade(record.grade || record.rating) ?? 'N/A',
         status: this.mapStatus(record.status || record.result),
         externalURL: this.buildExternalURL(record.id || ''),
-        notes: record.notes || record.comments,
+        notes: record.notes || record.comments || '',
       };
     } catch (error) {
       console.error('[PA API] Failed to parse record:', error);

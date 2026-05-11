@@ -28,6 +28,7 @@ export default function AdminDashboard({ role, stats, recentActivity }: Dashboar
   const quickCards = [
     { icon: '💰', title: 'Cost Management', desc: 'Track spending across all services (Stripe, Supabase, Google Cloud, Resend, Vonage)', href: '/admin/cost-management', section: 'cost-management' as const },
     { icon: '📈', title: 'Analytics', desc: 'Real-time metrics on orders, drivers, merchants, and platform health', href: '/admin/analytics', section: 'analytics' as const },
+    { icon: '📊', title: 'PostHog Analytics', desc: 'View product analytics readiness and event tracking status for the live app', href: '/admin/analytics', section: 'analytics' as const },
     { icon: '👤', title: 'User Management', desc: 'View and manage drivers, merchants, and customer accounts', href: '/admin/users', section: 'users' as const },
     { icon: '🍽️', title: 'Restaurant Photos', desc: 'Upload and manage cover photos for all restaurants', href: '/admin/restaurants', section: 'users' as const },
   ].filter((card) => canView(card.section));

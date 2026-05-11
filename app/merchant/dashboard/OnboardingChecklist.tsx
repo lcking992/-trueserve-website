@@ -65,6 +65,7 @@ export default function OnboardingChecklist({
   const total = steps.length;
   const allDone = completed === total;
   const progress = Math.round((completed / total) * 100);
+  const nextStep = steps.find((step) => !step.done) ?? null;
 
   const [collapsed, setCollapsed] = useState(false);
   const [dismissed, setDismissed] = useState(false);
@@ -223,6 +224,86 @@ export default function OnboardingChecklist({
               )}
             </div>
           ))}
+
+          <div
+            style={{
+              borderTop: "1px solid rgba(255,255,255,0.06)",
+              padding: "16px 18px 18px",
+              background: "rgba(255,255,255,0.02)",
+            }}
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 12,
+              }}
+            >
+              <div
+                style={{
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: 12,
+                  padding: "14px 14px 12px",
+                  background: "#0f1412",
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "#f97316", marginBottom: 8 }}>
+                  Recommended next step
+                </div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 6 }}>
+                  {nextStep ? nextStep.label : "Launch checklist complete"}
+                </div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>
+                  {nextStep ? nextStep.description : "Your storefront setup looks ready for customers."}
+                </div>
+              </div>
+
+              <div
+                style={{
+                  border: "1px solid rgba(249,115,22,0.18)",
+                  borderRadius: 12,
+                  padding: "14px 14px 12px",
+                  background: "rgba(249,115,22,0.06)",
+                }}
+              >
+                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "#f97316", marginBottom: 8 }}>
+                  Need launch help?
+                </div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.72)", lineHeight: 1.6, marginBottom: 10 }}>
+                  We can help with menu setup, Stripe payouts, storefront branding, and getting your restaurant visible.
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <Link href="/contact" style={{
+                    background: "rgba(249,115,22,0.14)",
+                    border: "1px solid rgba(249,115,22,0.34)",
+                    color: "#f97316",
+                    borderRadius: 8,
+                    padding: "7px 12px",
+                    fontSize: 11,
+                    fontWeight: 800,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    textDecoration: "none",
+                  }}>
+                    Contact Support
+                  </Link>
+                  <Link href="/merchant/dashboard/storefront" style={{
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "#fff",
+                    borderRadius: 8,
+                    padding: "7px 12px",
+                    fontSize: 11,
+                    fontWeight: 800,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    textDecoration: "none",
+                  }}>
+                    Open Storefront
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

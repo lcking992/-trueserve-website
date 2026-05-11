@@ -22,6 +22,12 @@ jest.mock('@/lib/stripe', () => {
 import { stripe } from '@/lib/stripe';
 jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }));
 jest.mock('next/headers', () => ({ cookies: jest.fn(() => ({ get: () => ({ value: 'test-user' }) })) }));
+jest.mock('@/lib/system', () => ({
+    isOrderingEnabled: jest.fn().mockResolvedValue(true),
+    getRestaurantMinComplianceScore: jest.fn().mockResolvedValue(0),
+    shouldBlockFlaggedRestaurantOrders: jest.fn().mockResolvedValue(false),
+    getSystemConfig: jest.fn().mockImplementation((_key: string, defaultValue: any) => Promise.resolve(defaultValue)),
+}));
 
 describe('Order Actions - Business Logic Scenarios', () => {
     let mockSupabase: any;

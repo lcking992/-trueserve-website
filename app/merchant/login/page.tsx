@@ -9,6 +9,7 @@ import { loginWithPassword, type AuthState } from "@/app/auth/actions";
 export default function MerchantLoginPage() {
   const router = useRouter();
   const [errorText, setErrorText] = useState("");
+  const [accountMismatch, setAccountMismatch] = useState(false);
   const [state, formAction, isPending] = useActionState(
     async (_prevState: AuthState, formData: FormData) => loginWithPassword(formData),
     { message: "" }
@@ -27,11 +28,13 @@ export default function MerchantLoginPage() {
     }
 
     if (state.success && state.role && state.role !== "MERCHANT") {
+      setAccountMismatch(true);
       setErrorText("This account is not a merchant account.");
       return;
     }
 
     if (state.error) {
+      setAccountMismatch(false);
       setErrorText(state.message);
     }
   }, [state, router]);
@@ -71,6 +74,11 @@ export default function MerchantLoginPage() {
             {errorText && (
               <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.11em] text-red-300">
                 {errorText}
+                {accountMismatch && (
+                  <div className="mt-2 text-[11px] normal-case tracking-normal text-red-200">
+                    Use the shared <Link href="/login" className="font-bold underline">sign-in page</Link> for customer or driver access, or <Link href="/merchant/signup" className="font-bold underline">apply for partnership</Link>.
+                  </div>
+                )}
               </div>
             )}
 
@@ -82,6 +90,10 @@ export default function MerchantLoginPage() {
                   type="email"
                   placeholder="partner@yourplace.com"
                   defaultValue=""
+                  onChange={() => {
+                    setErrorText("");
+                    setAccountMismatch(false);
+                  }}
                   required
                 />
               </div>
@@ -92,8 +104,17 @@ export default function MerchantLoginPage() {
                   type="password"
                   placeholder="••••••••"
                   defaultValue=""
+                  onChange={() => {
+                    setErrorText("");
+                    setAccountMismatch(false);
+                  }}
                   required
                 />
+              </div>
+              <div style={{ textAlign: 'right', margin: '8px 0 16px' }}>
+                <Link href="/forgot-password" style={{ fontSize: '12px', color: 'var(--gold)', textDecoration: 'none' }}>
+                  Forgot password?
+                </Link>
               </div>
               <button className="ts-pill-btn ts-pill-btn-block mt-4" disabled={isPending}>
                 {isPending ? "Authorizing..." : "Establish Session"}
@@ -102,7 +123,7 @@ export default function MerchantLoginPage() {
 
             <Link
               href="/merchant/tutorial-preview"
-              className="ts-pill-btn ts-pill-btn-block mt-3"
+              className="portal-btn-outline portal-btn-outline-block mt-3"
             >
               View Animated Tutorial
             </Link>

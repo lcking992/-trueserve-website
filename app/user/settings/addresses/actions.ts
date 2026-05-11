@@ -6,6 +6,7 @@ export interface SavedAddress {
     id: string;
     label: string;
     address: string;
+    notes?: string;
     isDefault: boolean;
 }
 

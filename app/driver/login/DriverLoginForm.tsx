@@ -45,6 +45,20 @@ export default function DriverLoginForm() {
         return `+${digits}`;
     };
 
+    const requestOtpForPhone = async (formattedPhone: string) => {
+        const { error } = await supabase.auth.signInWithOtp({
+            phone: formattedPhone,
+            options: { shouldCreateUser: false }
+        });
+
+        if (error) {
+            if (error.message.includes("Signups not allowed")) {
+                throw new Error("This phone number is not registered to a driver application yet.");
+            }
+            throw error;
+        }
+    };
+
     const handleSendOTP = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage(null);
@@ -58,17 +72,7 @@ export default function DriverLoginForm() {
         }
 
         try {
-            const { error } = await supabase.auth.signInWithOtp({
-                phone: formattedPhone,
-                options: { shouldCreateUser: false }
-            });
-
-            if (error) {
-                if (error.message.includes("Signups not allowed")) {
-                    throw new Error("This phone number is not registered to an approved driver.");
-                }
-                throw error;
-            }
+            await requestOtpForPhone(formattedPhone);
 
             setPhone(formattedPhone);
             setStep("otp");
@@ -111,8 +115,22 @@ export default function DriverLoginForm() {
         }
     };
 
+    const handleResendCode = async () => {
+        setIsLoading(true);
+        setMessage(null);
+
+        try {
+            await requestOtpForPhone(phone);
+            setMessage({ text: "We sent a fresh code to your phone.", error: false });
+        } catch (err: any) {
+            setMessage({ text: err.message || "Failed to resend code.", error: true });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="space-y-6 animate-fade-in relative z-10 w-full overflow-hidden">
+        <div className="space-y-7 animate-fade-in relative z-10 w-full overflow-hidden">
             {message && (
                 <div className={`p-4 rounded-lg text-[11px] font-bold uppercase tracking-widest flex items-center gap-3 border ${
                     message.error ? 'bg-red-500/10 border-red-500/20 text-red-500' : 'bg-[#3dd68c]/10 border-[#3dd68c]/20 text-[#3dd68c]'
@@ -122,7 +140,7 @@ export default function DriverLoginForm() {
             )}
 
             {step === "phone" ? (
-                <form onSubmit={handleSendOTP} className="space-y-6">
+                <form onSubmit={handleSendOTP} className="space-y-7">
                     <div>
                         <label className="fl">Mobile Identifier (US Only)</label>
                         <div className="flex gap-[1px] bg-[#1c1f28] border border-[#2a2f3a] rounded-[12px] overflow-hidden">
@@ -147,12 +165,12 @@ export default function DriverLoginForm() {
                         {isLoading ? "UPLINKING..." : "Request Access Code →"}
                     </button>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-4 pt-1">
                         <div className="text-center font-dm-sans text-[12px] text-[#555]">
                             New to the fleet? <Link href="/driver/signup" className="text-[#3dd68c] font-bold">Apply to partner</Link>
                         </div>
                         {IS_DEV && (
-                            <div className="border-t border-dashed border-[#2a2f3a] pt-3">
+                            <div className="border-t border-dashed border-[#2a2f3a] pt-4">
                                 <p className="text-center text-[10px] font-bold uppercase tracking-widest text-[#444] mb-2">Dev / QA Only</p>
                                 <button
                                     type="button"
@@ -167,14 +185,15 @@ export default function DriverLoginForm() {
                     </div>
                 </form>
             ) : (
-                <form onSubmit={handleVerifyOTP} className="space-y-6">
+                <form onSubmit={handleVerifyOTP} className="space-y-7">
                     <div className="text-center">
                         <p className="text-[11px] text-[#555] font-bold uppercase tracking-widest mb-3">Verification code sent to <span className="text-[#3dd68c]">{phone}</span></p>
-                        <input 
+                        <input
                             type="text"
+                            inputMode="numeric"
                             maxLength={6}
                             placeholder="••••••"
-                            className="fi text-2xl font-bold tracking-[1em] text-center !text-[#3dd68c] h-15"
+                            className="fi text-2xl font-bold tracking-[0.5em] text-center !text-[#3dd68c] h-15"
                             value={token}
                             onChange={(e) => setToken(e.target.value.replace(/\D/g, ""))}
                             disabled={isLoading}
@@ -196,6 +215,19 @@ export default function DriverLoginForm() {
                     >
                         Cancel and try again
                     </button>
+
+                    <button
+                        type="button"
+                        onClick={handleResendCode}
+                        disabled={isLoading}
+                        className="w-full text-[10px] font-bold uppercase tracking-widest text-[#3dd68c] hover:text-white transition-colors disabled:opacity-40"
+                    >
+                        Resend code
+                    </button>
+
+                    <div className="text-center text-[11px] text-[#6a7280]">
+                        Changed your phone number? <Link href="/driver/recover" className="font-bold text-[#3dd68c]">Request a login update</Link>.
+                    </div>
                 </form>
             )}
         </div>

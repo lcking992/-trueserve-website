@@ -8,9 +8,11 @@ import DriverLoginForm from "./DriverLoginForm";
 
 export default function DriverLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorText, setErrorText] = useState("");
 
   const signInWithProvider = async (provider: 'google') => {
     setIsLoading(true);
+    setErrorText("");
     const wantsTour =
       typeof window !== "undefined" &&
       new URLSearchParams(window.location.search).get("tour") === "1";
@@ -26,7 +28,7 @@ export default function DriverLoginPage() {
     });
 
     if (error) {
-        alert(`Failed to connect with ${provider}: ${error.message}`);
+        setErrorText(`Failed to connect with ${provider}: ${error.message}`);
         setIsLoading(false);
     }
   };
@@ -63,27 +65,40 @@ export default function DriverLoginPage() {
             <h1 className="food-heading !text-[32px] md:!text-[36px]">Sign In</h1>
             <p className="lead mt-2 max-w-[360px]">Secure mobile access to your driver dashboard.</p>
 
+            {errorText && (
+              <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.11em] text-red-300">
+                {errorText}
+              </div>
+            )}
+
             <div className="mt-6">
               <DriverLoginForm />
             </div>
 
-            <div className="login-or">or continue with</div>
-            <div className="grid grid-cols-1 gap-3">
-              <button
-                className="portal-btn-outline portal-btn-outline-block gap-2 disabled:opacity-70"
-                onClick={() => signInWithProvider('google')}
-                disabled={isLoading}
+            <div className="mt-8 space-y-4">
+              <div className="login-or !my-0">or continue with</div>
+              <div className="grid grid-cols-1 gap-4">
+                <button
+                  type="button"
+                  className="portal-btn-outline portal-btn-outline-block gap-2 disabled:opacity-70"
+                  onClick={() => signInWithProvider('google')}
+                  disabled={isLoading}
+                >
+                  <span style={{ fontSize: '16px' }}>G</span> Continue with Google
+                </button>
+              </div>
+
+              <Link
+                href="/driver/tutorial-preview"
+                className="ts-pill-btn ts-pill-btn-block"
               >
-                <span style={{ fontSize: '16px' }}>G</span> Continue with Google
-              </button>
+                View Animated Tutorial
+              </Link>
             </div>
 
-            <Link
-              href="/driver/tutorial-preview"
-              className="ts-pill-btn ts-pill-btn-block mt-3"
-            >
-              View Animated Tutorial
-            </Link>
+            <div className="login-foot mt-5">
+              Changed numbers? <Link href="/driver/recover">Request a phone update</Link>
+            </div>
           </section>
         </div>
       </main>

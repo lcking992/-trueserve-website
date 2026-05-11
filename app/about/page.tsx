@@ -1,5 +1,5 @@
 import AboutTrueServePage from "@/components/AboutTrueServePage";
 
-export default function BenefitsPage() {
+export default function AboutPage() {
   return <AboutTrueServePage />;
 }

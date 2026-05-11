@@ -136,6 +136,43 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
         return 1;
     };
     const currentStep = getProgressStep(currentOrder.status);
+    const statusContent = {
+        PENDING: {
+            title: "Order confirmed",
+            detail: "Your order is in the restaurant queue and the kitchen should begin prep shortly.",
+            next: "Next up: kitchen prep begins",
+        },
+        PREPARING: {
+            title: "Kitchen is cooking",
+            detail: "The restaurant is actively preparing your order right now.",
+            next: "Next up: packed and marked ready",
+        },
+        READY_FOR_PICKUP: {
+            title: "Packed and waiting",
+            detail: "Your order is ready at the restaurant and waiting for driver pickup.",
+            next: "Next up: driver picks up your order",
+        },
+        PICKED_UP: {
+            title: "On the road",
+            detail: "Your driver has the order and is heading toward your delivery address.",
+            next: "Next up: handoff at your door",
+        },
+        DELIVERED: {
+            title: "Delivered",
+            detail: "Your order has been completed. You can tip, review, or report an issue from here.",
+            next: "Next up: rate your experience",
+        },
+        CANCELLED: {
+            title: "Order cancelled",
+            detail: "This order has been cancelled. Support can help if something looks off.",
+            next: "Next up: review cancellation details",
+        },
+    } as const;
+    const statusMeta = statusContent[currentOrder.status as keyof typeof statusContent] ?? {
+        title: "Order update",
+        detail: "We’re refreshing the latest status for your order.",
+        next: "Next update coming soon",
+    };
 
     const handleCancelOrder = async () => {
         if (!cancelReason) return;
@@ -311,6 +348,60 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                     <div className="track-right">
                         <div className="status-box">
                             <h3>Order Status</h3>
+                            <div style={{
+                                display: "grid",
+                                gap: 10,
+                                gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+                                marginBottom: 16,
+                            }}>
+                                <div style={{
+                                    border: "1px solid rgba(255,255,255,0.08)",
+                                    background: "rgba(255,255,255,0.03)",
+                                    borderRadius: 12,
+                                    padding: "12px 14px",
+                                }}>
+                                    <div style={{ fontSize: 10, fontWeight: 800, color: "#666", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 6 }}>
+                                        Current stage
+                                    </div>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 6 }}>{statusMeta.title}</div>
+                                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.58)", lineHeight: 1.55 }}>{statusMeta.detail}</div>
+                                </div>
+                                <div style={{
+                                    border: "1px solid rgba(255,255,255,0.08)",
+                                    background: "rgba(255,255,255,0.03)",
+                                    borderRadius: 12,
+                                    padding: "12px 14px",
+                                }}>
+                                    <div style={{ fontSize: 10, fontWeight: 800, color: "#666", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 6 }}>
+                                        What happens next
+                                    </div>
+                                    <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 6 }}>{statusMeta.next}</div>
+                                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.58)", lineHeight: 1.55 }}>
+                                        {currentOrder.status === "PICKED_UP" || currentOrder.status === "DELIVERED"
+                                            ? `Live ETA: ${eta}`
+                                            : "We’ll keep this page updated as the order moves forward."}
+                                    </div>
+                                </div>
+                                <div style={{
+                                    border: "1px solid rgba(249,115,22,0.2)",
+                                    background: "rgba(249,115,22,0.06)",
+                                    borderRadius: 12,
+                                    padding: "12px 14px",
+                                }}>
+                                    <div style={{ fontSize: 10, fontWeight: 800, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.14em", marginBottom: 6 }}>
+                                        Support lane
+                                    </div>
+                                    <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Need help with this order?</div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-ghost"
+                                        style={{ width: "100%" }}
+                                        onClick={() => openSupport(`Hi TrueServe Support — I need help with order ${currentOrder.id} from ${currentOrder.restaurant?.name}.`)}
+                                    >
+                                        Open Support
+                                    </button>
+                                </div>
+                            </div>
 
                             {/* Live prep status banner */}
                             {currentOrder.status === "PREPARING" && (

@@ -16,13 +16,16 @@ export type AuthState = {
     role?: string;
 };
 
+const MIN_PASSWORD_LENGTH = 8;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function loginWithPassword(formData: FormData): Promise<AuthState> {
     const rawEmail = formData.get("email") as string;
     const rawPassword = formData.get("password") as string;
 
     // Trim and normalize inputs to prevent minor typos from failing the demo
     const email = rawEmail?.trim()?.toLowerCase();
-    const password = rawPassword?.trim();
+    const password = rawPassword;
 
     const cookieStore = await cookies();
     const supabase = await createClient();
@@ -31,22 +34,28 @@ export async function loginWithPassword(formData: FormData): Promise<AuthState> 
         return { message: "Email and Password are required", error: true };
     }
 
-    // --- PILOT TESTING BYPASS ---
-    if (email === "test@trueserve.com" && password === "trueserve2026") {
-        console.log("[AUTH] Using Pilot Testing Bypass Credentials");
+    // --- DEV/PREVIEW BYPASS (never runs on production) ---
+    // NEXT_PUBLIC_APP_ENV must be explicitly set to 'production' on production deploys.
+    // In local dev it is undefined; on Vercel preview it is 'preview' — both allow bypass.
+    const isProductionEnv = (process.env.NEXT_PUBLIC_APP_ENV as string) === 'production';
+    if (
+        !isProductionEnv &&
+        email === "test@trueserve.com" &&
+        password === "trueserve2026"
+    ) {
+        console.log("[AUTH] Using Dev Bypass Credentials");
         const DEMO_DRIVER_ID = "a18a0115-5238-4e82-a2e1-0020e2c40ba1";
         const cookieStore = await cookies();
-        
-        // Ensure standard driver setup exists for this ID
+
         await loginAsDemoDriver();
-        
-        cookieStore.set("userId", DEMO_DRIVER_ID, { 
-            secure: process.env.NODE_ENV === "production", 
-            httpOnly: true, 
-            path: '/' 
+
+        cookieStore.set("userId", DEMO_DRIVER_ID, {
+            secure: process.env.NODE_ENV === "production",
+            httpOnly: true,
+            path: '/'
         });
-        
-        return { message: "Pilot Login successful!", success: true, role: "DRIVER" };
+
+        return { message: "Dev login successful!", success: true, role: "DRIVER" };
     }
 
     try {
@@ -99,18 +108,28 @@ export async function loginWithPassword(formData: FormData): Promise<AuthState> 
 
 export async function signupWithPassword(prevStateOrFormData: AuthState | FormData, maybeFormData?: FormData): Promise<AuthState> {
     const formData = maybeFormData ?? (prevStateOrFormData as FormData);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const rawEmail = (formData.get("email") as string) || "";
+    const password = (formData.get("password") as string) || "";
+    const email = rawEmail.trim().toLowerCase();
     const role = (formData.get("role") as string) || 'CUSTOMER';
     const plan = formData.get("plan") as string || 'Basic'; // Capture requested plan
     const name = (formData.get("name") as string) || email.split('@')[0];
     const address = formData.get("address") as string;
+    const deliveryNotes = ((formData.get("deliveryNotes") as string) || "").trim();
     const phone = normalizePhoneNumber((formData.get("phone") as string) || "");
     const cookieStore = await cookies();
     const supabase = await createClient();
 
     if (!email || !password) {
         return { message: "Email and Password are required", error: true };
+    }
+
+    if (!EMAIL_PATTERN.test(email)) {
+        return { message: "Please enter a valid email address.", error: true };
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        return { message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`, error: true };
     }
 
     try {
@@ -150,6 +169,17 @@ export async function signupWithPassword(prevStateOrFormData: AuthState | FormDa
                 plan: plan, // Store the plan
                 address: address || null,
                 phone: phone || null,
+                savedAddresses: address
+                    ? JSON.stringify([
+                        {
+                            id: uuidv4(),
+                            label: "Home",
+                            address,
+                            isDefault: true,
+                            ...(deliveryNotes ? { notes: deliveryNotes } : {}),
+                        },
+                    ])
+                    : null,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             });
@@ -240,8 +270,7 @@ export async function signupWithPassword(prevStateOrFormData: AuthState | FormDa
 }
 
 export async function resetPassword(formData: FormData): Promise<AuthState> {
-    const email = formData.get("email") as string;
-    const supabase = await createClient();
+    const email = ((formData.get("email") as string) || "").trim().toLowerCase();
 
     if (!email) return { message: "Email is required", error: true };
 
@@ -255,7 +284,12 @@ export async function resetPassword(formData: FormData): Promise<AuthState> {
             }
         });
 
-        if (error) throw error;
+        if (error) {
+            if (/user not found/i.test(error.message)) {
+                return { message: "If an account exists for that email, a reset link has been sent.", success: true };
+            }
+            throw error;
+        }
 
         // 2. Wrap that link in our Premium Emerald Branding
         const resetLink = data.properties.action_link;
@@ -273,7 +307,7 @@ export async function resetPassword(formData: FormData): Promise<AuthState> {
             <p><em>Security Tip: Never share your password reset links with anyone, including TrueServe staff.</em></p>`
         );
 
-        return { message: "Branded reset link sent! Please check your inbox.", success: true };
+        return { message: "If an account exists for that email, a reset link has been sent.", success: true };
     } catch (e: any) {
         console.error("Reset Password Error:", e);
         return { message: e.message || "Failed to send reset email.", error: true };

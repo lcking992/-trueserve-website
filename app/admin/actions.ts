@@ -418,12 +418,12 @@ export async function rejectMerchant(restaurantId: string) {
 }
 
 
-export async function connectStripe(_formData?: FormData) {
+export async function connectStripe(_formData?: FormData): Promise<void> {
     try {
         const { userId } = await requireAdminPermissions('manage_payouts');
         await logAuditAction({ action: "CONNECT_STRIPE_PORTAL", targetId: userId || "admin", entityType: "Admin" });
-    } catch (e: any) {
-        return { error: e.message || "Unauthorized" };
+    } catch {
+        return;
     }
 
     // Open the Stripe Dashboard home so staff land on the TrueServe account overview.
