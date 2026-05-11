@@ -142,7 +142,7 @@ describe('API Integration Tests (NC API)', () => {
   // Note: These tests should only run if NC_HEALTH_DEPT_API_KEY is set
   const apiKey = process.env.NC_HEALTH_DEPT_API_KEY;
 
-  it.skipIf(!apiKey)('should fetch NC inspections', async () => {
+  (apiKey ? it : it.skip)('should fetch NC inspections', async () => {
     // This is a placeholder - actual implementation depends on NC API structure
     // In real tests, use mock restaurant IDs or test data
     expect(apiKey).toBeDefined();

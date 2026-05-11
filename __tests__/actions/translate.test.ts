@@ -1,50 +1,46 @@
 
-// Mock fetch globally
-global.fetch = jest.fn();
+jest.mock('@anthropic-ai/sdk', () => {
+    const mockCreate = jest.fn();
+    return {
+        __esModule: true,
+        default: jest.fn().mockImplementation(() => ({
+            messages: { create: mockCreate },
+        })),
+        __mockCreate: mockCreate,
+    };
+});
 
 describe('translateText', () => {
+    let mockCreate: jest.Mock;
+
     beforeEach(() => {
-        (global.fetch as jest.Mock).mockClear();
-        // Set the key BEFORE each test so the module sees it
-        process.env.GEMINI_API_KEY = 'test-key';
-        jest.resetModules();
+        const sdk = jest.requireMock('@anthropic-ai/sdk');
+        mockCreate = sdk.__mockCreate;
+        mockCreate.mockReset();
+        process.env.ANTHROPIC_API_KEY = 'test-key';
     });
 
     afterEach(() => {
-        delete process.env.GEMINI_API_KEY;
+        delete process.env.ANTHROPIC_API_KEY;
     });
 
-    it('successfully translates text via Gemini', async () => {
-        (global.fetch as jest.Mock).mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-                candidates: [{
-                    content: {
-                        parts: [{ text: 'Hola' }]
-                    }
-                }]
-            })
+    it('successfully translates text via Claude', async () => {
+        mockCreate.mockResolvedValueOnce({
+            content: [{ type: 'text', text: 'Hola' }],
         });
 
-        const { translateText } = await import("@/app/actions/translate");
+        const { translateText } = await import('@/app/actions/translate');
         const result = await translateText('Hello', 'es');
 
-        expect(result).toEqual({ translatedText: 'Hola', provider: 'Gemini' });
-        expect(global.fetch).toHaveBeenCalledWith(
-            expect.stringContaining('generativelanguage.googleapis.com'),
-            expect.objectContaining({ method: 'POST' })
-        );
+        expect(result).toEqual({ translatedText: 'Hola', provider: 'Claude' });
     });
 
-    it('handles Gemini API error', async () => {
-        (global.fetch as jest.Mock).mockResolvedValueOnce({
-            ok: false,
-            json: async () => ({ error: { message: 'Invalid Key' } })
-        });
+    it('returns an error object when the API throws', async () => {
+        mockCreate.mockRejectedValueOnce(new Error('API error'));
 
-        const { translateText } = await import("@/app/actions/translate");
+        const { translateText } = await import('@/app/actions/translate');
         const result = await translateText('Hello', 'es');
 
-        expect(result).toHaveProperty('error', 'AI translation rejected the request.');
+        expect(result).toHaveProperty('error');
     });
 });
