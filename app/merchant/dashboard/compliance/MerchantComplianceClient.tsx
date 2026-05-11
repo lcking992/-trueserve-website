@@ -254,7 +254,7 @@ export default function MerchantComplianceClient({
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                             <div>
                                 <h2 className="text-lg md:text-xl font-bold text-white flex items-center gap-2">
-                                    <span>🔄 Live State Inspection Data</span>
+                                    <span>Live State Inspection Data</span>
                                     {!inspectionMetadata.isStale && (
                                         <span className="text-xs bg-green-500/20 text-green-300 px-2 py-1 rounded border border-green-500/30">
                                             Live
@@ -279,7 +279,7 @@ export default function MerchantComplianceClient({
 
                         {refreshMessage && (
                             <div className={`mb-4 p-3 rounded text-xs md:text-sm border ${
-                                refreshMessage.startsWith('✓') || refreshMessage.startsWith('Error')
+                                refreshMessage.startsWith('Done') || refreshMessage.startsWith('Error')
                                     ? 'bg-red-500/10 border-red-500/30 text-red-300'
                                     : 'bg-green-500/10 border-green-500/30 text-green-300'
                             }`}>
@@ -355,7 +355,7 @@ export default function MerchantComplianceClient({
                 {violationAggregate && violationAggregate.totalViolations > 0 && (
                     <div className="mc-panel">
                         <h2 className="text-lg md:text-xl font-bold text-white mb-4 flex items-center gap-2">
-                            {violationAggregate.criticalCount > 0 ? '⚠️' : '📊'} Violation Severity Breakdown
+                            {violationAggregate.criticalCount > 0 ? '' : ''} Violation Severity Breakdown
                         </h2>
 
                         <div className="grid gap-4 grid-cols-1 sm:grid-cols-3 mb-6">
@@ -476,7 +476,7 @@ export default function MerchantComplianceClient({
 
                             {!hasData ? (
                                 <div className="rounded-lg border border-white/8 bg-white/3 p-6 text-center">
-                                    <div className="text-3xl mb-2">📊</div>
+                                    <div className="text-3xl mb-2"></div>
                                     <p className="text-sm font-semibold text-white/70 mb-1">Not enough network data yet</p>
                                     <p className="text-xs text-white/40">Benchmarking activates once more restaurants in your state complete their compliance scores. Check back soon.</p>
                                 </div>
@@ -542,8 +542,8 @@ export default function MerchantComplianceClient({
                                                 <div className="flex-1">
                                                     <p className={`text-sm font-bold ${benchmarkComparison.performanceGap > 0 ? 'text-green-300' : 'text-yellow-300'}`}>
                                                         {benchmarkComparison.performanceGap > 0
-                                                            ? `✓ Above Peer Average by ${benchmarkComparison.performanceGap} points`
-                                                            : `⚠️ Below Peer Average by ${Math.abs(benchmarkComparison.performanceGap)} points`}
+                                                            ? `Ahead of peer Average by ${benchmarkComparison.performanceGap} points`
+                                                            : ` Below Peer Average by ${Math.abs(benchmarkComparison.performanceGap)} points`}
                                                     </p>
                                                     <p className="text-xs text-white/60 mt-1">
                                                         {benchmarkComparison.performanceGap > 0
@@ -558,7 +558,7 @@ export default function MerchantComplianceClient({
                                     {/* Top Performers — only show if we have real named restaurants */}
                                     {benchmarkComparison.topPerformers.filter(p => p.score > 0).length > 0 && (
                                         <div className="mb-4">
-                                            <h3 className="text-sm font-bold text-white mb-3">🏆 Top Performers in {restaurant.state}</h3>
+                                            <h3 className="text-sm font-bold text-white mb-3">Top Performers in {restaurant.state}</h3>
                                             <div className="space-y-2">
                                                 {benchmarkComparison.topPerformers.filter(p => p.score > 0).map((performer, idx) => (
                                                     <div key={performer.id} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/8">
@@ -586,7 +586,7 @@ export default function MerchantComplianceClient({
                     <div className="mc-panel">
                         <h2 className="text-lg md:text-xl font-bold text-white mb-4 flex items-center gap-2">
                             <Calendar className="h-5 w-5" />
-                            📅 Next Scheduled Inspection
+                            Next Scheduled Inspection
                         </h2>
 
                         <div className={`rounded-lg p-4 border-l-4 ${
@@ -622,12 +622,12 @@ export default function MerchantComplianceClient({
                                                 : 'text-green-200'
                                         }`}>
                                             {inspectionAlertMetadata.isOverdue
-                                                ? `🚨 OVERDUE by ${Math.abs(inspectionAlertMetadata.daysUntilDue)} ${
+                                                ? `OVERDUE by ${Math.abs(inspectionAlertMetadata.daysUntilDue)} ${
                                                     Math.abs(inspectionAlertMetadata.daysUntilDue) === 1 ? 'day' : 'days'
                                                 }`
                                                 : inspectionAlertMetadata.daysUntilDue === 0
-                                                ? '⚠️ DUE TODAY'
-                                                : `⏱️ In ${inspectionAlertMetadata.daysUntilDue} ${
+                                                ? ' DUE TODAY'
+                                                : `In ${inspectionAlertMetadata.daysUntilDue} ${
                                                     inspectionAlertMetadata.daysUntilDue === 1 ? 'day' : 'days'
                                                 }`}
                                         </p>
@@ -744,7 +744,7 @@ export default function MerchantComplianceClient({
                 {stateInspectionInfo && (
                     <div className="mc-panel">
                         <h2 className="text-lg md:text-xl font-bold text-white mb-1 flex items-center gap-2">
-                            🏛️ {stateInspectionInfo.state} Inspection Requirements
+                            {stateInspectionInfo.state} Inspection Requirements
                         </h2>
                         <p className="text-xs text-white/40 mb-5">Official state health department contact & compliance resources</p>
 
@@ -755,7 +755,7 @@ export default function MerchantComplianceClient({
                                     <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>Health Department</p>
                                     <p style={{ fontSize: 14, fontWeight: 600, color: "#fff", marginBottom: 6 }}>{stateInspectionInfo.healthDept}</p>
                                     <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: 6 }}>
-                                        <span style={{ fontSize: 12 }}>📞</span> {stateInspectionInfo.phoneNumber}
+                                        <span style={{ fontSize: 12 }}></span> {stateInspectionInfo.phoneNumber}
                                     </p>
                                 </div>
                             </div>
@@ -775,7 +775,7 @@ export default function MerchantComplianceClient({
                                     onMouseEnter={e => (e.currentTarget.style.background = "rgba(249,115,22,0.2)")}
                                     onMouseLeave={e => (e.currentTarget.style.background = "rgba(249,115,22,0.12)")}
                                 >
-                                    📋 Inspection Reports
+                                    Inspection Reports
                                     <ExternalLink style={{ width: 11, height: 11 }} />
                                 </a>
                                 <a
@@ -792,7 +792,7 @@ export default function MerchantComplianceClient({
                                     onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
                                     onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
                                 >
-                                    📖 Requirements
+                                    Requirements
                                     <ExternalLink style={{ width: 11, height: 11 }} />
                                 </a>
                             </div>
@@ -800,41 +800,52 @@ export default function MerchantComplianceClient({
 
                         {/* Requirements checklist */}
                         <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: 10 }}>Key Requirements</p>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 8 }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 8 }}>
                             {stateInspectionInfo.requirements.map((req, idx) => (
-                                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(77,202,128,0.06)", border: "1px solid rgba(77,202,128,0.15)", borderRadius: 8, padding: "8px 12px" }}>
-                                    <span style={{ color: "#4dca80", fontSize: 14, flexShrink: 0 }}>✓</span>
+                                <div key={idx} style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(77,202,128,0.06)", border: "1px solid rgba(77,202,128,0.15)", borderRadius: 8, padding: "10px 12px", minWidth: 0 }}>
+                                    <CheckCircle style={{ width: 14, height: 14, color: "#4dca80", flexShrink: 0 }} />
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", fontWeight: 500 }}>{req}</span>
                                 </div>
                             ))}
                         </div>
 
                         <div style={{ marginTop: 16, padding: "10px 14px", borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", fontSize: 11, color: "rgba(255,255,255,0.4)", lineHeight: 1.5 }}>
-                            💡 Visit your state health department's website to review the latest standards, complete required training, and submit documentation.
+                             Visit your state health department's website to review the latest standards, complete required training, and submit documentation.
                         </div>
                     </div>
                 )}
 
                 {/* Help Bot Section */}
-                <div className="mt-4">
-                    <button
-                        onClick={() => setChatOpen(!chatOpen)}
-                        className="w-full rounded-lg bg-[#f97316] hover:bg-[#d99620] text-black px-4 py-3 font-bold transition-colors text-sm md:text-base"
-                    >
-                        {chatOpen ? '✕ Close Help Bot' : '💬 Ask Compliance Help'}
-                    </button>
-                </div>
-
-                {chatOpen && (
-                    <div className="rounded-lg border border-white/10 overflow-hidden h-96 md:h-[500px]">
-                        <ChatBot
-                            title="Compliance Help"
-                            placeholder="Ask about violations, improvements, inspections..."
-                            onSendMessage={handleBotMessage}
-                            initialMessage="Hi! I'm your compliance assistant. Ask me about health inspections, violations, compliance requirements, or ways to improve your score."
-                        />
+                <div className="mc-panel mt-4">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#f97316]">Compliance assistant</p>
+                            <h2 className="mt-1 text-lg font-bold text-white">Need help interpreting this?</h2>
+                            <p className="mt-1 max-w-2xl text-sm leading-6 text-white/55">
+                                Ask about health inspection timing, required documents, recurring violations, or what to prioritize before the next review.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setChatOpen(!chatOpen)}
+                            className="inline-flex w-full items-center justify-center rounded-lg border border-[#f97316]/25 bg-[#f97316]/10 px-4 py-3 text-sm font-bold text-[#f97316] transition-colors hover:bg-[#f97316]/15 md:w-auto md:min-w-[190px]"
+                        >
+                            {chatOpen ? 'Close Assistant' : 'Open Assistant'}
+                        </button>
                     </div>
-                )}
+
+                    {chatOpen && (
+                        <div className="mt-4 max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-[#0b0f17] shadow-xl">
+                            <div className="h-[320px] max-h-[52vh]">
+                                <ChatBot
+                                    title="Compliance Help"
+                                    placeholder="Ask about violations, documents, inspections..."
+                                    onSendMessage={handleBotMessage}
+                                    initialMessage="Hi, I can help you understand inspection requirements, document readiness, violation patterns, and next steps before your next review."
+                                />
+                            </div>
+                        </div>
+                    )}
+                </div>
         </div>
         </>
     );

@@ -14,8 +14,8 @@ export default function LiveReassurance({ orderId, customerName }: LiveReassuran
     const handleSend = async () => {
         setStatus('SENDING');
         const messages = [
-            `Hey ${customerName.split(' ')[0]}! The kitchen is buzzing and your order is looking delicious. Almost there! 🍳`,
-            `Chef's special attention is on your order right now, ${customerName.split(' ')[0]}! Packaging it up fresh. 📦`,
+            `Hey ${customerName.split(' ')[0]}! The kitchen is buzzing and your order is looking delicious. Almost there!`,
+            `Chef's special attention is on your order right now, ${customerName.split(' ')[0]}! Packaging it up fresh.`,
             `Quality check complete! Your meal is being handed over to your courier. See you soon! ✨`
         ];
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -41,11 +41,11 @@ export default function LiveReassurance({ orderId, customerName }: LiveReassuran
             }`}
         >
             {status === 'IDLE' ? (
-                <><span>📸</span> Send Kitchen Update</>
+                <><span></span> Send Kitchen Update</>
             ) : status === 'SENDING' ? (
                 "Sending..."
             ) : (
-                <><span>✓</span> Update Sent!</>
+                <><span>Done</span> Update Sent!</>
             )}
         </button>
     );

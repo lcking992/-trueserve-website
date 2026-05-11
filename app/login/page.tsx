@@ -69,7 +69,13 @@ export default function LoginPage() {
     if (dbRole === 'MERCHANT') router.push('/merchant/dashboard');
     else if (dbRole === 'DRIVER') router.push('/driver/dashboard');
     else if (dbRole === 'ADMIN' || dbRole === 'QA_TESTER') router.push('/admin/dashboard');
-    else router.push('/');
+    else {
+      const redirectTo = new URLSearchParams(window.location.search).get('redirect');
+      const safeRedirect = redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//')
+        ? redirectTo
+        : '/restaurants';
+      router.push(safeRedirect);
+    }
 
     router.refresh();
   };

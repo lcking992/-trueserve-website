@@ -17,7 +17,7 @@ const COMPLIANCE_PRESETS: ComplianceTemplatePreset[] = [
         key: "daily_hygiene",
         label: "Daily restaurant hygiene checklist",
         description: "Daily restaurant hygiene checklist",
-        icon: "🧼",
+        icon: "Clean",
         note: "Best for opening, shift change, and closing sanitation checks.",
         sections: [
             {
@@ -38,7 +38,7 @@ const COMPLIANCE_PRESETS: ComplianceTemplatePreset[] = [
         key: "emergency_response",
         label: "Emergency response plan template",
         description: "Emergency response plan template",
-        icon: "🚨",
+        icon: "Urgent",
         note: "Ideal for power outages, weather events, equipment failure, or incident response.",
         sections: [
             {
@@ -59,7 +59,7 @@ const COMPLIANCE_PRESETS: ComplianceTemplatePreset[] = [
         key: "temperature_control",
         label: "Temperature control audit",
         description: "Temperature control audit",
-        icon: "🌡️",
+        icon: "Temp",
         note: "Useful when you want to verify hot-hold, cold-hold, and delivery readiness.",
         sections: [
             {
@@ -80,7 +80,7 @@ const COMPLIANCE_PRESETS: ComplianceTemplatePreset[] = [
         key: "driver_sanitation",
         label: "Driver bag sanitation checklist",
         description: "Driver bag sanitation checklist",
-        icon: "🚗",
+        icon: "Driver",
         note: "Great for driver onboarding and recurring attestations.",
         sections: [
             {

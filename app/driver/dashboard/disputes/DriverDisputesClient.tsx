@@ -152,7 +152,7 @@ export default function DriverDisputesClient({ driverName, pastDisputes }: Props
 
                         {submitted ? (
                             <div className="success-box">
-                                <div className="success-icon">✅</div>
+                                <div className="success-icon">Done</div>
                                 <div className="success-title">Dispute Submitted</div>
                                 <p className="success-msg">
                                     Your report has been logged. Our team reviews disputes within 24 hours.<br />
@@ -225,7 +225,7 @@ export default function DriverDisputesClient({ driverName, pastDisputes }: Props
                                             className={`urgency-btn${urgency === 'HIGH' ? ' high-active' : ''}`}
                                             onClick={() => setUrgency('HIGH')}
                                         >
-                                            🚨 High
+                                            High
                                         </button>
                                     </div>
                                 </div>
@@ -261,7 +261,7 @@ export default function DriverDisputesClient({ driverName, pastDisputes }: Props
                                 <div className="dispute-meta">
                                     <span className="dispute-meta-item">{dispute.date}</span>
                                     <span className={`dispute-meta-item ${dispute.urgency === 'HIGH' ? 'urgency-hi' : 'urgency-lo'}`}>
-                                        {dispute.urgency === 'HIGH' ? '🚨 High' : 'Low'} urgency
+                                        {dispute.urgency === 'HIGH' ? 'High' : 'Low'} urgency
                                     </span>
                                 </div>
                             </div>

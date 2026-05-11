@@ -48,7 +48,22 @@ export default function MerchantLoginPage() {
       <main className="food-auth-wrap">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
-            <div className="food-auth-image" style={{ backgroundImage: "url('/merchant_login_bg_restaurant.png')" }} />
+            <video
+              className="food-auth-image decorative-video"
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls={false}
+              disablePictureInPicture
+              preload="metadata"
+              poster="/merchant_login_bg_restaurant.png"
+              aria-hidden="true"
+              tabIndex={-1}
+              style={{ objectFit: "cover" }}
+            >
+              <source src="/videos/merchant-login-hospitality-portrait.mp4" type="video/mp4" />
+            </video>
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Merchant access</div>
               <div className="mt-5 space-y-4">

@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { BadgeCheck, CircleAlert, Clock3, Heart, MapPin, Star } from "lucide-react";
 import { toggleFavorite } from "@/app/user/favorite-actions";
+import { getRestaurantDisplayImage } from "@/lib/restaurant-images";
 
 function computeIsOpen(openTime?: string | null, closeTime?: string | null): boolean | null {
   const o = openTime?.slice(0, 5);
@@ -61,6 +63,18 @@ export default function RestaurantCard({
   const [favPending, setFavPending] = useState(false);
 
   const isOpen = computeIsOpen(r.openTime, r.closeTime);
+  const openLabel = (() => {
+    const open = r.openTime?.slice(0, 5);
+    const close = r.closeTime?.slice(0, 5);
+    if (!open || !close) return null;
+    const to12h = (value: string) => {
+      const [hRaw, mRaw = "00"] = value.split(":");
+      const h = Number(hRaw);
+      const period = h >= 12 ? "PM" : "AM";
+      return `${h % 12 || 12}:${mRaw} ${period}`;
+    };
+    return isOpen ? `Open until ${to12h(close)}` : `Opens at ${to12h(open)}`;
+  })();
 
   const handleFav = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -89,6 +103,9 @@ export default function RestaurantCard({
 
   const hasHealthGrade = r.healthGrade && r.healthGrade !== "—";
   const colors = hasHealthGrade ? gradeToColor(r.healthGrade) : null;
+  const displayImage = getRestaurantDisplayImage(r);
+  const partnerStatusLabel = isOpen === false ? "Browse menu" : "Taking orders";
+  const verificationLabel = hasHealthGrade ? `Health grade ${r.healthGrade}` : "Verified partner";
 
   return (
     <Link key={r.id} href={`/restaurants/${r.id}${menuQuery}`} className="block">
@@ -103,9 +120,7 @@ export default function RestaurantCard({
       <motion.div
         className="rc-img"
         style={{
-          backgroundImage: `url('${
-            r.imageUrl || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80"
-          }')`,
+          backgroundImage: `url('${displayImage}')`,
           position: "relative",
         }}
         whileHover={shouldReduceMotion ? undefined : { scale: 1.04 }}
@@ -134,6 +149,10 @@ export default function RestaurantCard({
             <span style={{ color: "var(--gold)" }}>●</span> FAST ASSIST
           </div>
         )}
+        <div className="rc-status-row" aria-label="Restaurant status">
+          <span className={`rc-status-chip ${isOpen === false ? "wait" : "ok"}`}>{partnerStatusLabel}</span>
+          <span className="rc-status-chip trust">{verificationLabel}</span>
+        </div>
 
         {/* OPEN / CLOSED badge */}
         {isOpen !== null && (
@@ -178,11 +197,10 @@ export default function RestaurantCard({
             cursor: "pointer",
             zIndex: 3,
             transition: "all 0.15s",
-            fontSize: 15,
             backdropFilter: "blur(4px)",
           }}
         >
-          {isFav ? "❤️" : "🤍"}
+          <Heart size={15} fill={isFav ? "#f97316" : "none"} color={isFav ? "#f97316" : "#fff"} aria-hidden="true" />
         </button>
 
         {/* Health Grade Badge */}
@@ -217,7 +235,7 @@ export default function RestaurantCard({
         <div className="rc-name">{r.name}</div>
         <div className="rc-meta">
           <div className="rc-rating">
-            <span>★</span> {r.rating || "4.9"}
+            <Star size={13} fill="currentColor" aria-hidden="true" /> {r.rating || "4.9"}
           </div>
           <div>•</div>
           <div>{estimateEta(r.distanceMiles)}</div>
@@ -231,6 +249,16 @@ export default function RestaurantCard({
           <div>
             {r.city}, {r.state}
           </div>
+        </div>
+        <div className="rc-detail-row">
+          <span>
+            <Clock3 size={13} aria-hidden="true" />
+            {openLabel || "Hours vary"}
+          </span>
+          <span>
+            <MapPin size={13} aria-hidden="true" />
+            {typeof r.distanceMiles === "number" ? `${r.distanceMiles.toFixed(1)} miles away` : "Local partner"}
+          </span>
         </div>
 
         {/* Compliance / trust badges */}
@@ -256,9 +284,7 @@ export default function RestaurantCard({
                   fontSize: 10, fontWeight: 800,
                   letterSpacing: "0.08em", textTransform: "uppercase",
                 }}>
-                  <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                    <path d="M1.5 4L3.2 5.7L6.5 2.3" stroke="#4dca80" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  <BadgeCheck size={12} aria-hidden="true" />
                   Verified Kitchen
                 </span>
               )}
@@ -272,7 +298,8 @@ export default function RestaurantCard({
                   fontSize: 10, fontWeight: 800,
                   letterSpacing: "0.08em", textTransform: "uppercase",
                 }}>
-                  ⚠ Health Review
+                  <CircleAlert size={12} aria-hidden="true" />
+                  Health Review
                 </span>
               )}
             </div>

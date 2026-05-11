@@ -18,7 +18,7 @@ export default async function StripeTestingPage() {
   return (
     <AdminPortalWrapper role={role}>
       <div className="adm-page-header">
-        <h1>🧪 Stripe Testing</h1>
+        <h1>Test Stripe Testing</h1>
         <p>
           Environment health, test card reference, webhook simulator, and Stripe CLI setup — all in one
           place for QA and developers.

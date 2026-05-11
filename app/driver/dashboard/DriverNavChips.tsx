@@ -9,7 +9,7 @@ const navItems = [
   { href: '/driver/dashboard/ratings',    tour: 'driver-nav-ratings',     label: 'Reputation'  },
   { href: '/driver/dashboard/compliance', tour: 'driver-nav-compliance',  label: 'Compliance'  },
   { href: '/driver/dashboard/account',    tour: 'driver-nav-account',     label: 'Profile'     },
-  { href: '/driver/dashboard/disputes',   tour: 'driver-nav-disputes',    label: '🚨 Disputes' },
+  { href: '/driver/dashboard/disputes',   tour: 'driver-nav-disputes',    label: 'Disputes' },
 ];
 
 export default function DriverNavChips() {

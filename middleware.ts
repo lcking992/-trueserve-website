@@ -49,7 +49,7 @@ export async function middleware(request: NextRequest) {
   
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), payment=(self)');
+  response.headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(self), payment=(self)');
   response.headers.set(
     'Content-Security-Policy',
     [
@@ -60,7 +60,7 @@ export async function middleware(request: NextRequest) {
       "worker-src 'self' blob:",
       "img-src 'self' data: blob: https: http:",
       "connect-src 'self' https://*.supabase.co https://api.stripe.com https://app.launchdarkly.com https://api.launchdarkly.com wss://*.supabase.co https://sentry.io",
-      "frame-src https://js.stripe.com https://hooks.stripe.com",
+      "frame-src https://js.stripe.com https://hooks.stripe.com https://www.google.com https://maps.google.com",
       isEmbed ? "frame-ancestors *" : "frame-ancestors 'self'",
       "upgrade-insecure-requests",
     ].join('; ')

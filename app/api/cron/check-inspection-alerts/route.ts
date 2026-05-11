@@ -237,10 +237,10 @@ function getEmailSubject(
   const dateStr = dueDate.toLocaleDateString();
   switch (alertType) {
     case '30_days':
-      return `📋 Health Inspection Reminder: ${restaurantName} (Due ${dateStr})`;
+      return `Checklist Health Inspection Reminder: ${restaurantName} (Due ${dateStr})`;
     case '7_days':
-      return `⚠️ Health Inspection Due Soon: ${restaurantName}`;
+      return `Warning Health Inspection Due Soon: ${restaurantName}`;
     case 'overdue':
-      return `🚨 URGENT: Health Inspection Overdue - ${restaurantName}`;
+      return `Urgent URGENT: Health Inspection Overdue - ${restaurantName}`;
   }
 }

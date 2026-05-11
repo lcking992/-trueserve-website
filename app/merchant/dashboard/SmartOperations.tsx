@@ -58,7 +58,7 @@ export default function SmartOperations({
                 <div>
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-xl font-bold flex items-center gap-2 text-indigo-100">
-                            <span>🤖</span> AI Auto-Pilot
+                            <span></span> AI Auto-Pilot
                         </h3>
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" checked={autoPilot} onChange={handleToggleAutoPilot} className="sr-only peer" />
@@ -121,7 +121,7 @@ export default function SmartOperations({
                                 onClick={() => handleDeleteZone(zone.id)}
                                 className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             >
-                                ✕
+                                ×
                             </button>
                             <div className="flex justify-between items-start mb-2">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-primary">{days[zone.dayOfWeek]}s</span>

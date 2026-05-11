@@ -36,7 +36,7 @@ export default function OrderConfirmAnimation({ restaurantName, onComplete }: Or
             <div className="relative z-10 text-center mb-10 sm:mb-14 w-full max-w-sm sm:max-w-none confirm-header">
                 <div className="inline-flex items-center gap-2 mb-4">
                     <span className="confirm-badge">
-                        ✓&nbsp;&nbsp;Order Confirmed
+                        Done&nbsp;&nbsp;Order Confirmed
                     </span>
                 </div>
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif italic text-white tracking-tight leading-tight confirm-title">
@@ -65,7 +65,7 @@ export default function OrderConfirmAnimation({ restaurantName, onComplete }: Or
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2a8f8f]/25 to-transparent" />
                 </div>
 
-                {/* Vehicle — 🚗 emoji-style SVG, responsive width */}
+                {/* Vehicle — Driver emoji-style SVG, responsive width */}
                 <div className={`absolute bottom-7 left-1/2 -translate-x-1/2 w-[min(220px,55vw)] vehicle-container ${phase === "drive" ? "animate-rock" : ""} ${phase === "exit" ? "exit-opacity" : ""}`}>
                     <svg
                         width="100%"

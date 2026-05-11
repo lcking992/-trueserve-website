@@ -49,27 +49,27 @@ export default function PortalTour({ portal }: { portal: PortalType }) {
         {
           title: "Dashboard",
           body: "Your command center — live orders, today’s revenue, and active driver statuses all in one view.",
-          selector: "[data-tour=’merchant-nav-dashboard’]",
+          selector: "[data-tour='merchant-nav-dashboard']",
         },
         {
           title: "Compliance",
           body: "Keep your health grade, business license, and documents current so your storefront stays live.",
-          selector: "[data-tour=’merchant-nav-compliance’]",
+          selector: "[data-tour='merchant-nav-compliance']",
         },
         {
           title: "Integrations",
           body: "Connect your POS (Toast, Square, etc.) to sync your menu and receive orders directly in your kitchen.",
-          selector: "[data-tour=’merchant-nav-integrations’]",
+          selector: "[data-tour='merchant-nav-integrations']",
         },
         {
           title: "Storefront",
           body: "Control your banner, description, hours, and the embeddable widget for your own website.",
-          selector: "[data-tour=’merchant-nav-storefront’]",
+          selector: "[data-tour='merchant-nav-storefront']",
         },
         {
           title: "Franchise",
           body: "Manage multiple locations from one account — per-location hours, menus, and consolidated revenue.",
-          selector: "[data-tour=’merchant-nav-franchise’]",
+          selector: "[data-tour='merchant-nav-franchise']",
         },
       ];
     }
@@ -78,32 +78,32 @@ export default function PortalTour({ portal }: { portal: PortalType }) {
       {
         title: "Dashboard",
         body: "Your home base — available trips, today’s earnings, active delivery, and online/offline toggle.",
-        selector: "[data-tour=’driver-nav-dashboard’]",
+        selector: "[data-tour='driver-nav-dashboard']",
       },
       {
         title: "Settlements",
         body: "Weekly pay breakdown: every trip, tip, and deduction. See exactly when your next deposit lands.",
-        selector: "[data-tour=’driver-nav-earnings’]",
+        selector: "[data-tour='driver-nav-earnings']",
       },
       {
         title: "Reputation",
         body: "Track your star rating, acceptance rate, and customer feedback. Stay above 4.5 for priority orders.",
-        selector: "[data-tour=’driver-nav-ratings’]",
+        selector: "[data-tour='driver-nav-ratings']",
       },
       {
         title: "Compliance",
         body: "Manage your license, insurance, and background check status. TrueServe flags anything expiring.",
-        selector: "[data-tour=’driver-nav-compliance’]",
+        selector: "[data-tour='driver-nav-compliance']",
       },
       {
         title: "Profile",
         body: "Update your personal info, vehicle details, and bank account for payouts.",
-        selector: "[data-tour=’driver-nav-account’]",
+        selector: "[data-tour='driver-nav-account']",
       },
       {
         title: "Help",
         body: "Need help mid-route? Tap Support for live chat, call-back, or to report an order issue — 24/7.",
-        selector: "[data-tour=’support-fab’]",
+        selector: "[data-tour='support-fab']",
       },
     ];
   }, [portal]);
@@ -132,13 +132,6 @@ export default function PortalTour({ portal }: { portal: PortalType }) {
       return () => window.clearTimeout(t);
     }
 
-    try {
-      const alreadyDone = localStorage.getItem(storageKey) === "done";
-      if (!alreadyDone) {
-        const t = window.setTimeout(() => setIsOpen(true), 550);
-        return () => window.clearTimeout(t);
-      }
-    } catch { }
     return;
   }, [forceTour, storageKey]);
 

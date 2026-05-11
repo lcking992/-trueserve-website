@@ -1,6 +1,6 @@
 
 import { getStripe } from "@/lib/stripe";
-import { supabaseAdminAdmin } from "@/lib/supabaseAdmin-admin";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";

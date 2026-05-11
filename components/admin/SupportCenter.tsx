@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useTransition, useRef } from "react";
 import { getSupportTickets, getTicketMessages, updateTicketStatus, sendTicketMessage, processRefund } from "@/app/admin/support/actions";
 
-// 🎨 SVG ICON SYSTEM (v2 - Expanded for Support)
+//  SVG ICON SYSTEM (v2 - Expanded for Support)
 const Icons = {
   Search: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>,
   User: () => <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>,
@@ -91,7 +91,7 @@ export default function SupportCenter({ initialTickets, currentAdminId }: { init
   return (
     <div className="flex bg-black/40 border border-white/5 rounded-[2.5rem] overflow-hidden backdrop-blur-3xl h-[80vh] animate-in fade-in zoom-in-95 duration-700">
       
-      {/* 🧩 SIDEBAR: Ticket List */}
+      {/*  SIDEBAR: Ticket List */}
       <div className="w-[380px] border-r border-white/5 flex flex-col">
         <div className="p-8 border-b border-white/5">
           <h3 className="text-xl font-black tracking-tighter mb-4 text-white">Support <span className="text-primary text-xs uppercase tracking-[0.2em] ml-2">Pilot Desk</span></h3>
@@ -131,7 +131,7 @@ export default function SupportCenter({ initialTickets, currentAdminId }: { init
         </div>
       </div>
 
-      {/* 💬 MAIN CHAT: Interaction */}
+      {/* Chat MAIN CHAT: Interaction */}
       <div className="flex-1 flex flex-col bg-white/[0.01]">
         {selectedTicket ? (
           <>
@@ -212,7 +212,7 @@ export default function SupportCenter({ initialTickets, currentAdminId }: { init
         )}
       </div>
 
-      {/* 🔍 RIGHT PANE: User Intelligence */}
+      {/* Search RIGHT PANE: User Intelligence */}
       {selectedTicket && (
         <div className="w-[300px] border-l border-white/5 flex flex-col bg-black/20">
            <div className="p-8">
@@ -246,7 +246,7 @@ export default function SupportCenter({ initialTickets, currentAdminId }: { init
                  <p className="text-[8px] font-black uppercase text-slate-500 mb-4">Admin Assignment</p>
                  <div className="flex items-center gap-2 px-3 py-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                     <Icons.CheckCircle />
-                    <span className="text-[9px] font-black uppercase text-emerald-400">Security Clearance ✅</span>
+                    <span className="text-[9px] font-black uppercase text-emerald-400">Security Clearance Done</span>
                  </div>
                </div>
              </div>

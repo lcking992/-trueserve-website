@@ -30,7 +30,7 @@ export const STAFF_ROLE_BY_EMAIL: Partial<Record<string, AppRole>> = {
     "admin@trueserve.com": "ADMIN",
     "eric.mcduffie@thetieredconsulting.com": "ADMIN",
     "ericmcduffie7@gmail.com": "ADMIN",
-    "providantconsulting@gmail.com": "PM",
+    "providantconsulting@gmail.com": "OPS",
 };
 
 export const getStaffDisplayName = (email?: string, fallback?: string) => {

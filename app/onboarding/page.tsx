@@ -51,19 +51,19 @@ export default function OnboardingPortal() {
                             step="Step 1" 
                             title="Menu & POS" 
                             desc="Synchronize your current menu in minutes. We support Toast, Square, and Clover natively."
-                            icon="📂"
+                            icon="Folder"
                         />
                         <OnboardingCard 
                             step="Step 2" 
                             title="Fleet Operations" 
                             desc="Real-time routing for our professional drivers. Zero friction, zero paperwork."
-                            icon="🏁"
+                            icon="Finished"
                         />
                         <OnboardingCard 
                             step="Step 3" 
                             title="Bank Settlement" 
                             desc="Automated ежедневный settlements to your business bank. Transparent fee architecture."
-                            icon="🏦"
+                            icon="Bank"
                         />
                     </div>
                 </section>

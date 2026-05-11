@@ -36,7 +36,7 @@ export default function DriverPerformance({ orders }: DriverPerformanceProps) {
     return (
         <div className="card bg-white/5 border-white/10 p-8 mb-12">
             <h2 className="text-xl font-black text-white mb-6 flex items-center gap-3">
-                <span className="text-2xl">🏎️</span> Courier Performance
+                <span className="text-2xl"></span> Courier Performance
             </h2>
             
             <div className="space-y-4">

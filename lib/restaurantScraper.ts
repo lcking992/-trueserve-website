@@ -14,7 +14,7 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 export async function scrapeAndOnboardRestaurant(url: string, merchantEmail: string) {
     if (!ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is required for smart scraping.");
 
-    console.log(`[Scraper] 🚀 Starting deep scrape for: ${url}`);
+    console.log(`[Scraper] Launch Starting deep scrape for: ${url}`);
 
     // In a real execution, we would use a browser or specialized scraping service
     // to get the full HTML content. For this implementation, we will assume 
@@ -29,7 +29,7 @@ export async function scrapeAndOnboardRestaurant(url: string, merchantEmail: str
         // In a production app, we would pass the HTML or a screenshot to Claude 3.5 Sonnet.
         // For this tool, we'll implement the logic to handle the result.
         
-        console.log(`[Scraper] 🧠 AI is analyzing the digital menu...`);
+        console.log(`[Scraper] Insight AI is analyzing the digital menu...`);
         
         // This is a placeholder for the actual fetch/AI logic which 
         // would be triggered by the Merchant Portal UI.
@@ -45,7 +45,7 @@ export async function scrapeAndOnboardRestaurant(url: string, merchantEmail: str
         };
 
     } catch (e: any) {
-        console.error(`[Scraper] ❌ Error during scrape:`, e.message);
+        console.error(`[Scraper] Cancelled Error during scrape:`, e.message);
         return { success: false, error: e.message };
     }
 }

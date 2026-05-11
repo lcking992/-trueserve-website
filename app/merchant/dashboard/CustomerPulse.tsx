@@ -37,7 +37,7 @@ export default function CustomerPulse({ restaurantId }: CustomerPulseProps) {
 
     return (
         <div className="card bg-white/5 border-white/10 p-8 mb-12 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:scale-110 transition-transform duration-700">🧠</div>
+            <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:scale-110 transition-transform duration-700"></div>
             
             <div className="flex flex-col lg:flex-row gap-12 relative z-10">
                 {/* Score Section */}
@@ -58,7 +58,7 @@ export default function CustomerPulse({ restaurantId }: CustomerPulseProps) {
                             <ul className="space-y-3">
                                 {analysis.strengths.map((s: string, i: number) => (
                                     <li key={i} className="text-xs font-medium text-slate-300 flex items-start gap-3">
-                                        <span className="text-emerald-400 opacity-60">✓</span> {s}
+                                        <span className="text-emerald-400 opacity-60">Done</span> {s}
                                     </li>
                                 ))}
                             </ul>
@@ -80,7 +80,7 @@ export default function CustomerPulse({ restaurantId }: CustomerPulseProps) {
 
                     <div className="pt-6 border-t border-white/5">
                         <div className="bg-primary/10 border border-primary/20 p-5 rounded-2xl flex items-start gap-4">
-                            <span className="text-2xl mt-0.5">💡</span>
+                            <span className="text-2xl mt-0.5"></span>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">AI Recommendation</p>
                                 <p className="text-xs font-bold text-white leading-relaxed">{analysis.recommendation}</p>

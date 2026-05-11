@@ -28,7 +28,7 @@ export async function triggerEmergencyMarketplacePause(jiraIssueKey: string, rea
             action: 'EMERGENCY_PAUSE',
             entityType: 'MARKETPLACE',
             targetId: 'global',
-            message: `⚠️ EMERGENCY PAUSE: Triggered by Jira Ticket ${jiraIssueKey}. Reason: ${reason}`,
+            message: `Warning EMERGENCY PAUSE: Triggered by Jira Ticket ${jiraIssueKey}. Reason: ${reason}`,
             metadata: {
                 jiraIssueKey,
                 reason,
@@ -51,7 +51,7 @@ export async function triggerEmergencyMarketplacePause(jiraIssueKey: string, rea
         // 4. Confirmation back to Jira (Talk Back)
         await postJiraComment(
             jiraIssueKey, 
-            `🚨 AUTOMATION: Marketplace has been PAUSED in response to this incident. Status: EMERGENCY_LOCK=TRUE.`
+            `Urgent AUTOMATION: Marketplace has been PAUSED in response to this incident. Status: EMERGENCY_LOCK=TRUE.`
         );
 
         return { success: true, message: `Marketplace paused via ${jiraIssueKey}` };
@@ -71,7 +71,7 @@ export async function resumeMarketplace(jiraIssueKey: string, resolvedBy: string
             action: 'SYSTEM_RESUME',
             entityType: 'MARKETPLACE',
             targetId: 'global',
-            message: `✅ SYSTEM RESUME: Resolved via Jira Ticket ${jiraIssueKey}`,
+            message: `Done SYSTEM RESUME: Resolved via Jira Ticket ${jiraIssueKey}`,
             metadata: { jiraIssueKey, resolvedBy }
         });
 
@@ -88,7 +88,7 @@ export async function resumeMarketplace(jiraIssueKey: string, resolvedBy: string
         // Confirmation back to Jira (Talk Back)
         await postJiraComment(
             jiraIssueKey, 
-            `✅ AUTOMATION: Marketplace has been RESUMED. Status: EMERGENCY_LOCK=FALSE.`
+            `Done AUTOMATION: Marketplace has been RESUMED. Status: EMERGENCY_LOCK=FALSE.`
         );
 
         return { success: true };

@@ -22,7 +22,7 @@ export default function DriverChatButton({ orderId }: { orderId: string }) {
                     <div className="bg-slate-900 border border-primary/30 rounded-3xl overflow-hidden shadow-2xl shadow-primary/10">
                         <div className="bg-primary/10 p-3 border-b border-primary/20 flex justify-between items-center">
                             <span className="text-[10px] font-black uppercase text-primary tracking-widest">Active Chat: Order #{orderId.substring(0, 8)}</span>
-                            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+                            <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white">Close</button>
                         </div>
                         <ChatWindow orderId={orderId} role="DRIVER" />
                     </div>

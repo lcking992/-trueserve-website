@@ -30,11 +30,11 @@ export default function GHLSettingsPanel({
             .eq('id', restaurantId);
 
         if (error) {
-            setMessage("❌ Failed to save GHL URL");
+            setMessage("Cancelled Failed to save GHL URL");
             console.error(error);
         } else {
             setGhlUrl(urlToSave);
-            setMessage("✓ GHL embed saved — ordering will load automatically");
+            setMessage("GHL embed saved — ordering will load automatically");
             setTimeout(() => setMessage(""), 3000);
         }
         setIsSaving(false);
@@ -219,7 +219,7 @@ export default function GHLSettingsPanel({
                         Best practice: paste the public ordering iframe source, not an internal admin URL.
                     </div>
                     {message && (
-                        <div className={`ghl-message ${message.startsWith('✓') ? 'success' : 'error'}`}>
+                        <div className={`ghl-message ${message.startsWith('Done') ? 'success' : 'error'}`}>
                             {message}
                         </div>
                     )}

@@ -1,8 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
 import { getAuthSession } from "@/app/auth/actions";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import POSIntegration from "../POSIntegration";
+import MerchantPortalRecovery from "../MerchantPortalRecovery";
 
 export const dynamic = "force-dynamic";
 
@@ -25,15 +26,14 @@ export default async function IntegrationsPage() {
             posType: "Toast"
         };
     } else {
-        const supabase = await createClient();
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("Restaurant")
             .select('*')
             .eq("ownerId", activeUserId!)
             .maybeSingle();
 
         if (error || !data) {
-            redirect("/merchant/signup");
+            return <MerchantPortalRecovery />;
         }
         restaurant = data;
     }
@@ -45,7 +45,9 @@ export default async function IntegrationsPage() {
             </p>
             <POSIntegration
                 currentApiKey={restaurant.apiKey}
-                posType={restaurant.posType || "None"}
+                posType={restaurant.posSystem || restaurant.posType || "None"}
+                posClientId={restaurant.posClientId || ""}
+                hasPosSecret={Boolean(restaurant.posClientSecret)}
             />
         </>
     );

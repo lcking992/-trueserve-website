@@ -239,13 +239,13 @@ export default function PricingRulesManager({ initialRules }: { initialRules: an
                         <div key={rule.id} className={`pe-card ${!rule.isActive ? 'inactive' : ''}`}>
                             {/* Hover actions */}
                             <div className="pe-card-actions-hover">
-                                <button className="pe-icon-btn" onClick={() => setEditingRule(rule)} title="Edit">✏️</button>
-                                <button className="pe-icon-btn del" onClick={() => handleDelete(rule.id)} title="Delete">🗑</button>
+                                <button className="pe-icon-btn" onClick={() => setEditingRule(rule)} title="Edit">Edit</button>
+                                <button className="pe-icon-btn del" onClick={() => handleDelete(rule.id)} title="Delete">Delete</button>
                             </div>
 
                             {/* Header */}
                             <div className="pe-card-header">
-                                <div className="pe-rule-icon">{rule.boostMultiplier > 1 ? "🚀" : "⚖️"}</div>
+                                <div className="pe-rule-icon">{rule.boostMultiplier > 1 ? "Launch" : "Balance"}</div>
                                 <div className="pe-rule-name">{rule.name}</div>
                             </div>
 
@@ -294,7 +294,7 @@ export default function PricingRulesManager({ initialRules }: { initialRules: an
             {editingRule && (
                 <div className="pe-overlay" onClick={(e) => { if (e.target === e.currentTarget) setEditingRule(null); }}>
                     <div className="pe-modal">
-                        <button className="pe-modal-close" onClick={() => setEditingRule(null)}>✕</button>
+                        <button className="pe-modal-close" onClick={() => setEditingRule(null)}>Close</button>
                         <div className="pe-modal-title">{editingRule.id ? "Edit Rule" : "New Pricing Rule"}</div>
 
                         <div className="pe-modal-grid">

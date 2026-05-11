@@ -359,7 +359,7 @@ export default function AdminLogin() {
                                         border: "1px solid rgba(239,68,68,0.25)",
                                         borderRadius: 10
                                     }}>
-                                        <p style={{ margin: 0, color: "#f87171", fontSize: 13, fontWeight: 600 }}>⚠️ {error}</p>
+                                        <p style={{ margin: 0, color: "#f87171", fontSize: 13, fontWeight: 600 }}>Warning {error}</p>
                                     </div>
                                 )}
 

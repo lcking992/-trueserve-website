@@ -5,11 +5,11 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",    icon: "📊", color: "#f97316" },
-  { label: "Compliance",   icon: "✅", color: "#4dca80" },
-  { label: "Integrations", icon: "🔗", color: "#6b8ee8" },
-  { label: "Storefront",   icon: "🛍️", color: "#f97316" },
-  { label: "Franchise",    icon: "🏪", color: "#4dca80" },
+  { label: "Dashboard",    icon: "Analytics", color: "#f97316" },
+  { label: "Compliance",   icon: "Done", color: "#4dca80" },
+  { label: "Integrations", icon: "Link", color: "#6b8ee8" },
+  { label: "Storefront",   icon: "Store", color: "#f97316" },
+  { label: "Franchise",    icon: "Restaurant", color: "#4dca80" },
 ];
 
 const SECTIONS = [
@@ -257,7 +257,7 @@ export default function MerchantTutorialPreviewPage() {
                   cursor: "pointer",
                 }}
               >
-                <span>{i < step ? "✓" : s.step}</span>
+                <span>{i < step ? "Done" : s.step}</span>
                 <span style={{ opacity: 0.5 }}>·</span>
                 {s.label}
               </button>
@@ -357,7 +357,7 @@ export default function MerchantTutorialPreviewPage() {
                 </button>
                 {isLast ? (
                   <Link href="/merchant/login" className="ts-pill-btn ts-pill-btn-sm flex-1 text-center">
-                    Done ✓
+                    Done Done
                   </Link>
                 ) : (
                   <button

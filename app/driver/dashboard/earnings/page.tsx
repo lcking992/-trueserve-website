@@ -268,7 +268,7 @@ export default async function DriverEarnings() {
                             background: "rgba(77,202,128,0.06)", border: "1px solid rgba(77,202,128,0.18)",
                             borderRadius: 8, padding: "10px 12px", marginBottom: 14,
                         }}>
-                            <span style={{ fontSize: 16, flexShrink: 0 }}>💚</span>
+                            <span style={{ fontSize: 16, flexShrink: 0 }}></span>
                             <div>
                                 <div style={{ fontSize: 11, fontWeight: 800, color: "#4dca80", marginBottom: 2 }}>
                                     TrueServe takes 0% of your tips. Always.

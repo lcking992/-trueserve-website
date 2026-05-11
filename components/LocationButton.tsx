@@ -51,7 +51,7 @@ export default function LocationButton() {
             className={`btn btn-sm md:btn-md btn-ghost join-item border-none hover:bg-white/10 px-3 h-full flex items-center justify-center ${loading ? 'loading' : ''}`}
             title="Use my location"
         >
-            <span className="text-lg">{loading ? '' : '📍'}</span>
+            <span className="text-lg">{loading ? '' : 'Location'}</span>
         </button>
     );
 }

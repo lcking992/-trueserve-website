@@ -68,7 +68,7 @@ export default function MembershipUI({
 
             {error && (
                 <div className="mb-6 text-[10px] font-bold uppercase tracking-widest text-[#f97316] bg-[#f97316]/5 border border-[#f97316]/20 p-4 rounded-xl">
-                    ⚠️ {error}
+                    Warning {error}
                 </div>
             )}
 

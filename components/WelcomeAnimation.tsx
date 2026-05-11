@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CarFront, UtensilsCrossed } from "lucide-react";
 
 type Role = "driver" | "merchant";
 
@@ -21,13 +22,13 @@ const GREETINGS = () => {
 
 const ROLE_CONFIG = {
   driver: {
-    icon: "🚗",
+    icon: CarFront,
     color: "#3dd68c",
     tagline: "You're on the clock. Let's make it count.",
     cta: "Start Driving",
   },
   merchant: {
-    icon: "🍽️",
+    icon: UtensilsCrossed,
     color: "#f97316",
     tagline: "Your kitchen is live. Let's serve today.",
     cta: "Enter Dashboard",
@@ -45,6 +46,7 @@ export default function WelcomeAnimation({
 
   const storageKey = `welcome_shown_${role}`;
   const cfg = ROLE_CONFIG[role];
+  const Icon = cfg.icon;
 
   useEffect(() => {
     if (forceShow) {
@@ -120,12 +122,12 @@ export default function WelcomeAnimation({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 34,
               margin: "0 auto",
+              color: cfg.color,
               animation: "welcome-pulse 2s ease-in-out infinite",
             }}
           >
-            {cfg.icon}
+            <Icon size={34} strokeWidth={1.8} aria-hidden="true" />
           </div>
           {/* Online dot */}
           <span

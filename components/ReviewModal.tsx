@@ -54,7 +54,7 @@ export default function ReviewModal({ orderId, driverId, customerId, isOpen, onC
                     .barlow-cond { font-family: 'Barlow Condensed', sans-serif; }
                 ` }} />
                 <div className="w-full max-w-sm bg-[#0a0a0a] border border-[#f97316]/40 p-10 text-center rounded-[2.5rem] shadow-[0_0_80px_rgba(249,115,22,0.2)] animate-in zoom-in-95 duration-500">
-                    <div className="w-20 h-20 bg-[#f97316]/20 rounded-full flex items-center justify-center text-4xl mb-6 mx-auto border border-[#f97316]/30 shadow-inner">✅</div>
+                    <div className="w-20 h-20 bg-[#f97316]/20 rounded-full flex items-center justify-center text-4xl mb-6 mx-auto border border-[#f97316]/30 shadow-inner">Done</div>
                     <h2 className="bebas text-4xl italic tracking-wide text-white uppercase">REVIEW<span className="text-[#f97316]">UPLOADED.</span></h2>
                     <p className="barlow-cond text-[10px] font-black uppercase tracking-[0.3em] text-[#555] mt-2 italic">Communication synchronization complete</p>
                 </div>
@@ -115,7 +115,7 @@ export default function ReviewModal({ orderId, driverId, customerId, isOpen, onC
                             ) : (
                                 <>
                                     <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-xl relative overflow-hidden group-hover:bg-[#f97316]/10 transition-colors">
-                                        <span className="opacity-40 group-hover:opacity-100 transition-opacity group-hover:scale-125 duration-500">📸</span>
+                                        <span className="opacity-40 group-hover:opacity-100 transition-opacity group-hover:scale-125 duration-500">Photo</span>
                                         <div className="absolute top-0 left-0 w-full h-[1px] bg-[#f97316] shadow-[0_0_10px_#f97316] opacity-0 group-hover:opacity-100 animate-scanning" />
                                     </div>
                                     <p className="barlow-cond text-[10px] font-black tracking-[0.2em] text-white/30 group-hover:text-white/60 transition-colors uppercase">Synchronize Visual Memory</p>

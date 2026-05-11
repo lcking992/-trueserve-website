@@ -92,5 +92,5 @@ export async function POST(req: Request) {
 
 // Health check — Toast pings this on setup
 export async function GET() {
-  return new NextResponse('Toast Protocol Active ✓', { status: 200 });
+  return new NextResponse('Toast Protocol Active Done', { status: 200 });
 }

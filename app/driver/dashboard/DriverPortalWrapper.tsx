@@ -4,6 +4,18 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/app/auth/actions';
+import {
+  AlertTriangle,
+  CircleHelp,
+  ClipboardList,
+  IdCard,
+  LayoutDashboard,
+  LogOut,
+  Menu as MenuIcon,
+  ShieldCheck,
+  Star,
+  WalletCards,
+} from 'lucide-react';
 
 interface DriverPortalWrapperProps {
   children: React.ReactNode;
@@ -27,13 +39,13 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
   }, [mobileNavOpen]);
 
   const navItems = [
-    { href: '/driver/dashboard', label: 'Dashboard', icon: '📊', tour: 'driver-nav-dashboard' },
-    { href: '/driver/dashboard/earnings', label: 'Settlements', icon: '💰', tour: 'driver-nav-earnings' },
-    { href: '/driver/dashboard/ratings', label: 'Reputation', icon: '⭐', tour: 'driver-nav-ratings' },
-    { href: '/driver/dashboard/compliance', label: 'Compliance', icon: '✅', tour: 'driver-nav-compliance' },
-    { href: '/driver/dashboard/account',   label: 'Profile',   icon: '👤', tour: 'driver-nav-account'   },
-    { href: '/driver/dashboard/disputes',  label: 'Disputes',  icon: '🚨', tour: 'driver-nav-disputes'  },
-    { href: '/driver/dashboard/help',      label: 'Help',      icon: '🆘', tour: 'driver-nav-help'      },
+    { href: '/driver/dashboard', label: 'Dashboard', icon: LayoutDashboard, tour: 'driver-nav-dashboard' },
+    { href: '/driver/dashboard/earnings', label: 'Settlements', icon: WalletCards, tour: 'driver-nav-earnings' },
+    { href: '/driver/dashboard/ratings', label: 'Reputation', icon: Star, tour: 'driver-nav-ratings' },
+    { href: '/driver/dashboard/compliance', label: 'Compliance', icon: ShieldCheck, tour: 'driver-nav-compliance' },
+    { href: '/driver/dashboard/account',   label: 'Profile',   icon: IdCard, tour: 'driver-nav-account'   },
+    { href: '/driver/dashboard/disputes',  label: 'Disputes',  icon: AlertTriangle, tour: 'driver-nav-disputes'  },
+    { href: '/driver/dashboard/help',      label: 'Help',      icon: CircleHelp, tour: 'driver-nav-help'      },
   ];
 
   return (
@@ -97,8 +109,9 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           background: rgba(249,115,22,0.08) !important;
           border-left-color: #f97316 !important;
         }
-        .drv-nav-emoji {
-          font-size: 13px !important;
+        .drv-nav-icon {
+          width: 15px !important;
+          height: 15px !important;
           flex-shrink: 0 !important;
         }
         .drv-sidebar-footer {
@@ -216,7 +229,7 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           white-space: nowrap !important; overflow: hidden !important;
           text-overflow: ellipsis !important;
         }
-        .drv-mobile-status {
+          .drv-mobile-status {
           display: inline-flex !important; align-items: center !important;
           gap: 6px !important; padding: 6px 10px !important;
           border-radius: 999px !important;
@@ -225,6 +238,9 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           color: #f97316 !important; font-size: 10px !important;
           font-weight: 800 !important; letter-spacing: .1em !important;
           text-transform: uppercase !important; flex-shrink: 0 !important;
+        }
+        .drv-bottom-nav {
+          display: none !important;
         }
 
         @media (max-width: 767px) {
@@ -257,10 +273,49 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
             z-index: 130 !important;
           }
           .drv-sidebar.drv-sidebar-open { transform: translateX(0) !important; }
-          .drv-main { margin-left: 0 !important; padding: 14px !important; min-height: 100dvh !important; }
+          .drv-main { margin-left: 0 !important; padding: 14px 14px 96px !important; min-height: 100dvh !important; }
           .dd-two-col, .dd-bottom-grid { grid-template-columns: 1fr !important; }
           .dd-stat-grid { grid-template-columns: 1fr 1fr !important; }
           .dd-addr-grid { grid-template-columns: 1fr !important; }
+          .drv-bottom-nav {
+            display: grid !important;
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            gap: 4px !important;
+            position: fixed !important;
+            left: 10px !important;
+            right: 10px !important;
+            bottom: calc(10px + env(safe-area-inset-bottom)) !important;
+            z-index: 125 !important;
+            padding: 8px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(255,255,255,0.08) !important;
+            background: rgba(12,15,13,0.94) !important;
+            backdrop-filter: blur(18px) !important;
+            box-shadow: 0 18px 50px rgba(0,0,0,0.4) !important;
+          }
+          .drv-bottom-link {
+            min-width: 0 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 4px !important;
+            min-height: 54px !important;
+            border-radius: 13px !important;
+            color: #7f877f !important;
+            text-decoration: none !important;
+            font-size: 10px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.02em !important;
+          }
+          .drv-bottom-link svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .drv-bottom-link.drv-active {
+            color: #f97316 !important;
+            background: rgba(249,115,22,0.1) !important;
+          }
         }
 
         /* ── Tablet: slimmer sidebar ── */
@@ -292,6 +347,7 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
             {navItems.map((item) => {
               const isActive = pathname === item.href || (item.href !== '/driver/dashboard' && pathname.startsWith(item.href));
+              const Icon = item.icon;
               return (
                 <Link
                   key={item.href}
@@ -299,7 +355,7 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
                   href={item.href}
                   className={`drv-nav-item${isActive ? ' drv-active' : ''}`}
                 >
-                  <span className="drv-nav-emoji">{item.icon}</span>
+                  <Icon className="drv-nav-icon" aria-hidden="true" />
                   {item.label}
                 </Link>
               );
@@ -316,7 +372,7 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
             </button>
             <form action={logout}>
               <button type="submit" className="drv-logout-btn">
-                <span style={{ fontSize: 14 }}>→</span> Log Out
+                <LogOut size={14} aria-hidden="true" /> Log Out
               </button>
             </form>
           </div>
@@ -326,7 +382,7 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           {/* Mobile top bar */}
           <div className="drv-mobile-topbar">
             <button className="drv-mobile-nav-btn" aria-label="Open navigation" onClick={() => setMobileNavOpen(true)}>
-              ☰
+              <MenuIcon size={20} aria-hidden="true" />
             </button>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="drv-mobile-eyebrow">Driver Portal</div>
@@ -347,6 +403,24 @@ export default function DriverPortalWrapper({ children, pageTitle, pageSubtitle 
           ) : null}
           {children}
         </main>
+
+        <nav className="drv-bottom-nav" aria-label="Driver quick navigation">
+          {[
+            { href: '/driver/dashboard', label: 'Offers', icon: ClipboardList },
+            { href: '/driver/dashboard/earnings', label: 'Earnings', icon: WalletCards },
+            { href: '/driver/dashboard/help', label: 'Support', icon: CircleHelp },
+            { href: '/driver/dashboard/account', label: 'Profile', icon: IdCard },
+          ].map((item) => {
+            const isActive = pathname === item.href || (item.href !== '/driver/dashboard' && pathname.startsWith(item.href));
+            const Icon = item.icon;
+            return (
+              <Link key={item.href} href={item.href} className={`drv-bottom-link${isActive ? ' drv-active' : ''}`}>
+                <Icon aria-hidden="true" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
       </div>
     </>
   );

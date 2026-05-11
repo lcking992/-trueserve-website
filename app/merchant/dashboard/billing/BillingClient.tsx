@@ -292,7 +292,7 @@ export default function BillingClient({
                                     {/* Overage */}
                                     {plan.overage && (
                                         <div style={{ marginBottom: 16, padding: '7px 10px', borderRadius: 7, background: `${plan.color}08`, border: `1px solid ${plan.color}18` }}>
-                                            <p style={{ margin: 0, fontSize: 10, color: `${plan.color}88` }}>⚡ {plan.overage}</p>
+                                            <p style={{ margin: 0, fontSize: 10, color: `${plan.color}88` }}>Fast {plan.overage}</p>
                                         </div>
                                     )}
 

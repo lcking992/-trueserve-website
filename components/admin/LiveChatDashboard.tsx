@@ -379,7 +379,7 @@ export default function LiveChatDashboard({ initialChats }: { initialChats: any[
                 {!activeChat ? (
                     <div className="live-chat-room-empty">
                         <div>
-                            <div className="text-4xl text-slate-700 mb-4">💬</div>
+                            <div className="text-4xl text-slate-700 mb-4">Chat</div>
                             <p>Select a chat to join live</p>
                         </div>
                     </div>

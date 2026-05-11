@@ -56,7 +56,7 @@ export default function MerchantAnalytics({ orders, restaurantName }: MerchantAn
             {/* Stat Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="card bg-emerald-500/5 border-emerald-500/20 p-8 relative overflow-hidden group">
-                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">💰</div>
+                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform"></div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-4">Total Revenue</p>
                     <h3 className="text-4xl font-black text-white mb-2">${stats.totalEarnings.toFixed(2)}</h3>
                     <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
@@ -66,14 +66,14 @@ export default function MerchantAnalytics({ orders, restaurantName }: MerchantAn
                 </div>
 
                 <div className="card bg-primary/5 border-primary/20 p-8 relative overflow-hidden group">
-                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">🍔</div>
+                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform"></div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-4">Orders Completed</p>
                     <h3 className="text-4xl font-black text-white mb-2">{stats.orderCount}</h3>
                     <p className="text-xs font-bold text-slate-400 italic">Across {stats.dailyData.length} active days</p>
                 </div>
 
                 <div className="card bg-indigo-500/5 border-indigo-500/20 p-8 relative overflow-hidden group">
-                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">📊</div>
+                    <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform"></div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-4">Avg. Order Value</p>
                     <h3 className="text-4xl font-black text-white mb-2">${stats.avgOrderValue.toFixed(2)}</h3>
                     <p className="text-xs font-bold text-slate-400 italic">Net per request</p>
@@ -108,7 +108,7 @@ export default function MerchantAnalytics({ orders, restaurantName }: MerchantAn
 
                 {/* Smart Autopilot Impact */}
                 <div className="card bg-indigo-500/10 border-indigo-500/20 p-8 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl">🤖</div>
+                    <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl"></div>
                     <h3 className="text-sm font-black uppercase tracking-widest text-indigo-400 mb-2">Smart Autopilot Impact</h3>
                     <p className="text-xs text-slate-400 mb-8 max-w-sm">How autonomous traffic control protected your ratings this week.</p>
                     

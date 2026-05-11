@@ -9,6 +9,19 @@ import { sendEmail } from "@/lib/email";
 import { normalizePhoneNumber } from "@/lib/phoneUtils";
 import { syncSignupLeadToGHL } from "@/lib/ghl-sync";
 
+const CUSTOMER_REWARDS_CHECKOUT_COPY: Record<"Plus" | "Premium", { name: string; description: string; amount: number }> = {
+    Plus: {
+        name: "TrueServe Plus Rewards",
+        description: "Priority dispatch, faster support, and 1.5x TruePoints on every completed order.",
+        amount: 999
+    },
+    Premium: {
+        name: "TrueServe Premium Rewards",
+        description: "Highest dispatch priority, concierge support, and 2x TruePoints on every completed order.",
+        amount: 1999
+    }
+};
+
 export type AuthState = {
     message: string;
     success?: boolean;
@@ -211,7 +224,7 @@ export async function signupWithPassword(prevStateOrFormData: AuthState | FormDa
             await sendEmail(
                 email,
                 "Welcome to TrueServe! Your account is ready",
-                `<h1>Welcome to TrueServe, ${name}! 👋</h1>
+                `<h1>Welcome to TrueServe, ${name}! </h1>
                 <p>Your customer account has been created successfully.</p>
                 <p>Next steps:</p>
                 <ul>
@@ -232,7 +245,7 @@ export async function signupWithPassword(prevStateOrFormData: AuthState | FormDa
             // 4. STRIPE REDIRECTION FOR PLUS/PREMIUM
             if (role === 'CUSTOMER' && (plan === 'Plus' || plan === 'Premium')) {
                 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-                const amount = plan === 'Plus' ? 999 : 1999;
+                const checkoutCopy = CUSTOMER_REWARDS_CHECKOUT_COPY[plan];
 
                 const session = await (await import("@/lib/stripe")).getStripe().checkout.sessions.create({
                     payment_method_types: ['card'],
@@ -240,10 +253,10 @@ export async function signupWithPassword(prevStateOrFormData: AuthState | FormDa
                         price_data: {
                             currency: 'usd',
                             product_data: {
-                                name: `TrueServe ${plan} Membership`,
-                                description: plan === 'Plus' ? 'Priority dispatch & Member-only discounts' : 'Zero delivery fees & Concierge support'
+                                name: checkoutCopy.name,
+                                description: checkoutCopy.description
                             },
-                            unit_amount: amount,
+                            unit_amount: checkoutCopy.amount,
                             recurring: { interval: 'month' }
                         },
                         quantity: 1,
@@ -371,27 +384,17 @@ export async function getAuthSession(): Promise<{ isAuth: boolean; userId?: stri
     try {
         const cookieStore = await cookies();
 
-        const userId = cookieStore.get("userId")?.value;
+        const cookieUserId = cookieStore.get("userId")?.value;
         const adminSession = cookieStore.get("admin_session")?.value === "true";
         const adminRole = cookieStore.get("admin_role")?.value;
-        console.log("[AuthSession] userId from cookie:", userId);
+        console.log("[AuthSession] userId from cookie:", cookieUserId);
 
         let role = adminSession && adminRole ? adminRole : undefined;
+        const supabase = await createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        const userId = authUser?.id || cookieUserId;
 
         if (!userId) {
-            // Fallback: Check Supabase session directly
-            const supabase = await createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-            console.log("[AuthSession] Supabase fallback user:", user?.id);
-            if (user) {
-                const { data: publicUser } = await supabaseAdmin
-                    .from('User')
-                    .select('role, name, stripeAccountId')
-                    .eq('email', user.email)
-                    .maybeSingle();
-
-                return { isAuth: true, userId: user.id, role: adminSession && adminRole ? adminRole : (publicUser?.role || 'CUSTOMER'), name: publicUser?.name || user.email, stripeAccountId: publicUser?.stripeAccountId };
-            }
             return { isAuth: false };
         }
 
@@ -406,12 +409,12 @@ export async function getAuthSession(): Promise<{ isAuth: boolean; userId?: stri
             role = publicUser.role;
         } else if (!role) {
             // ID Mismatch fallback: Try by email
-            const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
-            if (authUser?.user?.email) {
+            const resolvedAuthUser = authUser || (await supabaseAdmin.auth.admin.getUserById(userId)).data.user;
+            if (resolvedAuthUser?.email) {
                 const { data: publicUserByEmail } = await supabaseAdmin
                     .from('User')
                     .select('role')
-                    .eq('email', authUser.user.email)
+                    .eq('email', resolvedAuthUser.email)
                     .maybeSingle();
                 
                 if (publicUserByEmail?.role) {

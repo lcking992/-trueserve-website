@@ -19,7 +19,7 @@ function createTransporter() {
 export async function sendEmail(to: string, subject: string, htmlBody: string, attachments?: any[]) {
     // Fallback if no SMTP credentials are set
     if (!process.env.SES_SMTP_USER || !process.env.SES_SMTP_PASS) {
-        logger.warn("⚠️ [MOCK EMAIL] AWS SES SMTP Credentials missing in .env");
+        logger.warn("Warning [MOCK EMAIL] AWS SES SMTP Credentials missing in .env");
         logger.info({ to, subject, attachments: attachments ? attachments.length : 0 }, '[MOCK EMAIL] details');
         return { success: true };
     }

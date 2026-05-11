@@ -240,7 +240,7 @@ export default function CostSyncManager() {
 
             <div className="mt-6 rounded-md border border-[#1e2420] bg-black/20 p-4">
                 <div className="mb-3 flex items-center gap-2">
-                    <span className="text-sm font-semibold text-[#8dc7ff]">📋 Setup Required</span>
+                    <span className="text-sm font-semibold text-[#8dc7ff]">Checklist Setup Required</span>
                     <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-white/45">
                         Admin only
                     </span>

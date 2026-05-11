@@ -150,7 +150,7 @@ export default function SupportWidget({ role = "CUSTOMER" }: { role?: "CUSTOMER"
                             <div className="chat-title">TrueServe Support</div>
                             <div className="chat-status"><span className="live-dot"></span> Claude AI Active</div>
                         </div>
-                        <button className="chat-close" onClick={() => setIsOpen(false)}>✕</button>
+                        <button className="chat-close" onClick={() => setIsOpen(false)}>Close</button>
                     </div>
                     
                     <div className="chat-body">

@@ -431,7 +431,7 @@ export default function DriverPortalPreviewPage() {
             <span className="dpp-stripe-sub">This preview mirrors the live driver layout for routes, earnings, and payout status.</span>
           </div>
         </div>
-        <div className="dpp-stripe-connected">✓ Active</div>
+        <div className="dpp-stripe-connected">Done Active</div>
       </div>
 
       <div className="dpp-two-col">

@@ -17,7 +17,7 @@ export default async function AdminRestaurantsPage() {
 
     const { data: restaurants } = await supabaseAdmin
         .from("Restaurant")
-        .select("id, name, imageUrl, cuisineType, visibility, city, state, ownerEmail")
+        .select("id, name, imageUrl, cuisineType, visibility, city, state, ownerEmail, stripeAccountId, openTime, closeTime, posSystem, posType, posClientId, menuItems:MenuItem(id)")
         .order("name", { ascending: true });
 
     return (
@@ -27,9 +27,9 @@ export default async function AdminRestaurantsPage() {
                     <p style={{ fontSize: 11, color: "#f97316", fontWeight: 800, letterSpacing: ".15em", textTransform: "uppercase", margin: "0 0 6px" }}>
                         Admin · Restaurants
                     </p>
-                    <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: 0 }}>Restaurant Photos</h1>
+                    <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: 0 }}>Restaurant Readiness</h1>
                     <p style={{ fontSize: 13, color: "#555", margin: "4px 0 0" }}>
-                        Upload or update cover photos for any restaurant.
+                        Review launch readiness, cover photos, cuisine labels, payout state, menu presence, hours, and POS status.
                     </p>
                 </div>
                 <AdminRestaurantGrid restaurants={restaurants || []} />

@@ -9,7 +9,7 @@ function CopyButton({ text }: { text: string }) {
       onClick={async () => { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
       style={{ background: copied ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.05)', border: `1px solid ${copied ? 'rgba(34,197,94,0.3)' : 'rgba(255,255,255,0.1)'}`, color: copied ? '#22c55e' : '#666', borderRadius: 5, padding: '2px 8px', fontSize: 11, cursor: 'pointer', transition: 'all 150ms', fontFamily: 'monospace', whiteSpace: 'nowrap' }}
     >
-      {copied ? '✓' : 'Copy'}
+      {copied ? 'Done' : 'Copy'}
     </button>
   );
 }
@@ -41,7 +41,7 @@ function TDDWorkflow() {
   const [activeStep, setActiveStep] = useState<number>(0);
   const steps = [
     {
-      color: '#ef4444', label: 'RED', icon: '🔴',
+      color: '#ef4444', label: 'RED', icon: 'Red',
       title: 'Write a failing test first',
       what: 'Before writing any implementation code, write a test that describes the desired behavior. Run it — it MUST fail. If it passes immediately, the test is wrong.',
       example: `// __tests__/lib/payEngine.test.ts
@@ -55,7 +55,7 @@ test('Late Night Bonus: adds $2 between 11pm–3am', () => {
       cmd: 'pnpm test --testPathPattern payEngine --watch',
     },
     {
-      color: '#f59e0b', label: 'GREEN', icon: '🟡',
+      color: '#f59e0b', label: 'GREEN', icon: 'Yellow',
       title: 'Write the minimum code to pass',
       what: 'Add only enough implementation to make the test pass. Do not over-engineer. Do not add features you don\'t have tests for. Keep it simple.',
       example: `// lib/payEngine.ts
@@ -71,11 +71,11 @@ export function calculateDriverPay(
   const totalPay = (base + distancePay + batchBonus + lateNightBonus) * surge + timePay;
   return { base, distancePay, timePay, batchBonus, lateNightBonus, totalPay };
 }
-// → Run test again → PASS ✅`,
+// → Run test again → PASS Done`,
       cmd: 'pnpm test --testPathPattern payEngine',
     },
     {
-      color: '#22c55e', label: 'REFACTOR', icon: '🟢',
+      color: '#22c55e', label: 'REFACTOR', icon: 'Green',
       title: 'Clean up, then run all tests',
       what: 'Now that it works, clean up: rename variables, extract helpers, add JSDoc comments, remove duplication. Run the full suite after — if anything breaks you\'ve over-refactored.',
       example: `// Extract bonus calculation into its own helper for readability
@@ -181,21 +181,21 @@ function StateMachine() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
         <div>
-          <div style={{ fontSize: 11, color: '#22c55e', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>✅ Valid Transitions</div>
+          <div style={{ fontSize: 11, color: '#22c55e', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Done Valid Transitions</div>
           {valid.map(t => <div key={t} style={{ fontSize: 12, color: '#aaa', padding: '3px 0', fontFamily: 'monospace' }}>{t.replace('→', ' → ')}</div>)}
         </div>
         <div>
-          <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>↩ Cancel Paths</div>
+          <div style={{ fontSize: 11, color: '#f59e0b', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Return Cancel Paths</div>
           {cancel.map(t => <div key={t} style={{ fontSize: 12, color: '#aaa', padding: '3px 0', fontFamily: 'monospace' }}>{t.replace('→', ' → ')}</div>)}
         </div>
         <div>
-          <div style={{ fontSize: 11, color: '#ef4444', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>🚫 Forbidden (throws)</div>
+          <div style={{ fontSize: 11, color: '#ef4444', fontWeight: 700, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Blocked Forbidden (throws)</div>
           {invalid.map(t => <div key={t} style={{ fontSize: 12, color: '#ef4444', padding: '3px 0', fontFamily: 'monospace', textDecoration: 'line-through', opacity: 0.7 }}>{t.replace('→', ' → ')}</div>)}
         </div>
       </div>
 
       <div style={{ marginTop: 14, padding: '8px 12px', background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 6, fontSize: 12, color: '#93c5fd' }}>
-        💡 Test file: <code>__tests__/order_logic.test.ts</code> — Run with <code>pnpm test --testPathPattern order_logic</code>
+        Tip Test file: <code>__tests__/order_logic.test.ts</code> — Run with <code>pnpm test --testPathPattern order_logic</code>
       </div>
     </div>
   );
@@ -206,7 +206,7 @@ function StateMachine() {
 function CoreInvariants() {
   const invariants = [
     {
-      icon: '💰', title: 'Payout Golden Ratio', color: '#f97316',
+      icon: 'Cost', title: 'Payout Golden Ratio', color: '#f97316',
       rule: '4.2 miles / 12 min wait / $6 tip = $14.94 total',
       breakdown: [
         { label: 'Base', value: '$3.00' },
@@ -219,7 +219,7 @@ function CoreInvariants() {
       test: '__tests__/onboarding_tester_examples.test.ts',
     },
     {
-      icon: '📞', title: 'Phone E.164 Rule', color: '#a78bfa',
+      icon: 'Phone', title: 'Phone E.164 Rule', color: '#a78bfa',
       rule: 'All phone numbers stored as E.164: +1XXXXXXXXXX',
       breakdown: [
         { label: '"(803) 555-1234"', value: '+18035551234' },
@@ -231,7 +231,7 @@ function CoreInvariants() {
       test: '__tests__/phone_utils.test.ts',
     },
     {
-      icon: '🗺️', title: 'Haversine Reference', color: '#60a5fa',
+      icon: 'Map', title: 'Haversine Reference', color: '#60a5fa',
       rule: 'Statue of Liberty → Empire State Building = ~5.1 miles',
       breakdown: [
         { label: 'SoL coords', value: '40.6892°N, 74.0445°W' },
@@ -369,7 +369,7 @@ function ReleaseChecklist() {
 
   const sections = [
     {
-      title: '🔬 Before Opening a PR', items: [
+      title: 'Review Before Opening a PR', items: [
         { id: 'unit', label: 'All unit tests pass locally (pnpm test)' },
         { id: 'security', label: 'Security tests pass (pnpm run test:security)' },
         { id: 'tsc', label: 'TypeScript compiles cleanly (npx tsc --noEmit)' },
@@ -379,7 +379,7 @@ function ReleaseChecklist() {
       ]
     },
     {
-      title: '🧪 QA on Preview Branch', items: [
+      title: 'Test QA on Preview Branch', items: [
         { id: 'stripe_cli', label: 'Stripe CLI is running and forwarding to /api/webhook/stripe' },
         { id: 'checkout', label: 'Checkout flow tested with 4242 4242 4242 4242 (success)' },
         { id: 'decline', label: 'Checkout flow tested with 4000 0000 0000 0002 (declined — shows error gracefully)' },
@@ -390,7 +390,7 @@ function ReleaseChecklist() {
       ]
     },
     {
-      title: '🚀 Before Merging to Main', items: [
+      title: 'Launch Before Merging to Main', items: [
         { id: 'e2e', label: 'E2E tests pass on preview URL (pnpm run test:e2e)' },
         { id: 'no_mock', label: 'No mock data seeded to preview Supabase that will bleed to prod' },
         { id: 'env_vars', label: 'Any new env vars added to Vercel project settings' },
@@ -432,7 +432,7 @@ function ReleaseChecklist() {
                 <label key={item.id} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', padding: '8px 10px', borderRadius: 6, background: checked[item.id] ? 'rgba(34,197,94,0.05)' : 'transparent', border: `1px solid ${checked[item.id] ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.04)'}`, transition: 'all 150ms' }}>
                   <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${checked[item.id] ? '#22c55e' : '#333'}`, background: checked[item.id] ? '#22c55e' : 'transparent', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 150ms', cursor: 'pointer' }}
                     onClick={() => toggle(item.id)}>
-                    {checked[item.id] && <span style={{ color: '#000', fontSize: 10, fontWeight: 900 }}>✓</span>}
+                    {checked[item.id] && <span style={{ width: 5, height: 8, borderRight: '2px solid #000', borderBottom: '2px solid #000', transform: 'rotate(45deg)', marginTop: -2 }} />}
                   </div>
                   <span style={{ fontSize: 13, color: checked[item.id] ? '#666' : '#ccc', textDecoration: checked[item.id] ? 'line-through' : 'none', lineHeight: 1.5, transition: 'all 150ms' }}
                     onClick={() => toggle(item.id)}>
@@ -489,34 +489,34 @@ function EnvRules() {
     {
       name: 'Local Dev', file: '.env.local', color: '#60a5fa',
       rules: [
-        '✅ Use sk_test_ / pk_test_ Stripe keys',
-        '✅ Use real Supabase project (development schema)',
-        '✅ Stripe CLI forwards webhooks locally',
-        '✅ Mock users, mock drivers allowed',
-        '✅ QA tooling and test seed scripts OK',
-        '🚫 Never paste sk_live_ keys here',
+        'Done Use sk_test_ / pk_test_ Stripe keys',
+        'Done Use real Supabase project (development schema)',
+        'Done Stripe CLI forwards webhooks locally',
+        'Done Mock users, mock drivers allowed',
+        'Done QA tooling and test seed scripts OK',
+        'Blocked Never paste sk_live_ keys here',
       ]
     },
     {
       name: 'Preview (Vercel)', file: 'Vercel env → Preview', color: '#f59e0b',
       rules: [
-        '✅ Use sk_test_ / pk_test_ Stripe keys',
-        '✅ Full Stripe Connect flows testable',
-        '✅ QA testing against branch deployments',
-        '🚫 No mock data that will bleed to prod DB',
-        '🚫 No real customer data in test flows',
-        '🚫 No live Stripe keys',
+        'Done Use sk_test_ / pk_test_ Stripe keys',
+        'Done Full Stripe Connect flows testable',
+        'Done QA testing against branch deployments',
+        'Blocked No mock data that will bleed to prod DB',
+        'Blocked No real customer data in test flows',
+        'Blocked No live Stripe keys',
       ]
     },
     {
       name: 'Production', file: '.env.production + Vercel', color: '#22c55e',
       rules: [
-        '✅ sk_live_ / pk_live_ Stripe keys only',
-        '✅ Real customer data, real transactions',
-        '✅ STRIPE_WEBHOOK_SECRET required',
-        '🚫 No mock users or mock drivers',
-        '🚫 No QA tooling or seed scripts',
-        '🚫 No test cards — all charges are real money',
+        'Done sk_live_ / pk_live_ Stripe keys only',
+        'Done Real customer data, real transactions',
+        'Done STRIPE_WEBHOOK_SECRET required',
+        'Blocked No mock users or mock drivers',
+        'Blocked No QA tooling or seed scripts',
+        'Blocked No test cards — all charges are real money',
       ]
     },
   ];
@@ -531,7 +531,7 @@ function EnvRules() {
             <div style={{ fontSize: 11, color: '#555', marginBottom: 12, fontFamily: 'monospace' }}>{env.file}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               {env.rules.map(r => (
-                <div key={r} style={{ fontSize: 12, color: r.startsWith('🚫') ? '#ef444488' : '#888', lineHeight: 1.5 }}>{r}</div>
+                <div key={r} style={{ fontSize: 12, color: r.startsWith('Blocked') ? '#ef444488' : '#888', lineHeight: 1.5 }}>{r}</div>
               ))}
             </div>
           </div>
@@ -557,14 +557,14 @@ function DevSetup() {
   const patterns = [
     {
       title: 'Lazy SDK Initialization', color: '#f97316',
-      code: `// ✅ DO — lazy init, defers until first request
+      code: `// Done DO — lazy init, defers until first request
 let _stripe: Stripe | null = null;
 function getStripe() {
   if (!_stripe) _stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   return _stripe;
 }
 
-// ❌ DON'T — module-level init breaks Next.js build
+// Cancelled DON'T — module-level init breaks Next.js build
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);`,
       why: 'Module-level SDK calls run at build time when env vars may be empty, crashing the Vercel build. Always defer with a getter.',
     },
@@ -629,7 +629,7 @@ export async function updateSomething(id: string, data: any) {
           ].map(item => <CodeBlock key={item.cmd} cmd={item.cmd} label={item.label} />)}
         </div>
         <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(249,115,22,0.06)', border: '1px solid rgba(249,115,22,0.15)', borderRadius: 7, fontSize: 12, color: '#fb923c' }}>
-          ⚠️ <strong>Required env vars:</strong> NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY (sk_test_...), NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+          Warning <strong>Required env vars:</strong> NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY (sk_test_...), NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
         </div>
       </div>
 
@@ -687,7 +687,7 @@ export async function updateSomething(id: string, data: any) {
           ))}
         </div>
         <div style={{ padding: '10px 14px', background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 7, fontSize: 12, color: '#93c5fd' }}>
-          💡 <strong>Branch naming:</strong> <code>feature/</code> for new features · <code>fix/</code> for bug fixes · <code>chore/</code> for maintenance · <code>hotfix/</code> for urgent production fixes
+          Tip <strong>Branch naming:</strong> <code>feature/</code> for new features · <code>fix/</code> for bug fixes · <code>chore/</code> for maintenance · <code>hotfix/</code> for urgent production fixes
         </div>
       </div>
 
@@ -924,10 +924,10 @@ NEXT_PUBLIC_MOCK_MODE=true`,
   ];
 
   const sidebarItems = [
-    { id: 'seed' as const, label: 'Seed Scripts', icon: '🌱' },
-    { id: 'factories' as const, label: 'Data Factories', icon: '🏭' },
-    { id: 'supabase' as const, label: 'Mocking Patterns', icon: '🔌' },
-    { id: 'reset' as const, label: 'Reset & Inspect', icon: '🔄' },
+    { id: 'seed' as const, label: 'Seed Scripts' },
+    { id: 'factories' as const, label: 'Data Factories' },
+    { id: 'supabase' as const, label: 'Mocking Patterns' },
+    { id: 'reset' as const, label: 'Reset & Inspect' },
   ];
 
   return (
@@ -946,11 +946,11 @@ NEXT_PUBLIC_MOCK_MODE=true`,
               fontSize: 13, fontWeight: 600,
             }}
           >
-            {item.icon} {item.label}
+            {item.label}
           </button>
         ))}
         <div style={{ marginTop: 12, padding: '10px 12px', background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.15)', borderRadius: 7, fontSize: 11, color: '#4ade80', lineHeight: 1.6 }}>
-          ✅ Mock data is <strong>only</strong> allowed in Local Dev and Preview envs. Never in Production.
+          Mock data is <strong>only</strong> allowed in Local Dev and Preview envs. Never in Production.
         </div>
       </div>
 
@@ -965,7 +965,7 @@ NEXT_PUBLIC_MOCK_MODE=true`,
             </div>
             <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 7 }}>
               <div style={{ fontSize: 12, color: '#93c5fd', lineHeight: 1.7 }}>
-                💡 <strong>How seeds work:</strong> Scripts live in <code>scripts/seed/</code>. They use <code>supabaseAdmin</code> to insert rows directly, bypassing RLS. Each entity is tagged with <code>is_mock: true</code> so they can be bulk-deleted without touching real data.
+                Tip <strong>How seeds work:</strong> Scripts live in <code>scripts/seed/</code>. They use <code>supabaseAdmin</code> to insert rows directly, bypassing RLS. Each entity is tagged with <code>is_mock: true</code> so they can be bulk-deleted without touching real data.
               </div>
             </div>
           </div>
@@ -1222,9 +1222,9 @@ function OnboardingHub() {
   ];
 
   const sidebarItems = [
-    { id: 'checklist' as const, label: 'Onboarding Checklist', icon: '✅' },
-    { id: 'troubleshooting' as const, label: 'Troubleshooting FAQ', icon: '🔧' },
-    { id: 'schema' as const, label: 'Schema Map', icon: '🗄️' },
+    { id: 'checklist' as const, label: 'Onboarding Checklist' },
+    { id: 'troubleshooting' as const, label: 'Troubleshooting FAQ' },
+    { id: 'schema' as const, label: 'Schema Map' },
   ];
 
   return (
@@ -1243,7 +1243,7 @@ function OnboardingHub() {
               fontSize: 13, fontWeight: 600,
             }}
           >
-            {item.icon} {item.label}
+            {item.label}
           </button>
         ))}
       </div>
@@ -1277,7 +1277,7 @@ function OnboardingHub() {
                     {day.items.map(item => (
                       <label key={item.id} onClick={() => toggle(item.id)} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', padding: '8px 10px', borderRadius: 6, background: checked[item.id] ? 'rgba(34,197,94,0.05)' : 'transparent', border: `1px solid ${checked[item.id] ? 'rgba(34,197,94,0.15)' : 'rgba(255,255,255,0.04)'}`, transition: 'all 150ms' }}>
                         <div style={{ width: 16, height: 16, borderRadius: 4, border: `2px solid ${checked[item.id] ? '#22c55e' : '#333'}`, background: checked[item.id] ? '#22c55e' : 'transparent', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 150ms' }}>
-                          {checked[item.id] && <span style={{ color: '#000', fontSize: 10, fontWeight: 900 }}>✓</span>}
+                          {checked[item.id] && <span style={{ width: 5, height: 8, borderRight: '2px solid #000', borderBottom: '2px solid #000', transform: 'rotate(45deg)', marginTop: -2 }} />}
                         </div>
                         <span style={{ fontSize: 13, color: checked[item.id] ? '#555' : '#ccc', textDecoration: checked[item.id] ? 'line-through' : 'none', lineHeight: 1.5 }}>{item.label}</span>
                       </label>
@@ -1300,7 +1300,7 @@ function OnboardingHub() {
               {faqs.map((faq, i) => (
                 <div key={i} style={{ background: '#0f1210', border: `1px solid ${faq.color}22`, borderRadius: 8, padding: 16 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: faq.color, marginBottom: 8, fontFamily: 'monospace' }}>
-                    ❌ {faq.error}
+                    Cancelled {faq.error}
                   </div>
                   <div style={{ fontSize: 12, color: '#666', marginBottom: 6 }}>
                     <span style={{ color: '#444' }}>Cause: </span>{faq.cause}
@@ -1320,7 +1320,7 @@ function OnboardingHub() {
           <div className="adm-card">
             <SectionHeader title="Database Schema Map" sub="Core Supabase tables, their columns, and how they relate. Source of truth for new devs." />
             <div style={{ padding: '10px 14px', background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 7, marginBottom: 16, fontSize: 12, color: '#93c5fd' }}>
-              💡 <strong>Key relationships:</strong> profiles ← Driver (userId) · profiles ← Order (customerId, driverId) · Restaurant ← MenuItem · Order ← OrderItem ← MenuItem
+              Tip <strong>Key relationships:</strong> profiles ← Driver (userId) · profiles ← Order (customerId, driverId) · Restaurant ← MenuItem · Order ← OrderItem ← MenuItem
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {tables.map(table => (
@@ -1368,33 +1368,34 @@ function OnboardingHub() {
 export default function DevHubDashboard() {
   const [tab, setTab] = useState<'tdd' | 'tests' | 'checklist' | 'env' | 'dev' | 'mock' | 'onboarding'>('tdd');
 
-  const tabs: Array<{ id: typeof tab; label: string; icon: string }> = [
-    { id: 'tdd', label: 'TDD Guide', icon: '🔴' },
-    { id: 'tests', label: 'Test Suite', icon: '📁' },
-    { id: 'checklist', label: 'Release QA', icon: '✅' },
-    { id: 'env', label: 'Environments', icon: '🌍' },
-    { id: 'dev', label: 'Dev Setup', icon: '⚙️' },
-    { id: 'mock', label: 'Mock Data', icon: '🌱' },
-    { id: 'onboarding', label: 'Onboarding', icon: '🚀' },
+  const tabs: Array<{ id: typeof tab; label: string }> = [
+    { id: 'tdd', label: 'TDD Guide' },
+    { id: 'tests', label: 'Test Suite' },
+    { id: 'checklist', label: 'Release QA' },
+    { id: 'env', label: 'Environments' },
+    { id: 'dev', label: 'Dev Setup' },
+    { id: 'mock', label: 'Mock Data' },
+    { id: 'onboarding', label: 'Onboarding' },
   ];
 
   return (
     <div>
       {/* Tab bar */}
-      <div style={{ display: 'flex', gap: 4, marginBottom: 20, borderBottom: '1px solid #1e2420', paddingBottom: 12 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20, borderBottom: '1px solid #1e2420', paddingBottom: 12 }}>
         {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             style={{
-              padding: '7px 16px', borderRadius: 6,
+              padding: '8px 14px', borderRadius: 8,
               border: tab === t.id ? '1px solid rgba(249,115,22,0.3)' : '1px solid transparent',
               background: tab === t.id ? 'rgba(249,115,22,0.1)' : 'transparent',
               color: tab === t.id ? '#f97316' : '#666',
-              fontSize: 13, fontWeight: 600, cursor: 'pointer', transition: 'all 150ms',
+              fontSize: 12, fontWeight: 800, cursor: 'pointer', transition: 'all 150ms',
+              letterSpacing: '0.06em', textTransform: 'uppercase',
             }}
           >
-            {t.icon} {t.label}
+            {t.label}
           </button>
         ))}
       </div>

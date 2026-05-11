@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import { BadgeCheck, CarFront, Clock3, IdCard, Route, ShieldCheck, Smartphone, Zap } from "lucide-react";
 
 export default function DriverLanding() {
   return (
@@ -31,8 +32,8 @@ export default function DriverLanding() {
             minHeight: 280,
           }}>
             <img
-              src="/driver_hero_real.png"
-              alt="TrueServe driver on the road at dusk with delivery bag"
+              src="/driver-route-interior-trueserve.png"
+              alt="TrueServe driver route view from inside a car with delivery bag"
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 30%" }}
             />
             {/* gradient overlay so text below doesn't need extra contrast */}
@@ -77,31 +78,35 @@ export default function DriverLanding() {
         <section className="grid gap-6 md:grid-cols-3" style={{ marginBottom: 56 }}>
           {[
             {
-              icon: "🕐",
+              icon: Clock3,
               kicker: "Full Flexibility",
               title: "Set your own hours",
               desc: "Work mornings, evenings, or weekends. Go online when it suits you and offline the moment you're done. Zero obligations.",
             },
             {
-              icon: "⚡",
+              icon: Zap,
               kicker: "Fast Payouts",
               title: "Get paid quickly",
               desc: "Earnings are tracked in real time and paid out via Stripe. No waiting until Friday — your money moves when you do.",
             },
             {
-              icon: "🗺️",
+              icon: Route,
               kicker: "Smart Dispatch",
               title: "Live route assist",
               desc: "Intelligent order matching sends you deliveries that fit your location. Built-in navigation keeps every route efficient.",
             },
-          ].map((card) => (
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
             <div key={card.title} className="food-card" style={{ padding: 28 }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>{card.icon}</div>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 14, marginBottom: 14, color: "#f97316", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.22)" }}>
+                <Icon size={21} strokeWidth={2.1} />
+              </div>
               <p className="food-kicker" style={{ marginBottom: 8 }}>{card.kicker}</p>
               <h3 className="food-heading" style={{ fontSize: 26, marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.65)" }}>{card.desc}</p>
             </div>
-          ))}
+          )})}
         </section>
 
         {/* Requirements */}
@@ -110,19 +115,23 @@ export default function DriverLanding() {
           <h2 className="food-heading" style={{ marginBottom: 32 }}>What you <span className="accent">need to start</span></h2>
           <div className="grid gap-6 md:grid-cols-2">
             {[
-              { icon: "🪪", label: "Valid driver's license", sub: "Must be current and in good standing" },
-              { icon: "🚗", label: "Reliable vehicle", sub: "Car, scooter, or bike — all accepted" },
-              { icon: "📱", label: "Smartphone", sub: "iOS or Android to run the driver app" },
-              { icon: "✅", label: "Background check", sub: "Quick online screening — usually clears in 24–48 hours" },
-            ].map((req) => (
+              { icon: IdCard, label: "Valid driver's license", sub: "Must be current and in good standing" },
+              { icon: CarFront, label: "Reliable vehicle", sub: "Car, scooter, or bike — all accepted" },
+              { icon: Smartphone, label: "Smartphone", sub: "iOS or Android to run the driver app" },
+              { icon: ShieldCheck, label: "Background check", sub: "Quick online screening — usually clears in 24–48 hours" },
+            ].map((req) => {
+              const Icon = req.icon;
+              return (
               <div key={req.label} style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
-                <div style={{ fontSize: 24, flexShrink: 0, marginTop: 2 }}>{req.icon}</div>
+                <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 10, flexShrink: 0, marginTop: 2, color: "#f97316", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.18)" }}>
+                  <Icon size={18} strokeWidth={2.1} />
+                </div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 3 }}>{req.label}</div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{req.sub}</div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </section>
 

@@ -89,7 +89,7 @@ export async function GET(request: Request) {
           violationCount > 3 ? `\n... and ${violationCount - 3} more violations` : '';
 
         const emailBody = `
-<h2>🚨 Critical Health Code Violations Detected</h2>
+<h2>Urgent Critical Health Code Violations Detected</h2>
 <p>Your restaurant <strong>${alert.restaurantName}</strong> in ${alert.state} has <strong>${violationCount} critical violations</strong> from the recent inspection on <strong>${new Date(alert.inspectionDate).toLocaleDateString()}</strong>.</p>
 
 <h3>Critical Violations Found:</h3>
@@ -109,14 +109,14 @@ export async function GET(request: Request) {
 <p>Log in to your merchant dashboard to view the full inspection report and track remediation progress.</p>
         `;
 
-        const smsMessage = `🚨 CRITICAL: ${alert.restaurantName} has ${violationCount} critical health violations from recent inspection. Log into your dashboard for details and remediation steps.`;
+        const smsMessage = `Urgent CRITICAL: ${alert.restaurantName} has ${violationCount} critical health violations from recent inspection. Log into your dashboard for details and remediation steps.`;
 
         // Send email
         if (alert.ownerEmail) {
           try {
             await sendEmail(
               alert.ownerEmail,
-              `🚨 URGENT: Critical Health Code Violations - ${alert.restaurantName}`,
+              `Urgent URGENT: Critical Health Code Violations - ${alert.restaurantName}`,
               emailBody
             );
             emailSent = true;

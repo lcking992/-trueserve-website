@@ -10,6 +10,7 @@ import { useRamenStream } from "@/hooks/useRamenStream";
 import { driverLocChannel } from "@/lib/ramen/types";
 import type { DriverLocationPayload } from "@/lib/ramen/types";
 import PostDeliveryTip from "@/components/PostDeliveryTip";
+import OrderTransparencyLog from "@/components/OrderTransparencyLog";
 
 interface OrderTrackingClientProps {
     order: any;
@@ -283,7 +284,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
 
                 <div style={{ textAlign: "center", animation: "ts-text-rise 0.4s ease-out 0.5s both", opacity: 0 }}>
                     <p style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
-                        Order Delivered! 🎉
+                        Order Delivered! 
                     </p>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", marginTop: 6 }}>
                         Enjoy your meal · tap to dismiss
@@ -466,7 +467,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                             <div className="tl">
                                 {/* Step 1: Order Confirmed */}
                                 <div className={`tl-row ${currentStep >= 1 ? 'done' : ''}`}>
-                                    <div className={`tl-dot ${currentStep >= 1 ? 'done' : 'wait'}`}>✓</div>
+                                    <div className={`tl-dot ${currentStep >= 1 ? 'done' : 'wait'}`}>Done</div>
                                     <div className="tl-body">
                                         <div className="tl-lbl">Order Confirmed</div>
                                         <div className="tl-sub">{new Date(currentOrder.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
@@ -476,7 +477,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                 {/* Step 2: Preparing */}
                                 <div className={`tl-row ${currentStep >= 2 ? 'done' : ''}`}>
                                     <div className={`tl-dot ${currentStep >= 2 ? 'done' : currentStep === 1 ? 'live' : 'wait'}`}>
-                                        {currentStep >= 2 ? '✓' : '2'}
+                                        {currentStep >= 2 ? 'Done' : '2'}
                                     </div>
                                     <div className="tl-body">
                                         <div className={`tl-lbl${currentStep === 1 ? ' active' : ''}`}>Preparing Your Food</div>
@@ -490,7 +491,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                 {/* Step 3: Ready for Pickup */}
                                 <div className={`tl-row ${currentStep >= 3 ? 'done' : ''}`}>
                                     <div className={`tl-dot ${currentStep >= 3 ? 'done' : currentStep === 2 ? 'live' : 'wait'}`}>
-                                        {currentStep >= 3 ? '✓' : '3'}
+                                        {currentStep >= 3 ? 'Done' : '3'}
                                     </div>
                                     <div className="tl-body">
                                         <div className={`tl-lbl${currentStep === 2 ? ' active' : ''}`}>Ready for Pickup</div>
@@ -504,7 +505,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                 {/* Step 4: Driver En Route */}
                                 <div className={`tl-row ${currentStep >= 4 ? 'done' : ''}`}>
                                     <div className={`tl-dot ${currentStep >= 4 ? 'done' : currentStep === 3 ? 'live' : 'wait'}`}>
-                                        {currentStep >= 4 ? '✓' : '4'}
+                                        {currentStep >= 4 ? 'Done' : '4'}
                                     </div>
                                     <div className="tl-body">
                                         <div className={`tl-lbl${currentStep === 3 ? ' active' : ''}`}>Driver En Route</div>
@@ -518,18 +519,20 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                 {/* Step 5: Delivered */}
                                 <div className={`tl-row ${currentStep >= 5 ? 'done' : ''}`}>
                                     <div className={`tl-dot ${currentStep >= 5 ? 'done' : currentStep === 4 ? 'live' : 'wait'}`}>
-                                        {currentStep >= 5 ? '✓' : '5'}
+                                        {currentStep >= 5 ? 'Done' : '5'}
                                     </div>
                                     <div className="tl-body">
                                         <div className={`tl-lbl${currentStep === 4 ? ' active' : ''}`}>Delivered</div>
                                         <div className="tl-sub">
-                                            {currentStep >= 5 ? 'Enjoy your meal! 🎉' : `Arriving in ${eta}`}
+                                            {currentStep >= 5 ? 'Enjoy your meal! ' : `Arriving in ${eta}`}
                                         </div>
                                         {currentStep === 4 && <div className="tl-eta">ETA: {eta}</div>}
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <OrderTransparencyLog order={currentOrder} compact perspective="customer" />
 
                         {currentOrder.driverId && (
                             <div className="driver-box">
@@ -540,9 +543,9 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                     </div>
                                     <div style={{ flex: 1 }}>
                                         <div className="d-name" style={{ fontWeight: 800 }}>{currentOrder.driver?.user?.name || "Marcus T."}</div>
-                                        <div className="d-stat" style={{ fontSize: '11px', color: 'var(--t2)' }}>⭐ 4.96 · {currentOrder.driver?.vehicleType}</div>
+                                        <div className="d-stat" style={{ fontSize: '11px', color: 'var(--t2)' }}>Rating 4.96 · {currentOrder.driver?.vehicleType}</div>
                                     </div>
-                                    <button className="btn btn-ghost" style={{ fontSize: '12px', padding: '6px 11px' }}>📞</button>
+                                    <button className="btn btn-ghost" style={{ fontSize: '12px', padding: '6px 11px' }}>Phone</button>
                                 </div>
                             </div>
                         )}

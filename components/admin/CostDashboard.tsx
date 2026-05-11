@@ -162,7 +162,7 @@ export default function CostDashboard({
                                             />
                                         </div>
                                         <span className="text-[10px] px-2 py-0.5 rounded bg-white/10 text-white/60">
-                                            {forecast.confidence === 'HIGH' ? '🎯' : forecast.confidence === 'MEDIUM' ? '⚠️' : '❓'} {forecast.confidence}
+                                            {forecast.confidence === 'HIGH' ? 'Target' : forecast.confidence === 'MEDIUM' ? 'Warning' : 'Unknown'} {forecast.confidence}
                                         </span>
                                     </div>
                                 </div>

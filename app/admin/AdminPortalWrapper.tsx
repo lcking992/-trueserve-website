@@ -2,8 +2,23 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { ElementType } from 'react';
 import { logout } from '@/app/auth/actions';
 import { ADMIN_NAV_ITEMS, canAccessAdminSection, getRoleLabel } from '@/lib/rbac';
+import {
+  ClipboardCheck,
+  CreditCard,
+  DollarSign,
+  FileText,
+  FlaskConical,
+  Headphones,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  SlidersHorizontal,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 
 interface AdminPortalWrapperProps {
   children: React.ReactNode;
@@ -15,6 +30,21 @@ export default function AdminPortalWrapper({ children, role }: AdminPortalWrappe
   const navItems = role
     ? ADMIN_NAV_ITEMS.filter((item) => canAccessAdminSection(role, item.section))
     : ADMIN_NAV_ITEMS;
+
+  const iconMap: Record<string, ElementType> = {
+    Analytics: LayoutDashboard,
+    Cost: DollarSign,
+    Payment: CreditCard,
+    Tools: SlidersHorizontal,
+    Team: Users,
+    Support: Headphones,
+    Note: FileText,
+    Trend: TrendingUp,
+    User: Users,
+    Test: FlaskConical,
+    Checklist: ClipboardCheck,
+    Settings,
+  };
 
   return (
     <>
@@ -98,10 +128,19 @@ export default function AdminPortalWrapper({ children, role }: AdminPortalWrappe
           background: rgba(249,115,22,0.08) !important;
         }
         .adm-icon {
-          font-size: 14px !important;
-          width: 18px !important;
+          width: 16px !important;
+          height: 16px !important;
+          font-size: 0 !important;
           flex-shrink: 0 !important;
-          display: inline-block !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        .adm-icon svg,
+        svg.adm-icon {
+          width: 16px !important;
+          height: 16px !important;
+          stroke-width: 2 !important;
         }
         .adm-logout-section {
           border-top: 1px solid #1e2420 !important;
@@ -165,22 +204,25 @@ export default function AdminPortalWrapper({ children, role }: AdminPortalWrappe
           {role && <div className="adm-role-pill">{getRoleLabel(role)}</div>}
 
           <div className="adm-nav-section">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`adm-link${pathname === item.href ? ' adm-active' : ''}`}
-              >
-                <span className="adm-icon">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const Icon = iconMap[item.icon] || LayoutDashboard;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`adm-link${pathname === item.href ? ' adm-active' : ''}`}
+                >
+                  <Icon className="adm-icon" aria-hidden="true" />
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="adm-logout-section">
             <form action={logout}>
               <button type="submit" className="adm-link" style={{ color: '#f97316' }}>
-                <span className="adm-icon">🚪</span>Log Out
+                <LogOut className="adm-icon" aria-hidden="true" />Log Out
               </button>
             </form>
           </div>

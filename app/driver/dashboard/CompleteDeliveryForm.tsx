@@ -95,7 +95,7 @@ export default function CompleteDeliveryForm({ orderId, customerName, deliveryIn
                 borderRadius: 8, padding: '14px 16px', textAlign: 'center', marginTop: 8,
             }}>
                 <div style={{ fontSize: 13, fontWeight: 800, color: '#3ecf6e', letterSpacing: '0.08em' }}>
-                    ✓ Delivery Complete
+                    Delivery Complete
                 </div>
             </div>
         );

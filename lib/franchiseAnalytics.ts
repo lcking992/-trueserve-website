@@ -100,31 +100,31 @@ export function generateFranchiseInsights(metrics: FranchiseMetrics): string[] {
 
     // Location count insight
     if (metrics.locationCount === 1) {
-        insights.push("📍 Single location franchise");
+        insights.push("Location Single location franchise");
     } else {
-        insights.push(`🏪 ${metrics.locationCount} locations managed`);
+        insights.push(`Restaurant ${metrics.locationCount} locations managed`);
     }
 
     // Average score insight
     if (metrics.averageScore >= 90) {
-        insights.push(`⭐ Excellent network average: ${metrics.averageScore}/100`);
+        insights.push(`Rating Excellent network average: ${metrics.averageScore}/100`);
     } else if (metrics.averageScore >= 80) {
-        insights.push(`✅ Good network average: ${metrics.averageScore}/100`);
+        insights.push(`Done Good network average: ${metrics.averageScore}/100`);
     } else if (metrics.averageScore >= 70) {
-        insights.push(`⚠️ Network average: ${metrics.averageScore}/100 — improvement needed`);
+        insights.push(`Warning Network average: ${metrics.averageScore}/100 — improvement needed`);
     } else {
-        insights.push(`🚨 Critical: Network average is ${metrics.averageScore}/100`);
+        insights.push(`Urgent Critical: Network average is ${metrics.averageScore}/100`);
     }
 
     // Pass rate insight
     if (metrics.passRate === 100) {
-        insights.push("✅ All locations passing compliance");
+        insights.push("Done All locations passing compliance");
     } else if (metrics.passRate >= 80) {
-        insights.push(`✅ ${metrics.passRate}% of locations passing`);
+        insights.push(`Done ${metrics.passRate}% of locations passing`);
     } else if (metrics.passRate >= 50) {
-        insights.push(`⚠️ Only ${metrics.passRate}% passing — ${metrics.flaggedCount} need attention`);
+        insights.push(`Warning Only ${metrics.passRate}% passing — ${metrics.flaggedCount} need attention`);
     } else {
-        insights.push(`🚨 Majority of locations flagged — immediate action required`);
+        insights.push(`Urgent Majority of locations flagged — immediate action required`);
     }
 
     // Grade distribution insight
@@ -139,9 +139,9 @@ export function generateFranchiseInsights(metrics: FranchiseMetrics): string[] {
         const dPercent = Math.round((metrics.aggregateGradeDistribution.d / total) * 100);
 
         if (aPercent >= 50) {
-            insights.push(`🟢 ${aPercent}% of locations with grade A`);
+            insights.push(`Green ${aPercent}% of locations with grade A`);
         } else if (dPercent > 20) {
-            insights.push(`🔴 ${dPercent}% of locations below grade C`);
+            insights.push(`Red ${dPercent}% of locations below grade C`);
         }
     }
 
@@ -152,7 +152,7 @@ export function generateFranchiseInsights(metrics: FranchiseMetrics): string[] {
 
         if (gap > 20) {
             insights.push(
-                `📊 Large performance gap: ${metrics.highestScoringLocation.name} (${metrics.highestScoringLocation.complianceScore}) vs ` +
+                `Analytics Large performance gap: ${metrics.highestScoringLocation.name} (${metrics.highestScoringLocation.complianceScore}) vs ` +
                     `${metrics.lowestScoringLocation.name} (${metrics.lowestScoringLocation.complianceScore})`
             );
         }

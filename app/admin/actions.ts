@@ -186,7 +186,7 @@ export async function approveDriver(id: string) {
             sendEmail(
                 email,
                 "Your TrueServe Driver Application - APPROVED",
-                `<h1>Welcome to the Fleet! 🚗</h1>
+                `<h1>Welcome to the Fleet! Driver</h1>
             <p>Hi <span class="accent">${name.split(' ')[0]}</span>,</p>
             <p>Great news! Your driver application for TrueServe has been <strong>approved</strong>.</p>
             <p>You can now log in using your phone number to receive a secure SMS code and start accepting orders immediately.</p>
@@ -240,7 +240,7 @@ export async function rejectDriver(id: string) {
             sendEmail(
                 (driver.user as any).email,
                 "Driver Application Update - TrueServe",
-                `<h1>Application Update 📝</h1>
+                `<h1>Application Update Note</h1>
             <p>Hi <span class="accent">${(driver.user as any).name.split(' ')[0]}</span>,</p>
             <p>Thank you for your interest in driving with TrueServe. We have carefully reviewed your application and documents.</p>
             <p>At this time, we are unable to move forward with your onboarding. We appreciate the time you took to apply.</p>
@@ -324,7 +324,7 @@ export async function approveMerchant(restaurantId: string) {
             notificationPromises.push(sendEmail(
                 owner.email,
                 "Your TrueServe Merchant Account Is Approved",
-                `<h1>You're Approved 🎉</h1>
+                `<h1>You're Approved </h1>
                 <p>Hi ${owner.name || "Partner"},</p>
                 <p>Your restaurant <strong>${restaurant.name}</strong> is now approved on TrueServe.</p>
                 <p>You can now log in to your merchant portal and complete setup.</p>
@@ -446,8 +446,8 @@ export async function generateMerchantStripeLink(restaurantId: string) {
 
         await sendEmail(
             restaurant.owner.email,
-            "🚀 Action Required: Set Up Your TrueServe Payouts",
-            `<h1>Ready for Launch? 🍱</h1>
+            "Launch Action Required: Set Up Your TrueServe Payouts",
+            `<h1>Ready for Launch? </h1>
             <p>Hi ${restaurant.owner.name.split(' ')[0]},</p>
             <p>Your restaurant <strong>${restaurant.name}</strong> is almost ready to go live on TrueServe.</p>
             <p>To start receiving payouts for your orders, please click the secure link below to link your bank account via Stripe Connect.</p>
@@ -605,7 +605,7 @@ export async function refreshBackgroundCheck(driverId: string) {
             await sendEmail(
                 (driver.user as any).email,
                 "Action Required: Driver Background Check",
-                `<h1>Action Required 🛡️</h1>
+                `<h1>Action Required Shield</h1>
                 <p>Hi <span class="accent">${(driver.user as any).name}</span>,</p>
                 <p>During our routine background screening, some items were flagged on your report that require additional attention.</p>
                 <p>Please contact our trust & safety team at <a href="mailto:safety@trueserve.delivery" style="color: #10B981;">safety@trueserve.delivery</a> if you would like to provide additional context or dispute these findings.</p>

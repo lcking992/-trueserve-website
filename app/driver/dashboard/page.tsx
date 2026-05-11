@@ -13,6 +13,11 @@ import DriverLocationTracker from "@/components/DriverLocationTracker";
 import WeatherCard from "@/components/WeatherCard";
 import { OrderTransparencyCard } from "./page-pilot-widgets";
 import DriverCarePanel from "./DriverCarePanel";
+import DriverAppControls from "./DriverAppControls";
+import DriverPhotoReportCard from "./DriverPhotoReportCard";
+import HustleAssistant from "./HustleAssistant";
+import DriverIncidentTimeline from "./DriverIncidentTimeline";
+import OrderTransparencyLog from "@/components/OrderTransparencyLog";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +91,7 @@ export default async function DriverDashboard() {
             .from("Order")
             .select("*, restaurant:Restaurant(name, address, lat, lng, complianceScore, complianceStatus)")
             .is("driverId", null)
+            .or("posReference.is.null,posReference.not.like.TEST-%")
             .neq("status", "DELIVERED")
             .neq("status", "CANCELLED")
             .limit(10);
@@ -111,6 +117,10 @@ export default async function DriverDashboard() {
     const hasStripe = Boolean((driver as any)?.stripeAccountId);
     const primaryOrder = myActiveOrders[0] || null;
     const additionalOrders = myActiveOrders.slice(1);
+    const pickupAddress = primaryOrder?.restaurant?.address || "";
+    const dropoffAddress = primaryOrder?.deliveryAddress || "";
+    const pickupMapUrl = pickupAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pickupAddress)}` : "";
+    const dropoffMapUrl = dropoffAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dropoffAddress)}` : "";
 
     return (
         <>
@@ -160,6 +170,113 @@ export default async function DriverDashboard() {
                 letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
             }
             .dd-weather-temp { font-size: 28px; font-weight: 700; color: #3ecf6e; letter-spacing: -0.5px; }
+
+            /* DRIVER APP CONTROLS */
+            .driver-app-card {
+                background: linear-gradient(135deg, rgba(249,115,22,0.1), rgba(20,26,24,0.95) 42%, #111512);
+                border: 1px solid rgba(249,115,22,0.22);
+                border-radius: 12px;
+                padding: 16px;
+                margin-bottom: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+            }
+            .driver-app-status {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+            .driver-live-dot {
+                width: 14px;
+                height: 14px;
+                border-radius: 999px;
+                background: #525252;
+                border: 3px solid rgba(255,255,255,0.08);
+                flex-shrink: 0;
+            }
+            .driver-live-dot.on {
+                background: #3ecf6e;
+                box-shadow: 0 0 0 7px rgba(62,207,110,0.1), 0 0 28px rgba(62,207,110,0.34);
+            }
+            .driver-app-kicker {
+                margin: 0 0 4px;
+                color: #7f877f;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+            .driver-app-status h2 {
+                margin: 0;
+                color: #fff;
+                font-size: 20px;
+                line-height: 1.1;
+                font-weight: 800;
+                text-transform: capitalize;
+            }
+            .driver-app-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+            }
+            .driver-app-toggle,
+            .driver-app-button,
+            .driver-install-note {
+                height: 40px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border-radius: 10px;
+                padding: 0 14px;
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+            .driver-app-toggle,
+            .driver-app-button {
+                border: 1px solid rgba(255,255,255,0.1);
+                background: #0f1210;
+                color: #aab4c8;
+                cursor: pointer;
+                font-family: inherit;
+            }
+            .driver-app-toggle.online {
+                border-color: rgba(62,207,110,0.28);
+                color: #3ecf6e;
+                background: rgba(62,207,110,0.08);
+            }
+            .driver-app-button:hover,
+            .driver-app-toggle:hover {
+                border-color: rgba(249,115,22,0.38);
+                color: #f97316;
+            }
+            .driver-install-note {
+                color: #778173;
+                background: rgba(255,255,255,0.03);
+                border: 1px solid rgba(255,255,255,0.06);
+            }
+            .driver-offer-alert {
+                flex-basis: 100%;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 10px;
+                border: 1px solid rgba(249,115,22,0.18);
+                background: rgba(249,115,22,0.06);
+                color: #f7b37c;
+                font-size: 12px;
+                font-weight: 700;
+            }
 
             /* STRIPE BANNER */
             .dd-stripe-banner {
@@ -334,6 +451,173 @@ export default async function DriverDashboard() {
                 letter-spacing: 0.11em;
             }
             .dd-btn-ghost:hover { color: #f97316; border-color: rgba(249,115,22,0.35); background: rgba(249,115,22,0.06); }
+            .dd-route-actions {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin: 10px 0;
+            }
+            .driver-photo-card {
+                margin-top: 14px;
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 12px;
+                background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
+                padding: 14px;
+            }
+            .driver-photo-head {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+            .driver-photo-head p {
+                margin: 0 0 4px;
+                color: #f97316;
+                font-size: 9px;
+                font-weight: 900;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+            .driver-photo-head h3 {
+                margin: 0;
+                color: #fff;
+                font-size: 16px;
+                font-weight: 800;
+            }
+            .driver-photo-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+                border: 1px solid rgba(249,115,22,0.25);
+                background: rgba(249,115,22,0.08);
+                color: #f97316;
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+            }
+            .driver-photo-grid {
+                display: grid;
+                grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+                gap: 12px;
+            }
+            .driver-photo-capture {
+                min-height: 154px;
+                border: 1px dashed rgba(249,115,22,0.35);
+                border-radius: 12px;
+                background: rgba(0,0,0,0.18);
+                color: #f97316;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                overflow: hidden;
+                position: relative;
+                text-align: center;
+                font-family: inherit;
+            }
+            .driver-photo-capture img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .driver-photo-capture span {
+                position: relative;
+                z-index: 1;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                border-radius: 999px;
+                background: rgba(0,0,0,0.68);
+                padding: 7px 11px;
+                color: #fff;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+            }
+            .driver-photo-capture small {
+                max-width: 180px;
+                color: #8b958f;
+                font-size: 11px;
+                line-height: 1.45;
+                font-weight: 650;
+            }
+            .driver-photo-fields {
+                display: grid;
+                gap: 8px;
+            }
+            .driver-photo-fields label {
+                display: grid;
+                gap: 5px;
+                color: #727a75;
+                font-size: 9px;
+                font-weight: 900;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+            .driver-photo-fields select,
+            .driver-photo-fields textarea {
+                width: 100%;
+                border: 1px solid #1e2420;
+                border-radius: 9px;
+                background: #0f1210;
+                color: #e7ece7;
+                font-family: inherit;
+                font-size: 12px;
+                font-weight: 700;
+                outline: none;
+                padding: 10px 11px;
+                resize: vertical;
+            }
+            .driver-photo-message {
+                display: flex;
+                align-items: center;
+                gap: 7px;
+                margin-top: 10px;
+                border-radius: 9px;
+                padding: 9px 10px;
+                font-size: 11px;
+                font-weight: 800;
+            }
+            .driver-photo-message.ok {
+                border: 1px solid rgba(62,207,110,0.2);
+                background: rgba(62,207,110,0.08);
+                color: #3ecf6e;
+            }
+            .driver-photo-message.error {
+                border: 1px solid rgba(232,64,64,0.22);
+                background: rgba(232,64,64,0.08);
+                color: #ff7373;
+            }
+            .driver-photo-submit {
+                width: 100%;
+                margin-top: 10px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                border: 0;
+                border-radius: 9px;
+                background: #f97316;
+                color: #000;
+                min-height: 40px;
+                font-family: inherit;
+                font-size: 10px;
+                font-weight: 950;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                cursor: pointer;
+            }
+            .driver-photo-submit:disabled {
+                background: #222722;
+                color: #5d655f;
+                cursor: not-allowed;
+            }
 
             /* ESSENTIALS GRID */
             .dd-essentials-grid {
@@ -345,10 +629,18 @@ export default async function DriverDashboard() {
                 .dd-stat-grid { grid-template-columns: repeat(3, 1fr); }
             }
             @media (max-width: 640px) {
+                .driver-app-card { align-items: stretch; flex-direction: column; padding: 14px; }
+                .driver-app-status h2 { font-size: 18px; }
+                .driver-app-actions { display: grid; grid-template-columns: 1fr 1fr; justify-content: stretch; }
+                .driver-app-toggle, .driver-app-button, .driver-install-note { width: 100%; padding: 0 10px; }
+                .driver-install-note { grid-column: 1 / -1; }
                 .dd-stat-grid { grid-template-columns: repeat(3, 1fr); }
                 .dd-stat-card { padding: 12px 10px; }
                 .dd-stat-value { font-size: 20px; }
                 .dd-addr-grid { grid-template-columns: 1fr; }
+                .dd-route-actions { grid-template-columns: 1fr; }
+                .driver-photo-grid { grid-template-columns: 1fr; }
+                .driver-photo-capture { min-height: 130px; }
                 .dd-stripe-banner { flex-direction: column; align-items: stretch; gap: 10px; padding: 14px 16px; }
                 .dd-stripe-left { align-items: flex-start; }
                 .dd-stripe-btn { text-align: center; justify-content: center; white-space: normal; }
@@ -357,6 +649,15 @@ export default async function DriverDashboard() {
                 .dd-weather-temp { font-size: 22px; }
             }
         `}</style>
+
+        <DriverAppControls availableCount={availableOrders.length} activeOrderStatus={primaryOrder?.status ?? null} />
+
+        <HustleAssistant
+            activeOrderId={primaryOrder?.id ?? null}
+            activeOrderStatus={primaryOrder?.status ?? null}
+            activeOrderPay={primaryOrder?.totalPay ?? primaryOrder?.driverPay ?? null}
+            activeOrderDistance={primaryOrder?.distance ?? null}
+        />
 
         {/* STAT CARDS */}
         <div className="dd-stat-grid">
@@ -457,6 +758,20 @@ export default async function DriverDashboard() {
                             <div style={{ fontSize: 10, color: '#f97316', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
                                 {primaryOrder.status === 'PICKED_UP' ? 'Picked up — heading to customer' : 'Heading to pickup'}
                             </div>
+                            {(pickupMapUrl || dropoffMapUrl) && (
+                                <div className="dd-route-actions">
+                                    {pickupMapUrl && (
+                                        <a className="dd-btn-ghost" style={{ marginBottom: 0 }} href={pickupMapUrl} target="_blank" rel="noreferrer">
+                                            Navigate to Pickup
+                                        </a>
+                                    )}
+                                    {dropoffMapUrl && (
+                                        <a className="dd-btn-gold" style={{ marginBottom: 0 }} href={dropoffMapUrl} target="_blank" rel="noreferrer">
+                                            Navigate to Drop-off
+                                        </a>
+                                    )}
+                                </div>
+                            )}
                             {primaryOrder.status === 'PICKED_UP' ? (
                                 <CompleteDeliveryForm
                                     orderId={primaryOrder.id}
@@ -572,6 +887,11 @@ export default async function DriverDashboard() {
                 <Link href="/driver/dashboard/compliance" className="dd-btn-gold">Open Compliance</Link>
                 <Link href="/driver/dashboard/earnings" className="dd-btn-ghost">View Settlements</Link>
                 <Link href="/driver/dashboard/help" className="dd-btn-ghost">Get Support</Link>
+                {primaryOrder ? (
+                    <OrderTransparencyLog order={primaryOrder} compact perspective="driver" />
+                ) : null}
+                <DriverIncidentTimeline order={primaryOrder} />
+                <DriverPhotoReportCard orderId={primaryOrder?.id ?? null} />
             </div>
         </div>
         </>

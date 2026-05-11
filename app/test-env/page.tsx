@@ -29,7 +29,7 @@ export default function TestEnvPage() {
                             Secret Key (Server)
                         </p>
                         <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                            {secretKey ? '✅ Present' : '❌ MISSING'}
+                            {secretKey ? 'Done Present' : 'Cancelled MISSING'}
                             {secretKey && <span style={{ fontSize: '0.875rem', color: '#71717a', fontWeight: 'normal', display: 'block' }}>Starts with: {secretKey.substring(0, 7)}...</span>}
                         </p>
                     </div>
@@ -39,7 +39,7 @@ export default function TestEnvPage() {
                             Publishable Key (Client)
                         </p>
                         <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                            {publishableKey ? '✅ Present' : '❌ MISSING'}
+                            {publishableKey ? 'Done Present' : 'Cancelled MISSING'}
                             {publishableKey && <span style={{ fontSize: '0.875rem', color: '#71717a', fontWeight: 'normal', display: 'block' }}>Starts with: {publishableKey.substring(0, 7)}...</span>}
                         </p>
                     </div>

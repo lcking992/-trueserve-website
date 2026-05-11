@@ -165,7 +165,7 @@ export default function EarningsComparisonWidget({ orders, driver }: Props) {
                         </div>
                         {totalEarnings > ddEquivalentEarnings ? (
                             <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(62,207,110,0.06)', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ fontSize: 14 }}>💰</span>
+                                <span style={{ fontSize: 14 }}></span>
                                 <span style={{ fontSize: 11, color: '#3ecf6e', fontWeight: 700 }}>
                                     You're ahead by <strong>${(totalEarnings - ddEquivalentEarnings).toFixed(2)}</strong>
                                 </span>

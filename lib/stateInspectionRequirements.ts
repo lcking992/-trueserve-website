@@ -170,12 +170,12 @@ export function getAlertMessage(
     : 'Pennsylvania Department of Health';
 
   if (daysUntil <= 0) {
-    return `🚨 URGENT: Your health inspection for ${restaurantName} is OVERDUE (was due ${Math.abs(daysUntil)} days ago). Contact ${deptName} immediately to schedule. Failure to comply may result in penalties.`;
+    return `Urgent URGENT: Your health inspection for ${restaurantName} is OVERDUE (was due ${Math.abs(daysUntil)} days ago). Contact ${deptName} immediately to schedule. Failure to comply may result in penalties.`;
   } else if (daysUntil <= 7) {
-    return `⚠️ IMPORTANT: Your health inspection for ${restaurantName} is due on ${dateStr} (in ${daysUntil} days). If not already scheduled, contact ${deptName} today to arrange your inspection.`;
+    return `Warning IMPORTANT: Your health inspection for ${restaurantName} is due on ${dateStr} (in ${daysUntil} days). If not already scheduled, contact ${deptName} today to arrange your inspection.`;
   } else if (daysUntil <= 30) {
-    return `📋 REMINDER: Your health inspection for ${restaurantName} is due on ${dateStr} (in ${daysUntil} days). Please ensure all documentation and facilities are in order. Contact ${deptName} to schedule.`;
+    return `Checklist REMINDER: Your health inspection for ${restaurantName} is due on ${dateStr} (in ${daysUntil} days). Please ensure all documentation and facilities are in order. Contact ${deptName} to schedule.`;
   } else {
-    return `📅 NOTIFICATION: Your next health inspection for ${restaurantName} is due on ${dateStr}. Begin preparing for inspection and schedule with ${deptName} as needed.`;
+    return `Date NOTIFICATION: Your next health inspection for ${restaurantName} is due on ${dateStr}. Begin preparing for inspection and schedule with ${deptName} as needed.`;
   }
 }

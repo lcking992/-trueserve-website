@@ -58,7 +58,7 @@ export default function OrderHistoryClient({ activeOrders, pastOrders }: Props) 
                             >
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-[#E8A020]/5 blur-2xl rounded-full -mr-12 -mt-12 group-hover:bg-[#E8A020]/10 transition-all" />
                                 <div className="flex gap-4 items-center relative z-10">
-                                    <div className="w-14 h-14 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center text-2xl">📦</div>
+                                    <div className="w-14 h-14 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-center text-2xl">Order</div>
                                     <div className="flex-1">
                                         <h4 className="font-bebas text-2xl text-white tracking-widest uppercase leading-none mb-1">
                                             {order.restaurant?.name || 'Kitchen'}
@@ -79,7 +79,7 @@ export default function OrderHistoryClient({ activeOrders, pastOrders }: Props) 
                     </div>
                 ) : (
                     <div className="food-panel text-center py-10">
-                        <div className="text-3xl mb-3">🛵</div>
+                        <div className="text-3xl mb-3">Delivery</div>
                         <p className="font-barlow-cond text-[10px] font-black uppercase tracking-widest text-white/30">
                             No active orders right now
                         </p>
@@ -166,7 +166,7 @@ export default function OrderHistoryClient({ activeOrders, pastOrders }: Props) 
                 ) : (
                     <div className="food-panel text-center py-10">
                         <div className="text-3xl mb-3">
-                            {filter === 'CANCELLED' ? '❌' : '🧾'}
+                            {filter === 'CANCELLED' ? 'Cancelled' : 'Receipt'}
                         </div>
                         <p className="font-barlow-cond text-[10px] font-black uppercase tracking-widest text-white/30">
                             {filter === 'ALL'

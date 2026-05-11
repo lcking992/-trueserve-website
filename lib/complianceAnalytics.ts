@@ -173,26 +173,26 @@ export function generateInsights(stats: NetworkComplianceStats): string[] {
 
     // Network-wide insights
     if (stats.averageScore >= 90) {
-        insights.push('🌟 Network average is excellent — maintain current standards');
+        insights.push('Excellent Network average is excellent — maintain current standards');
     } else if (stats.averageScore >= 80) {
-        insights.push('⚠️  Average compliance score is good, but room for improvement');
+        insights.push('Warning  Average compliance score is good, but room for improvement');
     } else {
-        insights.push('🚨 Network average below 80 — immediate action recommended');
+        insights.push('Urgent Network average below 80 — immediate action recommended');
     }
 
     // Pass rate insights
     if (stats.passRate >= 90) {
-        insights.push(`✅ ${stats.passRate}% of restaurants are fully compliant`);
+        insights.push(`Done ${stats.passRate}% of restaurants are fully compliant`);
     } else if (stats.passRate >= 70) {
-        insights.push(`⚡ ${stats.passRate}% compliance rate — ${stats.flaggedCount} locations need attention`);
+        insights.push(`Fast ${stats.passRate}% compliance rate — ${stats.flaggedCount} locations need attention`);
     } else {
-        insights.push(`⚠️ Only ${stats.passRate}% passing — ${stats.flaggedCount} flagged for immediate review`);
+        insights.push(`Warning Only ${stats.passRate}% passing — ${stats.flaggedCount} flagged for immediate review`);
     }
 
     // Violation insights
     if (stats.mostCommonViolations.length > 0) {
         const topViolation = stats.mostCommonViolations[0];
-        insights.push(`🔍 Most common issue: "${topViolation.violation}" (${topViolation.count} locations)`);
+        insights.push(`Search Most common issue: "${topViolation.violation}" (${topViolation.count} locations)`);
     }
 
     // Score distribution
@@ -202,7 +202,7 @@ export function generateInsights(stats: NetworkComplianceStats): string[] {
         const dPercent = Math.round((stats.scoreDistribution.d / totalGraded) * 100);
 
         if (dPercent > 10) {
-            insights.push(`📊 ${dPercent}% of restaurants scoring below 70 — training recommended`);
+            insights.push(`Analytics ${dPercent}% of restaurants scoring below 70 — training recommended`);
         }
     }
 

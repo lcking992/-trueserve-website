@@ -9,6 +9,9 @@ interface Order {
   status: string;
   total: number;
   createdAt: string;
+  posReference?: string | null;
+  deliveryAddress?: string | null;
+  deliveryInstructions?: string | null;
   user?: { name?: string };
   items?: { name: string; quantity: number }[];
 }
@@ -24,9 +27,9 @@ const STATUS_LABEL: Record<string, { label: string; color: string; bg: string; b
   READY_FOR_PICKUP: { label: "Ready",         color: "#4dca80", bg: "rgba(77,202,128,.1)",  border: "rgba(77,202,128,.25)" },
 };
 
-const NEXT_ACTION: Record<string, { label: string; next: string; emoji: string }> = {
-  PENDING:   { label: "Start Prep",         next: "PREPARING",        emoji: "🔥" },
-  PREPARING: { label: "Ready for Pickup",   next: "READY_FOR_PICKUP", emoji: "✅" },
+const NEXT_ACTION: Record<string, { label: string; next: string }> = {
+  PENDING:   { label: "Start Prep",         next: "PREPARING" },
+  PREPARING: { label: "Ready for Pickup",   next: "READY_FOR_PICKUP" },
 };
 
 export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrdersPanelProps) {
@@ -118,6 +121,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
             const action = NEXT_ACTION[order.status];
             const isActing = actionOrderId === order.id && pending;
             const age = Math.round((Date.now() - new Date(order.createdAt).getTime()) / 60000);
+            const isTestOrder = String(order.posReference || "").startsWith("TEST-");
 
             return (
               <div key={order.id} style={{
@@ -143,6 +147,23 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                     <div style={{ fontSize: 10, color: "#555", marginTop: 2 }}>
                       #{order.id.slice(-6).toUpperCase()} · {age < 1 ? "just now" : `${age}m ago`}
                     </div>
+                    {isTestOrder && (
+                      <div style={{
+                        marginTop: 8,
+                        display: "inline-flex",
+                        border: "1px solid rgba(91,207,212,0.24)",
+                        background: "rgba(91,207,212,0.08)",
+                        color: "#5bcfd4",
+                        borderRadius: 999,
+                        padding: "4px 9px",
+                        fontSize: 9,
+                        fontWeight: 900,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                      }}>
+                        Training order - do not prepare
+                      </div>
+                    )}
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0 }}>
@@ -162,7 +183,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                           fontFamily: "inherit",
                         }}
                       >
-                        {isActing ? "…" : `${action.emoji} ${action.label}`}
+                        {isActing ? "..." : action.label}
                       </button>
                     )}
                     {["PENDING", "PREPARING"].includes(order.status) && (
@@ -180,7 +201,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                           letterSpacing: "0.06em",
                         }}
                       >
-                        ✕ Cancel
+                        × Cancel
                       </button>
                     )}
                   </div>
@@ -192,7 +213,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                         color: "#4dca80", borderRadius: 9, padding: "9px 14px",
                         fontSize: 11, fontWeight: 800, whiteSpace: "nowrap",
                       }}>
-                        ✓ Awaiting Driver
+                        Awaiting Driver
                       </div>
                       <button
                         onClick={() => setRefundConfirmId(order.id)}
@@ -204,7 +225,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                           whiteSpace: "nowrap", transition: "all 0.15s", fontFamily: "inherit",
                         }}
                       >
-                        ↩ Refund
+                        Refund
                       </button>
                     </div>
                   )}
@@ -311,7 +332,7 @@ export default function LiveOrdersPanel({ restaurantId, initialOrders }: LiveOrd
                   opacity: refundPending ? 0.5 : 1,
                 }}
               >
-                {refundPending ? "…" : "Yes, Refund"}
+                {refundPending ? "..." : "Yes, Refund"}
               </button>
             </div>
           </div>

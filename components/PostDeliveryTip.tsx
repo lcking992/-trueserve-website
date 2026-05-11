@@ -44,7 +44,7 @@ export default function PostDeliveryTip({ orderId, restaurantName, deliveryPhoto
         background: "rgba(77,202,128,0.06)", border: "1px solid rgba(77,202,128,0.2)",
         borderRadius: 16,
       }}>
-        <div style={{ fontSize: 36, marginBottom: 10 }}>🙏</div>
+        <div style={{ fontSize: 36, marginBottom: 10 }}></div>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#4dca80", marginBottom: 6 }}>
           ${tipAmount.toFixed(2)} tip sent!
         </div>

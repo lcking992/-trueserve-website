@@ -22,22 +22,22 @@ interface TriggerResult {
 }
 
 const TEST_CARDS = [
-  { label: '✅ Success', number: '4242 4242 4242 4242', expiry: 'Any future', cvc: 'Any 3 digits', scenario: 'Standard approval' },
-  { label: '❌ Generic decline', number: '4000 0000 0000 0002', expiry: 'Any future', cvc: 'Any', scenario: 'card_declined' },
-  { label: '💸 Insufficient funds', number: '4000 0000 0000 9995', expiry: 'Any future', cvc: 'Any', scenario: 'insufficient_funds' },
-  { label: '🔐 3DS required', number: '4000 0025 0000 3155', expiry: 'Any future', cvc: 'Any', scenario: '3DS authentication needed' },
-  { label: '🔐 3DS (mobile banking)', number: '4000 0000 0000 3220', expiry: 'Any future', cvc: 'Any', scenario: '3DS on mobile' },
-  { label: '📅 Expired card', number: '4000 0000 0000 0069', expiry: 'Any future', cvc: 'Any', scenario: 'expired_card' },
-  { label: '🔢 Incorrect CVC', number: '4000 0000 0000 0127', expiry: 'Any future', cvc: 'Any', scenario: 'incorrect_cvc' },
-  { label: '🚫 Fraud (Radar block)', number: '4100 0000 0000 0019', expiry: 'Any future', cvc: 'Any', scenario: 'fraudulent — blocked by Radar' },
-  { label: '🏦 ACH test', number: 'Use routing 110000000', expiry: '—', cvc: '—', scenario: 'Bank account: 000123456789' },
+  { label: 'Done Success', number: '4242 4242 4242 4242', expiry: 'Any future', cvc: 'Any 3 digits', scenario: 'Standard approval' },
+  { label: 'Cancelled Generic decline', number: '4000 0000 0000 0002', expiry: 'Any future', cvc: 'Any', scenario: 'card_declined' },
+  { label: 'Funds Insufficient funds', number: '4000 0000 0000 9995', expiry: 'Any future', cvc: 'Any', scenario: 'insufficient_funds' },
+  { label: 'Secure 3DS required', number: '4000 0025 0000 3155', expiry: 'Any future', cvc: 'Any', scenario: '3DS authentication needed' },
+  { label: 'Secure 3DS (mobile banking)', number: '4000 0000 0000 3220', expiry: 'Any future', cvc: 'Any', scenario: '3DS on mobile' },
+  { label: 'Date Expired card', number: '4000 0000 0000 0069', expiry: 'Any future', cvc: 'Any', scenario: 'expired_card' },
+  { label: 'CVC Incorrect CVC', number: '4000 0000 0000 0127', expiry: 'Any future', cvc: 'Any', scenario: 'incorrect_cvc' },
+  { label: 'Blocked Fraud (Radar block)', number: '4100 0000 0000 0019', expiry: 'Any future', cvc: 'Any', scenario: 'fraudulent — blocked by Radar' },
+  { label: 'Bank ACH test', number: 'Use routing 110000000', expiry: '—', cvc: '—', scenario: 'Bank account: 000123456789' },
 ];
 
 const SCENARIOS = [
-  { id: 'payment_success', label: '✅ Simulate successful payment', desc: 'Creates a $1.00 PaymentIntent with pm_card_visa and confirms it. Fires payment_intent.succeeded.' },
-  { id: 'payment_declined', label: '❌ Simulate declined card', desc: 'Attempts a charge with a declining test card. Fires payment_intent.payment_failed.' },
-  { id: 'refund', label: '↩️ Simulate refund', desc: 'Creates a $5.00 charge then immediately refunds it. Fires charge.refunded.' },
-  { id: 'insufficient_funds', label: '💸 Simulate insufficient funds', desc: 'Declines with the insufficient_funds code specifically.' },
+  { id: 'payment_success', label: 'Done Simulate successful payment', desc: 'Creates a $1.00 PaymentIntent with pm_card_visa and confirms it. Fires payment_intent.succeeded.' },
+  { id: 'payment_declined', label: 'Cancelled Simulate declined card', desc: 'Attempts a charge with a declining test card. Fires payment_intent.payment_failed.' },
+  { id: 'refund', label: 'Refund Simulate refund', desc: 'Creates a $5.00 charge then immediately refunds it. Fires charge.refunded.' },
+  { id: 'insufficient_funds', label: 'Funds Simulate insufficient funds', desc: 'Declines with the insufficient_funds code specifically.' },
 ];
 
 const EVENT_COLORS: Record<string, string> = {
@@ -87,7 +87,7 @@ function CopyButton({ text }: { text: string }) {
         whiteSpace: 'nowrap',
       }}
     >
-      {copied ? '✓ Copied' : 'Copy'}
+      {copied ? 'Done Copied' : 'Copy'}
     </button>
   );
 }
@@ -157,8 +157,8 @@ export default function StripeTestingDashboard() {
             {[
               { label: 'Secret Key', value: <Badge mode={status.secretMode} />, ok: status.secretMode !== 'missing' },
               { label: 'Publishable Key', value: <Badge mode={status.pubMode} />, ok: status.pubMode !== 'missing' },
-              { label: 'Webhook Secret', value: status.webhookSecretPresent ? <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>✓ Present</span> : <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 600 }}>✗ Missing</span>, ok: status.webhookSecretPresent },
-              { label: 'Keys Match', value: status.keysMatch ? <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>✓ Both {status.secretMode}</span> : <span style={{ color: '#f59e0b', fontSize: 12, fontWeight: 600 }}>⚠ Mismatch</span>, ok: status.keysMatch },
+              { label: 'Webhook Secret', value: status.webhookSecretPresent ? <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>Done Present</span> : <span style={{ color: '#ef4444', fontSize: 12, fontWeight: 600 }}>✗ Missing</span>, ok: status.webhookSecretPresent },
+              { label: 'Keys Match', value: status.keysMatch ? <span style={{ color: '#22c55e', fontSize: 12, fontWeight: 600 }}>Done Both {status.secretMode}</span> : <span style={{ color: '#f59e0b', fontSize: 12, fontWeight: 600 }}>Warning Mismatch</span>, ok: status.keysMatch },
             ].map((item) => (
               <div key={item.label} style={{ background: '#0f1210', border: '1px solid #1e2420', borderRadius: 7, padding: '12px 14px' }}>
                 <div style={{ fontSize: 11, color: '#666', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.label}</div>
@@ -170,7 +170,7 @@ export default function StripeTestingDashboard() {
 
         {status && !status.keysMatch && (
           <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 7, fontSize: 12, color: '#f59e0b' }}>
-            ⚠️ <strong>Key mismatch:</strong> Your secret key is <strong>{status.secretMode}</strong> but publishable key is <strong>{status.pubMode}</strong>. Update <code>.env.production</code> to use <code>pk_live_...</code> for production.
+            Warning <strong>Key mismatch:</strong> Your secret key is <strong>{status.secretMode}</strong> but publishable key is <strong>{status.pubMode}</strong>. Update <code>.env.production</code> to use <code>pk_live_...</code> for production.
           </div>
         )}
         {status && !status.webhookSecretPresent && (
@@ -207,7 +207,7 @@ export default function StripeTestingDashboard() {
           </table>
         </div>
         <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.15)', borderRadius: 7, fontSize: 12, color: '#93c5fd' }}>
-          💡 <strong>Tip:</strong> For Connect accounts use <code>000000000</code> as routing and <code>000123456789</code> as account number in test mode.
+          Tip <strong>Tip:</strong> For Connect accounts use <code>000000000</code> as routing and <code>000123456789</code> as account number in test mode.
         </div>
       </div>
 
@@ -264,7 +264,7 @@ export default function StripeTestingDashboard() {
                   <span style={{ color: '#888', marginRight: 10 }}>[{r.scenario}]</span>
                   {r.result.error
                     ? <span style={{ color: '#ef4444' }}>✗ {r.result.error}</span>
-                    : <span style={{ color: '#22c55e' }}>✓ {r.result.message || JSON.stringify(r.result)}</span>
+                    : <span style={{ color: '#22c55e' }}>Done {r.result.message || JSON.stringify(r.result)}</span>
                   }
                 </div>
               ))}
@@ -367,7 +367,7 @@ export default function StripeTestingDashboard() {
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)')}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = '#1e2420')}
             >
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#f0f0f0', marginBottom: 3 }}>{link.label} ↗</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#f0f0f0', marginBottom: 3 }}>{link.label} Open</div>
               <div style={{ fontSize: 11, color: '#555' }}>{link.desc}</div>
             </a>
           ))}

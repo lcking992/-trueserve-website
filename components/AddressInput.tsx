@@ -107,8 +107,8 @@ export default function AddressInput({ onAddressSelect, initialAddress = "" }: A
             <div className="relative flex items-center bg-white/[0.03] border border-white/10 rounded-2xl focus-within:border-primary/40 transition-all overflow-hidden">
                 <input
                     type="text"
-                    placeholder="ENTER STREET ADDRESS..."
-                    className="flex-1 min-w-0 w-full bg-transparent border-none focus:outline-none text-white placeholder:text-white/30 px-6 py-4 text-[13px] font-bold pr-4 uppercase tracking-[0.14em] leading-[1.2]"
+                    placeholder="Enter street address..."
+                    className="flex-1 min-w-0 w-full bg-transparent border-none focus:outline-none text-white placeholder:text-white/30 px-5 py-4 text-sm font-semibold pr-4 leading-snug"
                     value={inputValue}
                     onChange={handleInput}
                     onFocus={() => {
@@ -128,8 +128,8 @@ export default function AddressInput({ onAddressSelect, initialAddress = "" }: A
                             className="px-8 py-4 hover:bg-primary/10 cursor-pointer border-b border-white/5 last:border-none transition-all group"
                             onMouseDown={() => handleSelectPrediction(p)}
                         >
-                            <div className="font-black text-white text-[11px] uppercase tracking-widest italic group-hover:text-primary transition-colors">{p.structured_formatting?.main_text || p.description}</div>
-                            <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-1">{p.structured_formatting?.secondary_text || ""}</div>
+                            <div className="font-bold text-white text-sm leading-snug break-words group-hover:text-primary transition-colors">{p.structured_formatting?.main_text || p.description}</div>
+                            <div className="text-xs text-slate-500 font-semibold mt-1 leading-snug break-words">{p.structured_formatting?.secondary_text || ""}</div>
                         </div>
                     ))}
                     <div className="bg-black/50 px-4 py-2 flex justify-end">

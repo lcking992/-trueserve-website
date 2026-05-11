@@ -53,13 +53,13 @@ export default function MorningBriefing({ restaurantId }: MorningBriefingProps) 
                         
                         {briefing.criticalAlert && (
                             <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3">
-                                <span className="text-lg">⚠️</span>
+                                <span className="text-lg"></span>
                                 <p className="text-xs font-bold text-red-400 leading-normal">{briefing.criticalAlert}</p>
                             </div>
                         )}
                         
                         <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-start gap-3">
-                            <span className="text-lg">📈</span>
+                            <span className="text-lg">Trend</span>
                             <p className="text-xs font-bold text-emerald-400 leading-normal">{briefing.opportunity}</p>
                         </div>
                     </div>

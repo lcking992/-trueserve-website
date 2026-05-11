@@ -58,7 +58,7 @@ function SetupForm({
 
             {message && (
                 <div className="mt-4 text-[10px] font-bold uppercase tracking-widest text-red-500 bg-red-500/5 border border-red-500/20 p-4 rounded-xl">
-                    ⚠️ {message}
+                    Warning {message}
                 </div>
             )}
 
@@ -159,7 +159,7 @@ export default function WalletUI({ userId }: { userId: string }) {
                 <div className="space-y-4">
                     {methods.length === 0 ? (
                         <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] py-10 text-center">
-                            <span className="mb-3 block text-3xl opacity-30">💳</span>
+                            <span className="mb-3 block text-3xl opacity-30">Payment</span>
                             <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">No Saved Payment Methods</p>
                         </div>
                     ) : (

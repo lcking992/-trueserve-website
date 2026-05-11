@@ -20,13 +20,13 @@ export default function WelcomeDemoPage() {
           onClick={() => setActive("driver")}
           style={{ padding: "16px 36px", background: "#3dd68c", color: "#0c0f0d", borderRadius: 14, fontWeight: 900, fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer" }}
         >
-          🚗 Driver Welcome
+          Driver Driver Welcome
         </button>
         <button
           onClick={() => setActive("merchant")}
           style={{ padding: "16px 36px", background: "#f97316", color: "#0c0f0d", borderRadius: 14, fontWeight: 900, fontSize: 13, letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer" }}
         >
-          🍽️ Merchant Welcome
+          Food Merchant Welcome
         </button>
       </div>
 

@@ -111,7 +111,7 @@ export default function PreferencesClient({ initial }: Props) {
 
                 {status && (
                     <div className={`status-bar ${status.type}`}>
-                        {status.type === 'error' ? '⚠ ' : '✓ '}{status.msg}
+                        {status.type === 'error' ? 'Issue: ' : 'Saved: '}{status.msg}
                     </div>
                 )}
 

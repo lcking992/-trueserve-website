@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 import { useJsApiLoader } from '@react-google-maps/api';
+import { MapPin } from "lucide-react";
 import { GOOGLE_MAPS_LIBRARIES, GOOGLE_MAPS_SCRIPT_ID, GOOGLE_MAPS_API_KEY } from "@/lib/maps-config";
 
 interface ServiceLocation {
@@ -146,7 +147,12 @@ export default function LandingSearch({ locations = [], initialValue = "", isCom
                 className={`relative z-20 w-full border border-white/10 bg-[#0a0a0b]/85 shadow-2xl backdrop-blur-3xl ${isCompact ? "grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2 rounded-2xl p-1.5" : "grid grid-cols-[minmax(0,1fr)_auto] items-stretch gap-2 rounded-[24px] p-2 md:rounded-[28px]"}`}
             >
                 <div className={`flex min-w-0 items-center border border-white/5 bg-black/25 ${isCompact ? "rounded-xl px-3 md:px-4" : "rounded-[18px] px-4 md:px-5"}`}>
-                    <span className="mr-2 text-[18px]">📍</span>
+                    <span
+                        className="mr-2 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-primary"
+                        aria-hidden="true"
+                    >
+                        <MapPin size={16} strokeWidth={2.2} />
+                    </span>
                     <input
                         type="text"
                         placeholder="Enter delivery address..."

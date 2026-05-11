@@ -205,7 +205,7 @@ export default function DriverLoginForm() {
                         disabled={isLoading || token.length < 6}
                         className="btn-green h-15 !rounded-[100px] disabled:opacity-40"
                     >
-                        {isLoading ? "AUTHORIZING..." : "Authorize Terminal ✓"}
+                        {isLoading ? "AUTHORIZING..." : "Authorize Terminal Done"}
                     </button>
 
                     <button 

@@ -20,6 +20,7 @@ import RevenueSparkline from "@/app/merchant/dashboard/RevenueSparkline";
 import MerchantPortalRecovery from "./MerchantPortalRecovery";
 import { ArrowRight, CheckCircle2, CreditCard, DollarSign, Package, UtensilsCrossed } from "lucide-react";
 import LaunchCenter from "@/app/merchant/dashboard/LaunchCenter";
+import GrowthConsultant from "@/app/merchant/dashboard/GrowthConsultant";
 
 export const dynamic = "force-dynamic";
 
@@ -100,7 +101,7 @@ export default async function MerchantDashboard({
         restaurant.posClientId
     );
     const hasTestOrder = (restaurant.orders || []).some((o: any) =>
-        ["PENDING", "PREPARING", "READY_FOR_PICKUP", "PICKED_UP", "DELIVERED"].includes(String(o.status || "").toUpperCase())
+        String(o.posReference || "").startsWith("TEST-")
     );
     const storefrontSlug = restaurant.slug || buildSlug(restaurant.name || "restaurant") || restaurant.id;
     const storefrontPath = `/restaurants/${storefrontSlug}`;
@@ -355,6 +356,12 @@ export default async function MerchantDashboard({
 
             {/* REVENUE SPARKLINE */}
             <RevenueSparkline orders={restaurant.orders || []} />
+
+            <GrowthConsultant
+                restaurantName={restaurant.name}
+                orders={restaurant.orders || []}
+                menuItems={restaurant.menuItems || []}
+            />
 
             {/* STRIPE BANNER */}
             {stripeConnectState === "setup_required" && (

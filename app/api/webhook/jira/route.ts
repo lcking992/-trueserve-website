@@ -33,12 +33,12 @@ export async function POST(req: NextRequest) {
             console.log(`[Jira Webhook] Triggering Emergency Market Pause for ${issueKey}...`);
             const result = await triggerEmergencyMarketplacePause(issueKey, summary, actor);
             
-            // 🚨 SENG ON-CALL SMS ALERT 🚨
+            // Urgent SENG ON-CALL SMS ALERT Urgent
             const onCallPhone = process.env.ON_CALL_ADMIN_PHONE;
             if (onCallPhone) {
                 await sendSMS(
                     onCallPhone, 
-                    `🚨 TRUESERVE EMERGENCY 🚨\nMarketplace was just PAUSED via Jira (${issueKey}).\nReason: ${summary}\nTriggered by: ${actor}`
+                    `Urgent TRUESERVE EMERGENCY Urgent\nMarketplace was just PAUSED via Jira (${issueKey}).\nReason: ${summary}\nTriggered by: ${actor}`
                 );
             } else {
                 console.warn("[Jira Webhook] ON_CALL_ADMIN_PHONE is missing from .env.local. No SMS sent.");

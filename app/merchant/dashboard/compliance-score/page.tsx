@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getAuthSession } from "@/app/auth/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import type { RestaurantComplianceMetrics } from "@/lib/complianceAnalytics";
+import MerchantPortalRecovery from "../MerchantPortalRecovery";
+import { AlertTriangle, CalendarDays, CheckCircle2, MapPin, Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -71,12 +73,12 @@ export default async function ComplianceScorePage() {
                 criticalViolations: 0,
             };
         } else {
-            redirect("/merchant/signup");
+            return <MerchantPortalRecovery />;
         }
     }
 
     if (!restaurant) {
-        redirect("/merchant/signup");
+        return <MerchantPortalRecovery />;
     }
 
     const colors = gradeToColor(restaurant.healthGrade);
@@ -118,16 +120,19 @@ export default async function ComplianceScorePage() {
                     </div>
                     <div style={{ color: "var(--t2)", fontSize: "14px" }}>
                         {restaurant.complianceStatus === "PASS"
-                            ? "✅ Compliant"
+                            ? <><CheckCircle2 size={14} aria-hidden="true" style={{ display: "inline", marginRight: 5 }} />Compliant</>
                             : restaurant.complianceStatus === "IN_REVIEW"
-                            ? "⚠️ In Review"
-                            : "🚨 Flagged"}
+                            ? <><Minus size={14} aria-hidden="true" style={{ display: "inline", marginRight: 5 }} />In Review</>
+                            : <><AlertTriangle size={14} aria-hidden="true" style={{ display: "inline", marginRight: 5 }} />Flagged</>}
                     </div>
                 </div>
                 <div style={{ color: "var(--t2)", fontSize: "13px" }}>
-                    <div>📍 {restaurant.city}, {restaurant.state}</div>
-                    <div>📅 Last inspection: {restaurant.lastInspectionAt ? new Date(restaurant.lastInspectionAt).toLocaleDateString() : "No data"}</div>
-                    <div>📈 Trend: {restaurant.trend === "improving" ? "🔺 Improving" : restaurant.trend === "declining" ? "🔻 Declining" : "➡️ Stable"}</div>
+                    <div><MapPin size={13} aria-hidden="true" style={{ display: "inline", marginRight: 6 }} />{restaurant.city}, {restaurant.state}</div>
+                    <div><CalendarDays size={13} aria-hidden="true" style={{ display: "inline", marginRight: 6 }} />Last inspection: {restaurant.lastInspectionAt ? new Date(restaurant.lastInspectionAt).toLocaleDateString() : "No data"}</div>
+                    <div>
+                        {restaurant.trend === "improving" ? <TrendingUp size={13} aria-hidden="true" style={{ display: "inline", marginRight: 6 }} /> : restaurant.trend === "declining" ? <TrendingDown size={13} aria-hidden="true" style={{ display: "inline", marginRight: 6 }} /> : <Minus size={13} aria-hidden="true" style={{ display: "inline", marginRight: 6 }} />}
+                        Trend: {restaurant.trend === "improving" ? "Improving" : restaurant.trend === "declining" ? "Declining" : "Stable"}
+                    </div>
                 </div>
             </div>
 
@@ -164,7 +169,7 @@ export default async function ComplianceScorePage() {
             {/* Action Items */}
             {restaurant.complianceStatus !== "PASS" && (
                 <div className="md-stat-block" style={{ borderColor: "#4a1a1a", background: "rgba(248, 113, 113, 0.08)" }}>
-                    <div className="md-stat-name mb-4">⚠️ Action Required</div>
+                    <div className="md-stat-name mb-4">Action Required</div>
                     <div style={{ fontSize: "13px", color: "var(--t1)", lineHeight: "1.6" }}>
                         <p style={{ marginBottom: "12px" }}>
                             Your restaurant has compliance observations that need to be addressed. Visit the <strong>Detailed Inspections</strong> page to:
@@ -189,11 +194,11 @@ export default async function ComplianceScorePage() {
                 </div>
                 <div className="grid gap-2">
                     <div className="btn btn-ghost justify-between" style={{ cursor: "default" }}>
-                        <span>📧 Email support</span>
+                        <span>Email support</span>
                         <span style={{ color: "var(--gold)" }}>support@trueserve.delivery</span>
                     </div>
                     <div className="btn btn-ghost justify-between" style={{ cursor: "default" }}>
-                        <span>📱 Phone support</span>
+                        <span>Phone support</span>
                         <span style={{ color: "var(--gold)" }}>1-800-TRUESERVE</span>
                     </div>
                 </div>

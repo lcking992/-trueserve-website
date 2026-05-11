@@ -204,7 +204,7 @@ export default function EmbedManager({ restaurantId, restaurantName, slug, store
                             {storefrontUrl}
                         </div>
                         <button onClick={() => handleCopy(storefrontUrl, "link")} className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
-                            {copiedItem === "link" ? "✓ Copied Link" : "Copy Ordering Link"}
+                            {copiedItem === "link" ? "Copied Link" : "Copy Ordering Link"}
                         </button>
                     </div>
                     <div className="embed-toolkit-card">
@@ -213,7 +213,7 @@ export default function EmbedManager({ restaurantId, restaurantName, slug, store
                             {socialCaption}
                         </div>
                         <button onClick={() => handleCopy(socialCaption, "caption")} className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
-                            {copiedItem === "caption" ? "✓ Copied Caption" : "Copy Social Caption"}
+                            {copiedItem === "caption" ? "Copied Caption" : "Copy Social Caption"}
                         </button>
                     </div>
                     <div className="embed-toolkit-card">
@@ -222,13 +222,13 @@ export default function EmbedManager({ restaurantId, restaurantName, slug, store
                             <img src={qrUrl} alt={`${restaurantName} ordering QR code`} style={{ width: "148px", height: "148px", display: "block" }} />
                         </div>
                         <button onClick={() => handleCopy(storefrontUrl, "qr")} className="btn btn-ghost" style={{ width: "100%", justifyContent: "center" }}>
-                            {copiedItem === "qr" ? "✓ Copied QR Link" : "Copy QR Destination"}
+                            {copiedItem === "qr" ? "Copied QR Link" : "Copy QR Destination"}
                         </button>
                     </div>
                 </div>
                 <div className="embed-action-grid">
                     <a href={facebookShareUrl} target="_blank" rel="noreferrer" className="btn btn-gold" style={{ justifyContent: "center", textDecoration: "none" }}>
-                        Share to Facebook ↗
+                        Share to Facebook Open
                     </a>
                     <a href={emailShareUrl} className="btn btn-ghost" style={{ justifyContent: "center", textDecoration: "none" }}>
                         Share by Email
@@ -336,10 +336,10 @@ export default function EmbedManager({ restaurantId, restaurantName, slug, store
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                     <button onClick={() => handleCopy(snippet, "snippet")} className="btn btn-ghost" style={{ justifyContent: "center", gap: "8px" }}>
-                        {copiedItem === "snippet" ? "✓ Copied Snippet" : "Copy GHL Snippet"}
+                        {copiedItem === "snippet" ? "Copied Snippet" : "Copy GHL Snippet"}
                     </button>
                     <a href={embedUrl} target="_blank" rel="noreferrer" className="btn btn-gold" style={{ justifyContent: "center", textDecoration: "none" }}>
-                        Preview Embedded View ↗
+                        Preview Embedded View Open
                     </a>
                 </div>
             </div>

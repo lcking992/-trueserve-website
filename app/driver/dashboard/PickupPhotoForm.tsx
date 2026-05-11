@@ -76,7 +76,7 @@ export default function PickupPhotoForm({ orderId, restaurantName }: { orderId: 
                 onMouseEnter={e => (e.currentTarget.style.background = '#ea6c10')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#f97316')}
             >
-                📸 Confirm Pickup with Photo
+                 Confirm Pickup with Photo
             </button>
         );
     }
@@ -95,7 +95,7 @@ export default function PickupPhotoForm({ orderId, restaurantName }: { orderId: 
                     onClick={() => { stopCamera(); setShowCamera(false); setPhotoCaptured(null); }}
                     style={{ background: '#1e2420', border: 'none', borderRadius: 6, width: 28, height: 28, cursor: 'pointer', color: '#666', fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'inherit' }}
                 >
-                    ✕
+                    ×
                 </button>
             </div>
 
@@ -120,7 +120,7 @@ export default function PickupPhotoForm({ orderId, restaurantName }: { orderId: 
                     <>
                         <img src={URL.createObjectURL(photoCaptured)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Pickup proof" />
                         <div style={{ position: 'absolute', top: 10, left: 10, background: 'rgba(62,207,110,0.9)', color: '#000', fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', padding: '4px 10px', borderRadius: 6 }}>
-                            ✓ Photo taken
+                            Photo taken
                         </div>
                         <button
                             onClick={() => { setPhotoCaptured(null); startCamera(); }}

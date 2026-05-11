@@ -102,7 +102,7 @@ export default function CoverPhotoPanel({ restaurantId, currentImageUrl, restaur
                         ? <img src={preview} alt="Cover photo" />
                         : (
                             <div className="cp-placeholder">
-                                <div className="cp-placeholder-icon">📷</div>
+                                <div className="cp-placeholder-icon"></div>
                                 <span className="cp-placeholder-text">Click to add cover photo</span>
                             </div>
                         )

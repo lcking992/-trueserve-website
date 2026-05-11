@@ -5,12 +5,12 @@ import Link from "next/link";
 import Logo from "@/components/Logo";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",   icon: "📊", color: "#f97316" },
-  { label: "Settlements", icon: "💰", color: "#4dca80" },
-  { label: "Reputation",  icon: "⭐", color: "#f97316" },
-  { label: "Compliance",  icon: "✅", color: "#4dca80" },
-  { label: "Profile",     icon: "👤", color: "#6b8ee8" },
-  { label: "Help",        icon: "🆘", color: "#e84040" },
+  { label: "Dashboard",   icon: "Analytics", color: "#f97316" },
+  { label: "Settlements", icon: "Cost", color: "#4dca80" },
+  { label: "Reputation",  icon: "Rating", color: "#f97316" },
+  { label: "Compliance",  icon: "Done", color: "#4dca80" },
+  { label: "Profile",     icon: "User", color: "#6b8ee8" },
+  { label: "Help",        icon: "Support", color: "#e84040" },
 ];
 
 const SECTIONS = [
@@ -224,10 +224,10 @@ const SECTIONS = [
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {[
-            { icon: "💬", label: "Live Chat",      sub: "Avg. response < 2 min",  cls: "text-[#4dca80]" },
-            { icon: "📞", label: "Call Support",   sub: "Callback available",     cls: "text-[#f97316]" },
-            { icon: "📋", label: "Report Issue",   sub: "Wrong order, accident",  cls: "text-white" },
-            { icon: "📖", label: "FAQ",            sub: "Common questions",       cls: "text-[#6b8ee8]" },
+            { icon: "Chat", label: "Live Chat",      sub: "Avg. response < 2 min",  cls: "text-[#4dca80]" },
+            { icon: "Phone", label: "Call Support",   sub: "Callback available",     cls: "text-[#f97316]" },
+            { icon: "Checklist", label: "Report Issue",   sub: "Wrong order, accident",  cls: "text-white" },
+            { icon: "Docs", label: "FAQ",            sub: "Common questions",       cls: "text-[#6b8ee8]" },
           ].map((s, i) => (
             <div key={i} className="rounded-[8px] border border-white/8 bg-black/20 px-4 py-3">
               <p className="text-[20px]">{s.icon}</p>
@@ -298,7 +298,7 @@ export default function DriverTutorialPreviewPage() {
                   cursor: "pointer",
                 }}
               >
-                <span>{i < step ? "✓" : s.step}</span>
+                <span>{i < step ? "Done" : s.step}</span>
                 <span style={{ opacity: 0.5 }}>·</span>
                 {s.label}
               </button>
@@ -399,7 +399,7 @@ export default function DriverTutorialPreviewPage() {
                 </button>
                 {isLast ? (
                   <Link href="/driver/login" className="ts-pill-btn ts-pill-btn-sm flex-1 text-center">
-                    Done ✓
+                    Done Done
                   </Link>
                 ) : (
                   <button

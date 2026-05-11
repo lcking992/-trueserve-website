@@ -49,7 +49,7 @@ export default function MenuArchitect({ restaurantId }: MenuArchitectProps) {
 
     return (
         <div className="card bg-gradient-to-br from-emerald-500/10 via-white/5 to-transparent border-emerald-500/20 p-8 mb-12 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:rotate-12 transition-transform duration-700">🏗️</div>
+            <div className="absolute top-0 right-0 p-8 opacity-10 text-8xl group-hover:rotate-12 transition-transform duration-700"></div>
             
             <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-6">

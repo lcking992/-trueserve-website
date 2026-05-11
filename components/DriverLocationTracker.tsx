@@ -72,7 +72,7 @@ export default function DriverLocationTracker({ driverId, orderId, intervalMs = 
         border: "1px solid rgba(248,113,113,0.2)",
         display: "inline-flex", alignItems: "center", gap: 6,
       }}>
-        <span>⚠</span> Location access denied — customers can't track you
+        <span>Warning</span> Location access denied — customers can't track you
       </div>
     );
   }

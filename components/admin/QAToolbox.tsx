@@ -76,7 +76,7 @@ export default function QAToolbox({ restaurants }: { restaurants: any[] }) {
         <section className="mb-16 animate-fade-in">
             <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-4 mb-6">
                 <h2 className="text-xl md:text-2xl font-black flex flex-wrap items-center gap-2">
-                    🛠️ QA <span className="text-gradient">Toolbox</span>
+                    Tools QA <span className="text-gradient">Toolbox</span>
                     <span className="bg-primary/10 text-primary text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest border border-primary/20 whitespace-nowrap">Pilot Ready</span>
                 </h2>
                 {message && (
@@ -181,7 +181,7 @@ export default function QAToolbox({ restaurants }: { restaurants: any[] }) {
                         target="_blank"
                         className="btn bg-white/10 hover:bg-white/20 text-white w-full text-[10px] font-black uppercase tracking-widest py-3 flex items-center justify-center transition-colors"
                     >
-                        Open QA Sign Up Form ↗
+                        Open QA Sign Up Form Open
                     </a>
                 </div>
 
@@ -206,7 +206,7 @@ export default function QAToolbox({ restaurants }: { restaurants: any[] }) {
         <section className="mb-16 animate-fade-in">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-black flex items-center gap-2">
-                    📋 QA Story Card Generator
+                    Checklist QA Story Card Generator
                 </h3>
                 <button 
                     onClick={fetchLogs}
@@ -234,13 +234,13 @@ export default function QAToolbox({ restaurants }: { restaurants: any[] }) {
                                 </code>
                                 <button
                                     onClick={() => {
-                                        const markdown = `### 🐛 QA Bug Report / Story Card\n**Action Traced:** \`${log.action}\`\n**Timestamp:** ${new Date(log.createdAt).toLocaleString()}\n**Target ID:** \`${log.targetId}\`\n**Entity:** \`${log.entityType}\`\n\n**Log Message:**\n> ${log.message}\n\n**Steps to Reproduce:**\n1. \n2. \n3. \n\n**Expected Result:**\n\n**Actual Result:**\n\n**Environment / Device Info:**\n- Device/Browser: \n- Network status: `;
+                                        const markdown = `### Bug QA Bug Report / Story Card\n**Action Traced:** \`${log.action}\`\n**Timestamp:** ${new Date(log.createdAt).toLocaleString()}\n**Target ID:** \`${log.targetId}\`\n**Entity:** \`${log.entityType}\`\n\n**Log Message:**\n> ${log.message}\n\n**Steps to Reproduce:**\n1. \n2. \n3. \n\n**Expected Result:**\n\n**Actual Result:**\n\n**Environment / Device Info:**\n- Device/Browser: \n- Network status: `;
                                         navigator.clipboard.writeText(markdown);
                                         setMessage({ text: 'Story Card copied to clipboard!', type: 'success' });
                                     }}
                                     className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-white transition-colors bg-primary/10 px-3 py-1 rounded border border-primary/20 hover:bg-primary/20"
                                 >
-                                    📋 Copy to Story Card
+                                    Checklist Copy to Story Card
                                 </button>
                             </div>
                         </div>

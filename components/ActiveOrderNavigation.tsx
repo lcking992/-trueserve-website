@@ -41,7 +41,7 @@ export default function ActiveOrderNavigation({ order, driverLat, driverLng }: A
                                     ? 'bg-primary/20 text-primary border border-primary/30' 
                                     : 'bg-white/10 text-white hover:bg-emerald-500/20 hover:text-emerald-400 border border-white/10'}`}
                         >
-                            {isArriving ? "Restaurant Pinged ⚡" : "Zero-Wait Ping"}
+                            {isArriving ? "Restaurant Pinged Fast" : "Zero-Wait Ping"}
                         </button>
                     )}
                     <div className="bg-black/40 px-3 py-1 rounded border border-white/5 flex items-center gap-2">
@@ -72,7 +72,7 @@ export default function ActiveOrderNavigation({ order, driverLat, driverLng }: A
                 {order.deliveryInstructions && (
                     <div className="absolute bottom-4 left-4 right-4 z-10">
                         <div className="bg-orange-500/90 backdrop-blur-md p-3 rounded-xl border border-orange-400 shadow-xl flex items-center gap-3">
-                            <span className="text-xl">📝</span>
+                            <span className="text-xl">Note</span>
                             <div>
                                 <p className="text-[9px] font-black uppercase tracking-widest text-orange-950/70 mb-0.5">Instruction</p>
                                 <p className="text-xs font-bold text-orange-950 leading-tight">{order.deliveryInstructions}</p>
@@ -113,7 +113,7 @@ export default function ActiveOrderNavigation({ order, driverLat, driverLng }: A
 
             <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-sm">📍</div>
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-sm">Location</div>
                     <div>
                         <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">Target</p>
                         <p className="text-[10px] font-bold text-emerald-100 truncate max-w-[150px]">

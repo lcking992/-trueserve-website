@@ -124,7 +124,7 @@ export async function refreshStateInspectionsAction(
         revalidatePath("/merchant/dashboard/compliance");
         return {
             status: "success",
-            message: `✓ Inspection data refreshed for ${state}. Synced ${result.summary?.totalRestaurantsSynced || 0} records.`,
+            message: `Inspection data refreshed for ${state}. Synced ${result.summary?.totalRestaurantsSynced || 0} records.`,
         };
     } catch (error: any) {
         console.error('[refreshStateInspections] Error:', error);

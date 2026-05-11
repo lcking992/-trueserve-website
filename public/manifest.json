@@ -1,11 +1,34 @@
 {
     "name": "TrueServe Delivery",
     "short_name": "TrueServe",
+    "id": "/driver/dashboard",
     "start_url": "/driver/dashboard",
+    "scope": "/",
     "display": "standalone",
+    "orientation": "portrait",
     "background_color": "#0a0a0a",
-    "theme_color": "#448C89",
-    "description": "Premium food delivery platform.",
+    "theme_color": "#0a0c09",
+    "description": "TrueServe driver, merchant, and local delivery tools.",
+    "shortcuts": [
+        {
+            "name": "Driver Dashboard",
+            "short_name": "Driver",
+            "url": "/driver/dashboard",
+            "description": "Open offers, active orders, and payouts."
+        },
+        {
+            "name": "Driver Earnings",
+            "short_name": "Earnings",
+            "url": "/driver/dashboard/earnings",
+            "description": "Review completed trips and payout status."
+        },
+        {
+            "name": "Driver Support",
+            "short_name": "Support",
+            "url": "/driver/dashboard/help",
+            "description": "Get help with an active delivery."
+        }
+    ],
     "icons": [
         {
             "src": "/logo.png",

@@ -114,7 +114,7 @@ export default function AdminOrderBoard({ initialOrders }: { initialOrders: any[
             <div className="aob-filters">
                 {["ACTIVE", "ALL", ...STATUS_ORDER].map(s => (
                     <button key={s} className={`aob-pill${filterStatus === s ? " active" : ""}`} onClick={() => setFilterStatus(s)}>
-                        {s === "ACTIVE" ? "🔴 Active" : s === "ALL" ? "All" : STATUS_CONFIG[s]?.label || s}
+                        {s === "ACTIVE" ? "Red Active" : s === "ALL" ? "All" : STATUS_CONFIG[s]?.label || s}
                     </button>
                 ))}
                 <input

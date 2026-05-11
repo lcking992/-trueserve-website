@@ -1,9 +1,11 @@
+import { AlertTriangle, Mail, MessageCircle, Phone, ShieldCheck, Smartphone, UserRound, WalletCards } from "lucide-react";
+
 export default function DriverHelp() {
     const categories = [
-        { icon: '💰', title: 'Pay & Earnings',      desc: 'Missing pay, promotions, cash out issues.' },
-        { icon: '📱', title: 'App Issues',           desc: 'Bugs, crashes, login problems.' },
-        { icon: '🛡️', title: 'Safety & Incidents',  desc: 'Report an accident or safety concern.' },
-        { icon: '👤', title: 'Account Info',         desc: 'Update vehicle, documents, phone number.' },
+        { Icon: WalletCards, title: 'Pay & Earnings',      desc: 'Missing pay, promotions, cash out issues.' },
+        { Icon: Smartphone, title: 'App Issues',           desc: 'Bugs, crashes, login problems.' },
+        { Icon: ShieldCheck, title: 'Safety & Incidents',  desc: 'Report an accident or safety concern.' },
+        { Icon: UserRound, title: 'Account Info',         desc: 'Update vehicle, documents, phone number.' },
     ];
 
     const faqs = [
@@ -50,7 +52,7 @@ export default function DriverHelp() {
                     padding: 14px 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
                 }
                 .help-cat-card:hover { border-color: rgba(249,115,22,0.35); background: rgba(249,115,22,0.04); }
-                .help-cat-icon { font-size: 18px; margin-bottom: 8px; }
+                .help-cat-icon { color: #f97316; margin-bottom: 8px; }
                 .help-cat-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 4px; }
                 .help-cat-desc { font-size: 11px; color: #666; line-height: 1.5; }
 
@@ -68,7 +70,7 @@ export default function DriverHelp() {
                 .help-contact-hd { font-size: 10px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #555; margin-bottom: 10px; }
                 .help-contact-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #131720; }
                 .help-contact-row:last-child { border-bottom: none; }
-                .help-contact-icon { font-size: 16px; flex-shrink: 0; width: 28px; text-align: center; }
+                .help-contact-icon { color: #f97316; flex-shrink: 0; width: 28px; display: flex; justify-content: center; }
                 .help-contact-label { font-size: 12px; font-weight: 700; color: #ccc; }
                 .help-contact-sub { font-size: 10px; color: #555; margin-top: 1px; }
 
@@ -85,14 +87,14 @@ export default function DriverHelp() {
             <div className="help-cta">
                 <h2>Need immediate help?</h2>
                 <p>Our support team is available around the clock for active delivery issues.</p>
-                <button className="help-chat-btn">💬 Chat with Support</button>
+                <button className="help-chat-btn"><MessageCircle size={15} aria-hidden="true" /> Chat with Support</button>
             </div>
 
             {/* Categories */}
             <div className="help-categories">
                 {categories.map(cat => (
                     <div key={cat.title} className="help-cat-card">
-                        <div className="help-cat-icon">{cat.icon}</div>
+                        <div className="help-cat-icon"><cat.Icon size={20} aria-hidden="true" /></div>
                         <div className="help-cat-title">{cat.title}</div>
                         <div className="help-cat-desc">{cat.desc}</div>
                     </div>
@@ -117,15 +119,15 @@ export default function DriverHelp() {
             <div className="help-contact">
                 <div className="help-contact-hd">Other Ways to Reach Us</div>
                 {[
-                    { icon: '📧', label: 'Email Support', sub: 'drivers@trueserve.com — reply within 4 hours' },
-                    { icon: '📞', label: 'Phone (Active Delivery)', sub: '1-800-TRUESERVE — press 2 for drivers' },
-                    { icon: '🚨', label: 'Emergency Only', sub: 'For safety incidents during an active order' },
-                ].map(item => (
-                    <div key={item.label} className="help-contact-row">
-                        <div className="help-contact-icon">{item.icon}</div>
+                    { Icon: Mail, label: 'Email Support', sub: 'drivers@trueserve.com — reply within 4 hours' },
+                    { Icon: Phone, label: 'Phone (Active Delivery)', sub: '1-800-TRUESERVE — press 2 for drivers' },
+                    { Icon: AlertTriangle, label: 'Emergency Only', sub: 'For safety incidents during an active order' },
+                ].map(({ Icon, label, sub }) => (
+                    <div key={label} className="help-contact-row">
+                        <div className="help-contact-icon"><Icon size={17} aria-hidden="true" /></div>
                         <div>
-                            <div className="help-contact-label">{item.label}</div>
-                            <div className="help-contact-sub">{item.sub}</div>
+                            <div className="help-contact-label">{label}</div>
+                            <div className="help-contact-sub">{sub}</div>
                         </div>
                     </div>
                 ))}

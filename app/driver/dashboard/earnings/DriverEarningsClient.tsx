@@ -18,6 +18,8 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
     const [weeklyGoal, setWeeklyGoal] = useState(800);
     const [editingGoal, setEditingGoal] = useState(false);
     const [goalInput, setGoalInput] = useState('800');
+    const stripeReady = Boolean(driver.stripeAccountId && driver.stripeOnboardingComplete);
+    const hasStripeAccount = Boolean(driver.stripeAccountId);
 
     // Calculate chart data from real orders (7-day window)
     const sevenDaysAgo = new Date();
@@ -47,7 +49,7 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
     const totalWeek = weeklyData.reduce((acc, curr) => acc + curr.amount, 0);
 
     const handleCashOut = async () => {
-        if (!driver.stripeAccountId) {
+        if (!stripeReady) {
             setLoading(true);
             try {
                 await createDriverStripeAccount();
@@ -69,7 +71,7 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
                 setMessage(result.error);
             } else {
                 setIsError(false);
-                setMessage("Payout successful! Funds are on the way. ✓");
+                setMessage("Payout successful! Funds are on the way.");
                 setTimeout(() => window.location.reload(), 2000);
             }
         } catch (e: any) {
@@ -95,17 +97,17 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
                     </div>
                     {message && (
                         <p className={`text-[10px] font-bold mt-2 ${isError ? 'text-red-400' : 'text-emerald-400 animate-bounce'}`}>
-                            {isError ? '⚠ ' : ''}{message}
+                            {isError ? 'Issue: ' : ''}{message}
                         </p>
                     )}
                     <button
                         onClick={handleCashOut}
-                        disabled={loading || (Number(driver.balance) <= 0 && !!driver.stripeAccountId)}
-                        className={`w-full md:w-auto btn ${!driver.stripeAccountId ? 'bg-blue-600 hover:bg-blue-700' : 'btn-primary'} h-12 mt-4 font-black text-xs uppercase tracking-widest px-8 shadow-lg shadow-primary/20 transition-all ${loading ? 'opacity-50 animate-pulse' : ''}`}
+                        disabled={loading || (Number(driver.balance) <= 0 && stripeReady)}
+                        className={`w-full md:w-auto btn ${!stripeReady ? 'bg-blue-600 hover:bg-blue-700' : 'btn-primary'} h-12 mt-4 font-black text-xs uppercase tracking-widest px-8 shadow-lg shadow-primary/20 transition-all ${loading ? 'opacity-50 animate-pulse' : ''}`}
                     >
-                        {loading ? 'Processing...' : (!driver.stripeAccountId ? 'Connect Stripe to Cash Out' : 'Cash Out Now')}
+                        {loading ? 'Processing...' : (!stripeReady ? (hasStripeAccount ? 'Finish Stripe Setup' : 'Connect Stripe to Cash Out') : 'Cash Out Now')}
                     </button>
-                    {!driver.stripeAccountId && (
+                    {!stripeReady && (
                         <p className="text-[9px] text-blue-400 mt-2 font-black uppercase tracking-widest">Secure Identity Verification Required</p>
                     )}
 
@@ -211,7 +213,7 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
                     if (totalWeek >= weeklyGoal) {
                         return (
                             <div className="flex items-center gap-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
-                                <span className="text-3xl">🎉</span>
+                                <span className="text-3xl"></span>
                                 <div>
                                     <p className="font-black text-emerald-400 text-sm">Goal Crushed!</p>
                                     <p className="text-[11px] text-slate-400 mt-0.5">
@@ -311,7 +313,7 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
                 <div className="card bg-white/5 border-white/10 p-6 md:p-8 flex flex-col justify-between hover:bg-white/10 transition-colors group">
                     <div>
                         <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mb-1">Driver Rating</p>
-                        <p className="text-3xl font-black text-white group-hover:text-yellow-400 transition-colors">{Number(driver.rating || 5).toFixed(1)} ⭐</p>
+                        <p className="text-3xl font-black text-white group-hover:text-yellow-400 transition-colors">{Number(driver.rating || 5).toFixed(1)} Rating</p>
                     </div>
                     <div className="w-full bg-white/5 h-1.5 mt-6 rounded-full overflow-hidden border border-white/5">
                         <div className="bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)] w-[98%] h-full"></div>
@@ -330,7 +332,7 @@ export default function DriverEarningsClient({ driver, orders }: DriverEarningsC
                         <div key={tx.id} className="p-5 md:p-6 flex justify-between items-center hover:bg-white/[0.04] transition-all group">
                             <div className="flex items-center gap-5">
                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-white/5 transition-transform group-hover:scale-110 ${tx.status === 'DELIVERED' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-800 text-slate-500'}`}>
-                                    {tx.status === 'DELIVERED' ? '🏁' : '🚗'}
+                                    {tx.status === 'DELIVERED' ? 'Delivered' : 'Active'}
                                 </div>
                                 <div>
                                     <p className="font-black text-white group-hover:text-primary transition-colors">Order {tx.id.slice(-6).toUpperCase()}</p>

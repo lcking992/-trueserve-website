@@ -33,7 +33,7 @@ export default function InventoryManager({ restaurantId, menuItems, outOfStockIn
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div>
                     <h2 className="text-2xl font-black text-white flex items-center gap-2">
-                        <span className="text-3xl">🧺</span> Kitchen Inventory
+                        <span className="text-3xl"></span> Kitchen Inventory
                     </h2>
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-1">Smart dependency tracking for active menu items</p>
                 </div>
@@ -82,7 +82,7 @@ export default function InventoryManager({ restaurantId, menuItems, outOfStockIn
 
             <div className="mt-8 p-4 bg-primary/5 border border-primary/20 rounded-2xl">
                 <p className="text-[10px] font-medium text-slate-400 flex items-center gap-2">
-                    <span className="text-lg">💡</span>
+                    <span className="text-lg"></span>
                     Marking an ingredient as "Sold Out" will automatically highlight affected items on your menu and notify customers before they order.
                 </p>
             </div>

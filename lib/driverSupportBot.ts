@@ -61,7 +61,7 @@ ${contextSummary}
 
 Driver Question: ${question}
 
-${shouldEscalate ? "⚠️ This question might need escalation to human support." : ""}
+${shouldEscalate ? "Warning This question might need escalation to human support." : ""}
 
 Provide a helpful response that:
 1. Directly addresses their concern
@@ -118,7 +118,7 @@ function buildDriverContextSummary(context: DriverContext): string {
     summary += `- Current Status: ${context.currentStatus}\n`;
 
     if (context.hasOpenDisputes) {
-        summary += `- ⚠️ Has Open Disputes\n`;
+        summary += `- Warning Has Open Disputes\n`;
     }
 
     return summary;
@@ -172,15 +172,15 @@ function determineEscalationReason(question: string): string {
  */
 export function generateDriverTip(context: DriverContext): string {
     if (context.averageRating < 4.0) {
-        return "⭐ Tip: Your rating is below 4.0. Focus on being professional, communicating with customers, and delivering orders on time to improve your rating.";
+        return "Rating Tip: Your rating is below 4.0. Focus on being professional, communicating with customers, and delivering orders on time to improve your rating.";
     }
     if (context.totalDeliveries < 10) {
-        return "🚀 Tip: New drivers get bonus pay for their first 10 deliveries! Complete these to unlock better earnings and access to peak hours.";
+        return "Launch Tip: New drivers get bonus pay for their first 10 deliveries! Complete these to unlock better earnings and access to peak hours.";
     }
     if (context.currentStatus === 'OFFLINE') {
-        return "📱 Tip: Go online to start receiving delivery offers. You can set your availability preferences to work on your schedule.";
+        return "Phone Tip: Go online to start receiving delivery offers. You can set your availability preferences to work on your schedule.";
     }
-    return "💰 Tip: High ratings lead to better trip offers and higher earnings. Keep providing great service!";
+    return "Cost Tip: High ratings lead to better trip offers and higher earnings. Keep providing great service!";
 }
 
 /**

@@ -230,7 +230,7 @@ export default async function RewardsPage({
                 <div className="mx-auto flex items-center justify-between px-4 sm:px-0" style={{ width: "min(1180px, calc(100% - 32px))", padding: "14px 0" }}>
                     <Logo size="sm" />
                     <div className="flex gap-2">
-                        <Link href="/account" className="btn btn-ghost">Account</Link>
+                        <Link href="/signup" className="btn btn-ghost">Sign Up</Link>
                         <Link href="/restaurants" className="btn btn-gold">Order Food</Link>
                     </div>
                 </div>
@@ -243,9 +243,23 @@ export default async function RewardsPage({
                     {/* Hero food imagery strip */}
                     <div className="pointer-events-none absolute inset-0">
                         <div
-                            className="absolute inset-0 bg-cover bg-center opacity-[0.12]"
+                            className="rewards-hero-poster absolute inset-0 bg-cover bg-center opacity-[0.12]"
                             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80')" }}
                         />
+                        <video
+                            className="rewards-hero-video decorative-video absolute inset-0 h-full w-full object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            controls={false}
+                            disablePictureInPicture
+                            preload="metadata"
+                            aria-hidden="true"
+                            tabIndex={-1}
+                        >
+                            <source src="/videos/rewards-hero-warm-inviting.mp4" type="video/mp4" />
+                        </video>
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0f0e]/90" />
                     </div>
@@ -289,18 +303,18 @@ export default async function RewardsPage({
                     </div>
                 </section>
 
-                <FadeInSection className="mt-4 grid grid-cols-3 divide-x divide-white/8 overflow-hidden rounded-2xl border border-white/8 bg-white/[0.02]">
-                    <div className="px-5 py-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><Crown size={11} className="text-[#f97316]" />Tier</p>
-                        <p className="text-2xl font-black text-white">{currentPlan}</p>
+                <FadeInSection className="rewards-stat-grid">
+                    <div className="rewards-stat-card">
+                        <p><Crown size={12} />Tier</p>
+                        <strong>{currentPlan}</strong>
                     </div>
-                    <div className="px-5 py-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><Sparkles size={11} className="text-[#f97316]" />Points</p>
-                        <p className="text-2xl font-black text-white">{snapshot ? snapshot.points.toLocaleString() : "0"}</p>
+                    <div className="rewards-stat-card">
+                        <p><Sparkles size={12} />Points</p>
+                        <strong>{snapshot ? snapshot.points.toLocaleString() : "0"}</strong>
                     </div>
-                    <div className="px-5 py-4">
-                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-1 flex items-center gap-1.5"><TrendingUp size={11} className="text-[#f97316]" />Orders</p>
-                        <p className="text-2xl font-black text-white">{snapshot ? snapshot.ordersCount : 0}</p>
+                    <div className="rewards-stat-card">
+                        <p><TrendingUp size={12} />Orders</p>
+                        <strong>{snapshot ? snapshot.ordersCount : 0}</strong>
                     </div>
                 </FadeInSection>
 
@@ -372,10 +386,10 @@ export default async function RewardsPage({
 
                 {/* HOW IT WORKS */}
                 <FadeInSection className="mt-8" delay={0.05}>
-                <section className="food-panel">
+                <section className="food-panel rewards-steps-panel">
                     <p className="food-kicker mb-1">How It Works</p>
                     <h2 className="food-heading !text-[26px] mb-6">Three steps to better perks</h2>
-                    <div className="space-y-6">
+                    <div className="rewards-steps-list">
                         {[
                             { n: "01", title: "Order Normally", desc: "Browse health-verified restaurants and check out. Rewards are automatic on every completed delivery — no extra steps." },
                             { n: "02", title: "Earn Points", desc: "Points credit instantly after delivery. Your tier multiplier applies automatically.", extra: (
@@ -386,12 +400,12 @@ export default async function RewardsPage({
                                 </div>
                             )},
                             { n: "03", title: "Unlock Tiers", desc: "Hit 1,200 pts to unlock Plus (1.5×, priority dispatch). Hit 3,000 pts to unlock Premium (2×, concierge support)." },
-                        ].map((step, i, arr) => (
-                            <div key={step.n} className={`flex gap-4 ${i < arr.length - 1 ? "pb-6 border-b border-white/6" : ""}`}>
-                                <span className="text-[11px] font-black text-[#f97316]/50 tracking-[0.18em] shrink-0 pt-0.5 w-6">{step.n}</span>
+                        ].map((step) => (
+                            <div key={step.n} className="rewards-step">
+                                <span>{step.n}</span>
                                 <div>
-                                    <p className="font-black text-white text-sm mb-1">{step.title}</p>
-                                    <p className="text-sm text-white/50 leading-relaxed">{step.desc}</p>
+                                    <p>{step.title}</p>
+                                    <small>{step.desc}</small>
                                     {step.extra}
                                 </div>
                             </div>

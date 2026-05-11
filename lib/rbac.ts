@@ -209,18 +209,18 @@ export const ADMIN_SECTION_PERMISSIONS: Record<AdminSection, Permission[]> = {
 };
 
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: '📊', section: 'dashboard' },
-    { href: '/admin/cost-management', label: 'Cost Management', icon: '💰', section: 'cost-management' },
-    { href: '/admin/pricing', label: 'Pricing', icon: '💳', section: 'pricing' },
-    { href: '/admin/feature-switches', label: 'Feature Switches', icon: '🔧', section: 'feature-switches' },
-    { href: '/admin/team', label: 'Team', icon: '👥', section: 'team' },
-    { href: '/admin/support', label: 'Support', icon: '🆘', section: 'support' },
-    { href: '/admin/content', label: 'Content', icon: '📝', section: 'content' },
-    { href: '/admin/analytics', label: 'Analytics', icon: '📈', section: 'analytics' },
-    { href: '/admin/users', label: 'Users', icon: '👤', section: 'users' },
+    { href: '/admin/dashboard', label: 'Dashboard', icon: 'Analytics', section: 'dashboard' },
+    { href: '/admin/cost-management', label: 'Cost Management', icon: 'Cost', section: 'cost-management' },
+    { href: '/admin/pricing', label: 'Pricing', icon: 'Payment', section: 'pricing' },
+    { href: '/admin/feature-switches', label: 'Feature Switches', icon: 'Tools', section: 'feature-switches' },
+    { href: '/admin/team', label: 'Team', icon: 'Team', section: 'team' },
+    { href: '/admin/support', label: 'Support', icon: 'Support', section: 'support' },
+    { href: '/admin/content', label: 'Content', icon: 'Note', section: 'content' },
+    { href: '/admin/analytics', label: 'Analytics', icon: 'Trend', section: 'analytics' },
+    { href: '/admin/users', label: 'Users', icon: 'User', section: 'users' },
     { href: '/admin/settings', label: 'Settings', icon: '⚙️', section: 'settings' },
-    { href: '/admin/stripe-testing', label: 'Stripe Testing', icon: '🧪', section: 'stripe-testing' },
-    { href: '/admin/dev-hub', label: 'Dev & QA Hub', icon: '📋', section: 'dev-hub' },
+    { href: '/admin/stripe-testing', label: 'Stripe Testing', icon: 'Test', section: 'stripe-testing' },
+    { href: '/admin/dev-hub', label: 'Dev & QA Hub', icon: 'Checklist', section: 'dev-hub' },
 ];
 
 export const ADMIN_ROLE_MATRIX = ADMIN_ROLES.map((role) => ({

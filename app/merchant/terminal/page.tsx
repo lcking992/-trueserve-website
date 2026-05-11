@@ -163,7 +163,7 @@ export default function KitchenTerminal() {
 
                     {orders.length === 0 && (
                         <div className="flex-1 w-full flex flex-col items-center justify-center opacity-20 py-40">
-                            <span className="text-9xl mb-8">🍳</span>
+                            <span className="text-9xl mb-8">Kitchen</span>
                             <p className="text-2xl font-serif italic tracking-tight">The kitchen is quiet...</p>
                         </div>
                     )}

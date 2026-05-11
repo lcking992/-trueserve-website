@@ -226,21 +226,21 @@ export default function MerchantPortalPreviewPage() {
       <div className="mpp-stat-grid">
         <div className="mpp-stat-card">
           <div className="mpp-stat-label">
-            <div className="mpp-stat-icon">📦</div>
+            <div className="mpp-stat-icon">Order</div>
             Incoming Orders
           </div>
           <div className="mpp-stat-value">3</div>
         </div>
         <div className="mpp-stat-card">
           <div className="mpp-stat-label">
-            <div className="mpp-stat-icon">🍽️</div>
+            <div className="mpp-stat-icon">Food</div>
             Menu Items
           </div>
           <div className="mpp-stat-value">42</div>
         </div>
         <div className="mpp-stat-card">
           <div className="mpp-stat-label">
-            <div className="mpp-stat-icon">💵</div>
+            <div className="mpp-stat-icon">Revenue</div>
             Net Revenue
           </div>
           <div className="mpp-stat-value" style={{ color: "#f97316" }}>$82.05</div>
@@ -255,7 +255,7 @@ export default function MerchantPortalPreviewPage() {
             <span className="mpp-stripe-sub">This preview mirrors the live merchant workflow for orders, automation, and payouts.</span>
           </div>
         </div>
-        <div className="mpp-stripe-connected">✓ Payouts Active</div>
+        <div className="mpp-stripe-connected">Done Payouts Active</div>
       </div>
 
       <div className="mpp-tab-row">

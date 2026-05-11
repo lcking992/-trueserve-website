@@ -18,7 +18,7 @@ export default async function DevHubPage() {
   return (
     <AdminPortalWrapper role={role}>
       <div className="adm-page-header">
-        <h1>📋 Dev & QA Hub</h1>
+        <h1>Dev & QA Hub</h1>
         <p>
           TDD workflow, test file map, core logic invariants, release checklist, and environment
           rules — the single source of truth for developers and QA testers.

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import { CarFront, ShieldCheck, Store } from "lucide-react";
 
 export default function HubPage() {
     const hubs = [
@@ -10,7 +11,7 @@ export default function HubPage() {
             sub: "DRIVER PORTAL",
             desc: "Uplink to delivery missions, track earnings, and manage your fleet logistics.",
             href: "/driver/dashboard",
-            icon: "🏎️",
+            icon: CarFront,
             color: "#f97316"
         },
         {
@@ -18,7 +19,7 @@ export default function HubPage() {
             sub: "PARTNER PORTAL",
             desc: "Command center for orders, menu management, and restaurant performance analytics.",
             href: "/merchant/dashboard",
-            icon: "🏛️",
+            icon: Store,
             color: "#f97316"
         },
         {
@@ -26,7 +27,7 @@ export default function HubPage() {
             sub: "STAFF TERMINAL",
             desc: "High-level oversight of platform operations and support protocols.",
             href: "/admin",
-            icon: "🛡️",
+            icon: ShieldCheck,
             color: "#f97316"
         }
     ];
@@ -48,14 +49,17 @@ export default function HubPage() {
 
             <main className="px-8 max-w-[430px] mx-auto space-y-6">
                 {hubs.map((hub, idx) => (
+                    (() => {
+                    const Icon = hub.icon;
+                    return (
                     <Link key={hub.title} href={hub.href} className="
                         group relative block bg-[#0d0d0d] border border-white/5 
                         rounded-[2.5rem] p-8 overflow-hidden transition-all duration-300
                         hover:bg-[#121212] hover:border-[#f97316]/20
                         animate-in fade-in slide-in-from-bottom-4
                     " style={{ animationDelay: `${idx * 100}ms` }}>
-                         <div className="absolute top-0 right-0 p-10 text-[64px] filter grayscale opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110 pointer-events-none">
-                            {hub.icon}
+                         <div className="absolute top-0 right-0 p-10 text-[#f97316] opacity-10 group-hover:opacity-20 transition-all group-hover:scale-110 pointer-events-none">
+                            <Icon size={64} strokeWidth={1.5} />
                         </div>
                         <div className="relative z-10 space-y-3">
                             <div className="flex flex-col">
@@ -69,6 +73,7 @@ export default function HubPage() {
                             </div>
                         </div>
                     </Link>
+                )})()
                 ))}
 
                 <div className="pt-12 text-center opacity-30 px-10">

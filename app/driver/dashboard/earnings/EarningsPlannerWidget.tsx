@@ -100,7 +100,7 @@ export default function EarningsPlannerWidget({ weeklyTotal, daysLeft }: Props) 
                                     background: 'transparent', color: '#555',
                                     border: '1px solid #1c1f28', cursor: 'pointer',
                                 }}
-                            >✕</button>
+                            >×</button>
                         </div>
                     ) : (
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -182,7 +182,7 @@ export default function EarningsPlannerWidget({ weeklyTotal, daysLeft }: Props) 
                     background: 'rgba(61,214,140,0.06)', border: '1px solid rgba(61,214,140,0.18)',
                     padding: '14px 18px',
                 }}>
-                    <span style={{ fontSize: 28 }}>🎉</span>
+                    <span style={{ fontSize: 28 }}></span>
                     <div>
                         <div style={{ fontSize: 13, fontWeight: 800, color: '#3dd68c', marginBottom: 3 }}>Goal Crushed!</div>
                         <div style={{ fontSize: 11, color: '#555', lineHeight: 1.5 }}>

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, BadgeDollarSign, CarFront, MapPin, Menu, Route, Share2, ShoppingBag, Star, Store, UtensilsCrossed, X } from "lucide-react";
+import { ArrowRight, BellRing, CarFront, CircleDollarSign, Clock3, MapPin, Menu, Navigation, Route, Share2, ShieldCheck, ShoppingBag, Star, Store, Timer, UtensilsCrossed, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion, useInView, animate, useMotionValue } from "motion/react";
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -20,63 +20,47 @@ const FacebookIcon = ({ className }: { className?: string }) => (
 );
 import Logo from "@/components/Logo";
 import LandingSearch from "@/components/LandingSearch";
-import ThreeHandoffs from "@/components/ThreeHandoffs";
 import { supabase } from "@/lib/supabase";
 import {
+  addDistanceMiles,
+  type PublicRestaurantRecord,
   getLiveRestaurants,
   summarizeRestaurantNetwork,
 } from "@/lib/public-restaurants";
+import { getRestaurantDisplayImage } from "@/lib/restaurant-images";
 import { getAccountHomeHref } from "@/lib/account-routing";
 
 const HERO_FALLBACK_VISUALS = [
   {
-    title: "Late-night comfort",
-    detail: "Curated local kitchens",
+    title: "Local favorites",
+    detail: "Browse nearby restaurants",
     image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80",
+    href: "/restaurants",
   },
   {
-    title: "Fresh and fast",
-    detail: "Built for direct ordering",
+    title: "Ready fast",
+    detail: "See what is available now",
     image: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80",
+    href: "/restaurants",
   },
   {
-    title: "Delivered local",
-    detail: "Real restaurants, real routes",
+    title: "Direct ordering",
+    detail: "Order from real kitchens",
     image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80",
+    href: "/restaurants",
   },
 ];
 
-const HERO_WORDS = ["craving", "ordering", "eating", "feeling"];
+type FeaturedRestaurantRecord = PublicRestaurantRecord & {
+  distanceMiles?: number | null;
+};
 
-function RotatingWord() {
-  const [index, setIndex] = useState(0);
-  const shouldReduceMotion = useReducedMotion();
-
-  useEffect(() => {
-    if (shouldReduceMotion) return;
-    const id = setInterval(() => setIndex(i => (i + 1) % HERO_WORDS.length), 3000);
-    return () => clearInterval(id);
-  }, [shouldReduceMotion]);
-
-  const word = HERO_WORDS[index];
-
-  return (
-    <motion.span layout className="inline-block" style={{ position: "relative" }}>
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={word}
-          className="accent"
-          style={{ display: "inline-block" }}
-          initial={shouldReduceMotion ? false : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
-          animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-          exit={shouldReduceMotion ? undefined : { opacity: 0, filter: "blur(14px)", scale: 0.92 }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {word}
-        </motion.span>
-      </AnimatePresence>
-    </motion.span>
-  );
+function slugifyRestaurant(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function AnimatedCounter({ from = 0, to, prefix = "", suffix = "", duration = 1.4 }: {
@@ -102,6 +86,43 @@ function AnimatedCounter({ from = 0, to, prefix = "", suffix = "", duration = 1.
   return <span ref={ref}>{display}</span>;
 }
 
+function LiveTrackingMockup({ reduceMotion }: { reduceMotion: boolean | null }) {
+  return (
+    <div className="home-tracking-mockup" aria-label="Live delivery tracking preview">
+      <div className="home-tracking-map">
+        <div className="home-map-road home-map-road-a" />
+        <div className="home-map-road home-map-road-b" />
+        <div className="home-map-road home-map-road-c" />
+        <div className="home-map-pin pickup"><Store size={14} aria-hidden="true" /></div>
+        <div className="home-map-pin dropoff"><MapPin size={14} aria-hidden="true" /></div>
+        <div className={`home-map-car${reduceMotion ? "" : " moving"}`}>
+          <CarFront size={16} aria-hidden="true" />
+        </div>
+      </div>
+      <div className="home-tracking-panel">
+        <div className="home-tracking-live"><span /> Live ETA</div>
+        <h3>Every handoff stays visible.</h3>
+        <div className="home-tracking-steps">
+          {[
+            { label: "Kitchen confirmed", value: "Now", icon: ShieldCheck },
+            { label: "Driver nearby", value: "7 min", icon: Navigation },
+            { label: "Dropoff window", value: "22-28 min", icon: Timer },
+          ].map((step) => {
+            const Icon = step.icon;
+            return (
+              <div key={step.label}>
+                <Icon size={15} aria-hidden="true" />
+                <span>{step.label}</span>
+                <strong>{step.value}</strong>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
   const [userId, setUserId] = useState<string | null>(null);
@@ -112,7 +133,10 @@ export default function Home() {
     markets: 0,
     averageRating: null as number | null,
   });
+  const [featuredRestaurants, setFeaturedRestaurants] = useState<PublicRestaurantRecord[]>([]);
+  const [featuredLocationLabel, setFeaturedLocationLabel] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showMobileOrderBar, setShowMobileOrderBar] = useState(false);
   const socialLinks = [
     {
       label: "Instagram",
@@ -161,15 +185,15 @@ export default function Home() {
     {
       title: "For Merchants",
       detail: "Launch a branded storefront, share direct-order links, and give your team better operational tools.",
-      href: "/merchant/signup",
-      cta: "Grow With TrueServe",
+      href: "/merchant",
+      cta: "Explore Merchant Page",
       icon: Store,
     },
     {
       title: "For Drivers",
       detail: "Onboard cleanly, upload docs, complete payout setup, and stay supported while you deliver.",
-      href: "/driver/signup",
-      cta: "Apply To Drive",
+      href: "/driver",
+      cta: "Explore Driver Page",
       icon: CarFront,
     },
   ];
@@ -177,8 +201,6 @@ export default function Home() {
   const revealTransition = shouldReduceMotion
     ? { duration: 0 }
     : { duration: 0.62, ease: [0.22, 1, 0.36, 1] as const };
-
-  const heroVisuals = HERO_FALLBACK_VISUALS;
 
   useEffect(() => {
     const match = document.cookie.match(new RegExp('(^| )userId=([^;]+)'));
@@ -215,8 +237,46 @@ export default function Home() {
 
       const restaurantData = restaurantsResult.data || [];
       const live = getLiveRestaurants(restaurantData);
+      let featured: FeaturedRestaurantRecord[] = [...live].sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
+      let nearbyLabel: string | null = null;
+
+      try {
+        const savedLat = Number(localStorage.getItem("ts.delivery.lat"));
+        const savedLng = Number(localStorage.getItem("ts.delivery.lng"));
+        const savedAddress = localStorage.getItem("ts.delivery.address");
+
+        if (Number.isFinite(savedLat) && Number.isFinite(savedLng)) {
+          const nearbyRestaurants = addDistanceMiles(live, savedLat, savedLng)
+            .filter((restaurant) => typeof restaurant.distanceMiles === "number")
+            .sort((a, b) => Number(a.distanceMiles ?? 9999) - Number(b.distanceMiles ?? 9999));
+
+          if (nearbyRestaurants.length > 0) {
+            featured = nearbyRestaurants;
+            nearbyLabel = savedAddress?.split(",")[0]?.trim() || "your area";
+          }
+        }
+      } catch {
+        // Local storage can be unavailable in strict privacy modes; fall back to featured restaurants.
+      }
+
       setNetworkStats(summarizeRestaurantNetwork(live));
+      setFeaturedLocationLabel(nearbyLabel);
+      setFeaturedRestaurants(featured.slice(0, 3));
     });
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowMobileOrderBar(window.scrollY > Math.min(680, window.innerHeight * 0.82));
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
 
   return (
@@ -235,9 +295,8 @@ export default function Home() {
         <div className="nav-links hidden md:flex">
           <Link href="/restaurants">Order Food</Link>
           <Link href="/rewards">Rewards</Link>
-          <Link href="/pricing">Pricing</Link>
-          <Link href="/merchant/signup">For Merchants</Link>
-          <Link href="/driver/signup">For Drivers</Link>
+          <Link href="/merchant">For Merchants</Link>
+          <Link href="/driver">For Drivers</Link>
           <Link href="/contact">Contact</Link>
         </div>
         <div className="nav-r">
@@ -276,11 +335,10 @@ export default function Home() {
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
                 {[
-                  { href:"/driver/signup", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
-                  { href:"/merchant/signup", icon:Store, label:"For Merchants", sub:"List your restaurant" },
+                  { href:"/driver", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
+                  { href:"/merchant", icon:Store, label:"For Merchants", sub:"List your restaurant" },
                   { href:"/restaurants", icon:UtensilsCrossed, label:"Order Food", sub:"Browse local restaurants" },
                   { href:"/rewards", icon:Star, label:"Rewards", sub:"Earn points on every order" },
-                  { href:"/pricing", icon:BadgeDollarSign, label:"Pricing", sub:"Zero commission plans" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.href}
@@ -326,6 +384,9 @@ export default function Home() {
       </AnimatePresence>
 
       <main className="food-app-main">
+        <div className="home-sticky-order" aria-hidden="true">
+          <LandingSearch isCompact />
+        </div>
         <section className="food-hero-card">
           <div className="home-bg-img"></div>
           <div className="home-bg-grad"></div>
@@ -343,7 +404,7 @@ export default function Home() {
                   animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.05 }}
                 >
-                  What are you<br /><RotatingWord /> tonight?
+                  Local food delivery, built around <span className="accent">real restaurants.</span>
                 </motion.h1>
                 <motion.p
                   className="food-subtitle"
@@ -351,7 +412,7 @@ export default function Home() {
                   animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
                   transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.12 }}
                 >
-                  Browse local favorites, place your order in seconds, and watch your food travel from kitchen to doorstep in real time.
+                  Order from nearby kitchens, track every handoff, and support local restaurants without the usual marketplace clutter.
                 </motion.p>
               </div>
 
@@ -370,9 +431,9 @@ export default function Home() {
                 transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.26 }}
               >
                 {[
-                  "Local restaurants",
+                  `${networkStats.totalRestaurants || 7} restaurant partners`,
                   "Live tracking",
-                  "Avg. 30 min",
+                  "Direct local ordering",
                 ].map((feature) => (
                   <motion.div
                     key={feature}
@@ -385,6 +446,34 @@ export default function Home() {
                   </motion.div>
                 ))}
               </motion.div>
+
+              <div className="home-route-video-card home-route-video-card-mobile" aria-label="Animated TrueServe delivery route preview">
+                {!shouldReduceMotion ? (
+                  <video
+                    className="home-route-video decorative-video"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                    disablePictureInPicture
+                    preload="metadata"
+                    aria-hidden="true"
+                    tabIndex={-1}
+                  >
+                    <source src="/videos/trueserve-route-delivery-car.mp4" type="video/mp4" />
+                  </video>
+                ) : (
+                  <div className="home-route-video-fallback" aria-hidden="true">
+                    <Route size={42} />
+                  </div>
+                )}
+                <div className="home-route-video-overlay" />
+                <div className="home-route-video-copy">
+                  <span>Live Route Preview</span>
+                  <strong>Kitchen to doorstep</strong>
+                </div>
+              </div>
             </motion.div>
 
             <motion.div
@@ -393,47 +482,47 @@ export default function Home() {
               animate={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
               transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.16 }}
             >
-              <div className="space-y-4">
-                <p className="food-kicker">Ready to eat?</p>
-                <h2 className="food-heading">Pick a spot. <span className="accent">Dig in.</span></h2>
-                <p className="food-subtitle !text-sm !max-w-none">
-                  From breakfast burritos to late-night pizza — find what you're craving from local restaurants near you.
-                </p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="food-stat">
-                  <strong>Live</strong>
-                  <span>Delivery ETAs update in real time</span>
-                </div>
-                <div className="food-stat">
-                  <strong>Verified</strong>
-                  <span>Restaurant reviews come from Google</span>
-                </div>
-              </div>
-
-              <div className="hero-preview-grid">
-                {heroVisuals.map((visual, index) => (
-                  <motion.div
-                    key={`${visual.title}-${index}`}
-                    className={`hero-preview-card${index === 0 ? " hero-preview-card-lg" : ""}`}
-                    initial={shouldReduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }}
-                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.22 + index * 0.08 }}
-                    whileHover={shouldReduceMotion ? undefined : { y: -4, scale: 1.01 }}
+              <div className="home-route-video-card" aria-label="Animated TrueServe delivery route preview">
+                {!shouldReduceMotion ? (
+                  <video
+                    className="home-route-video decorative-video"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    controls={false}
+                    disablePictureInPicture
+                    preload="metadata"
+                    aria-hidden="true"
+                    tabIndex={-1}
                   >
-                    <motion.div
-                      className="hero-preview-image"
-                      style={{ backgroundImage: `linear-gradient(180deg, rgba(8,10,14,.12), rgba(8,10,14,.76)), url('${visual.image}')` }}
-                      animate={shouldReduceMotion ? undefined : { scale: [1, 1.03, 1] }}
-                      transition={shouldReduceMotion ? undefined : { duration: 9, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
-                    />
-                    <div className="hero-preview-copy">
-                      <div className="hero-preview-title">{visual.title}</div>
-                      <div className="hero-preview-detail">{visual.detail}</div>
-                    </div>
-                  </motion.div>
-                ))}
+                    <source src="/videos/trueserve-route-delivery-car.mp4" type="video/mp4" />
+                  </video>
+                ) : (
+                  <div className="home-route-video-fallback" aria-hidden="true">
+                    <Route size={42} />
+                  </div>
+                )}
+                <div className="home-route-video-overlay" />
+                <div className="home-route-video-copy">
+                  <span>Live Route Preview</span>
+                  <strong>Kitchen to doorstep</strong>
+                </div>
+              </div>
+
+              <div className="home-hero-stats">
+                <div className="food-stat">
+                  <strong>{networkStats.totalRestaurants || 7}</strong>
+                  <span>Partners live</span>
+                </div>
+                <div className="food-stat">
+                  <strong>{networkStats.averageRating?.toFixed(1) || "4.8"}</strong>
+                  <span>Avg. rating</span>
+                </div>
+                <div className="food-stat">
+                  <strong>30</strong>
+                  <span>Avg. delivery</span>
+                </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -471,23 +560,117 @@ export default function Home() {
           transition={revealTransition}
         >
           {([
-            { icon:"📍", label:"Local Restaurants" },
-            { icon:"📡", label:"Live Tracking" },
-            { icon:"⚡", label:"Avg. 30 min" },
-            { icon:"⭐", label:"Google Reviews" },
+            { icon: MapPin, label:"Local Restaurants" },
+            { icon: Route, label:"Live Tracking" },
+            { icon: Clock3, label:"Avg. 30 min" },
+            { icon: Star, label:"Google Reviews" },
           ] as const).map((item, i, arr) => (
             <React.Fragment key={item.label}>
               <motion.div
                 style={{ display:"flex", alignItems:"center", gap:7, padding:"4px 18px", whiteSpace:"nowrap" }}
                 whileHover={shouldReduceMotion ? undefined : { y: -1, color: "rgba(255,255,255,0.78)" }}
               >
-                <span style={{ fontSize:14 }}>{item.icon}</span>
+                <item.icon size={15} strokeWidth={2.2} style={{ color:"#f97316", opacity:0.86, flexShrink:0 }} />
                 <span style={{ fontSize:11, fontWeight:800, textTransform:"uppercase", letterSpacing:"0.14em", color:"rgba(255,255,255,0.45)" }}>{item.label}</span>
               </motion.div>
               {i < arr.length - 1 && <div style={{ width:1, height:14, background:"rgba(255,255,255,0.1)", flexShrink:0 }} />}
             </React.Fragment>
           ))}
         </motion.div>
+
+        <motion.section
+          className="mt-8 home-tracking-section"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={revealTransition}
+        >
+          <div>
+            <p className="food-kicker mb-2">Live tracking</p>
+            <h2 className="food-heading">A delivery screen that feels <span className="accent">alive.</span></h2>
+            <p className="home-section-copy">
+              Customers should see what is happening without texting support: kitchen status, driver progress, and realistic ETA changes.
+            </p>
+          </div>
+          <LiveTrackingMockup reduceMotion={shouldReduceMotion} />
+        </motion.section>
+
+        <motion.section
+          className="mt-8 home-linear-section"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.25 }}
+          transition={revealTransition}
+        >
+          <div className="home-section-row">
+            <div>
+              <p className="food-kicker mb-2">{featuredLocationLabel ? `Near ${featuredLocationLabel}` : "Featured restaurants"}</p>
+              <h2 className="food-heading">
+                {featuredLocationLabel ? "Restaurants closest to your address" : <>Start with <span className="accent">real kitchens</span></>}
+              </h2>
+            </div>
+            <Link href="/restaurants" className="home-text-link">
+              View all restaurants <ArrowRight size={15} />
+            </Link>
+          </div>
+          <div className="home-proof-video-card" aria-label="Fresh takeout being packed for delivery">
+            {!shouldReduceMotion ? (
+              <video
+                className="home-proof-video decorative-video"
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls={false}
+                disablePictureInPicture
+                preload="metadata"
+                poster="/hero_food_delivery.png"
+                aria-hidden="true"
+                tabIndex={-1}
+              >
+                <source src="/videos/home-food-packing-loop.mp4" type="video/mp4" />
+              </video>
+            ) : (
+              <div className="home-proof-video-fallback" aria-hidden="true" />
+            )}
+            <div className="home-proof-video-overlay" />
+            <div className="home-proof-video-copy">
+              <span>Real food, real handoffs</span>
+              <strong>Fresh orders packed with care</strong>
+            </div>
+          </div>
+          <div className="home-featured-grid">
+            {(featuredRestaurants.length ? featuredRestaurants : HERO_FALLBACK_VISUALS).map((restaurant: any, index) => {
+              const name = restaurant.name || restaurant.title;
+              const image = restaurant.id ? getRestaurantDisplayImage(restaurant) : restaurant.image;
+              const href = restaurant.id ? `/restaurants/${slugifyRestaurant(name)}` : restaurant.href;
+              const placeLabel = [restaurant.city, restaurant.state].filter(Boolean).join(", ") || restaurant.detail || "Browse local ordering";
+              const cityLabel = typeof restaurant.distanceMiles === "number"
+                ? `${restaurant.distanceMiles.toFixed(1)} mi away · ${placeLabel}`
+                : placeLabel;
+              return (
+                <motion.div
+                  key={`${name}-${index}`}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+                  whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.06 }}
+                >
+                  <Link href={href} className="home-featured-card">
+                    <div
+                      className="home-featured-image"
+                      style={{ backgroundImage: `linear-gradient(180deg, rgba(8,10,14,.04), rgba(8,10,14,.62)), url('${image}')` }}
+                    />
+                    <div className="home-featured-copy">
+                      <span>{cityLabel}</span>
+                      <strong>{name}</strong>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.section>
 
         <motion.section
           className="mt-8 food-panel overflow-hidden"
@@ -523,13 +706,33 @@ export default function Home() {
 
 
         <motion.section
-          className="mt-8"
+          className="mt-8 home-linear-section"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={revealTransition}
         >
-          <ThreeHandoffs />
+          <div className="home-section-row">
+            <div>
+              <p className="food-kicker mb-2">How it works</p>
+              <h2 className="food-heading">Three steps, <span className="accent">no guessing</span></h2>
+            </div>
+          </div>
+          <div className="home-steps-line">
+            {howItWorks.map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.step} className="home-step-item">
+                  <div className="home-step-index">{step.step}</div>
+                  <div className="home-step-icon"><Icon size={18} aria-hidden="true" /></div>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.detail}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </motion.section>
 
         <motion.section
@@ -571,6 +774,41 @@ export default function Home() {
           </div>
         </motion.section>
 
+        <motion.section
+          className="mt-8 home-driver-recruit"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+          whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={revealTransition}
+        >
+          <div className="home-driver-recruit-copy">
+            <p className="food-kicker mb-2">For drivers</p>
+            <h2 className="food-heading">Earn while supporting <span className="accent">local restaurants.</span></h2>
+            <p>
+              TrueServe drivers keep 100% of tips, see route pay before accepting, and get wait-time protection when a restaurant delay is out of their control.
+            </p>
+          </div>
+          <div className="home-driver-recruit-grid">
+            {[
+              { icon: CircleDollarSign, label: "100% tips", detail: "Tips stay with the driver." },
+              { icon: Timer, label: "Wait-time care", detail: "Delays can be documented and reviewed." },
+              { icon: BellRing, label: "Support first", detail: "Photo proof and help tools stay close." },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label} className="home-driver-recruit-card">
+                  <Icon size={18} aria-hidden="true" />
+                  <strong>{item.label}</strong>
+                  <span>{item.detail}</span>
+                </div>
+              );
+            })}
+          </div>
+          <Link href="/driver" className="portal-btn-gold home-driver-recruit-cta">
+            Join the Fleet <ArrowRight size={14} aria-hidden="true" />
+          </Link>
+        </motion.section>
+
         {/* CTA strip replacing redundant utility cards */}
         <motion.section
           className="mt-8 food-panel"
@@ -588,9 +826,6 @@ export default function Home() {
               <Link href="/rewards" className="portal-btn-outline flex items-center gap-2 whitespace-nowrap">
                 <Star size={14} /> Rewards
               </Link>
-              <Link href="/pricing" className="portal-btn-outline flex items-center gap-2 whitespace-nowrap">
-                <BadgeDollarSign size={14} /> Pricing
-              </Link>
               <Link href="/restaurants" className="portal-btn-gold flex items-center gap-2 whitespace-nowrap">
                 Order Now <ArrowRight size={14} />
               </Link>
@@ -605,9 +840,8 @@ export default function Home() {
             <div className="flex items-center justify-center gap-6 px-4 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
               <Link href="/rewards" className="hover:text-[#f97316] transition-colors">Rewards</Link>
-              <Link href="/pricing" className="hover:text-[#f97316] transition-colors">Pricing</Link>
-              <Link href="/merchant/signup" className="hover:text-[#f97316] transition-colors">Merchants</Link>
-              <Link href="/driver/signup" className="hover:text-[#f97316] transition-colors">Drivers</Link>
+              <Link href="/merchant" className="hover:text-[#f97316] transition-colors">Merchants</Link>
+              <Link href="/driver" className="hover:text-[#f97316] transition-colors">Drivers</Link>
               <Link href="/contact" className="hover:text-[#f97316] transition-colors">Contact</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             </div>
@@ -634,6 +868,11 @@ export default function Home() {
           </div>
         </footer>
       </main>
+      <div className={`home-mobile-order-bar${showMobileOrderBar ? " is-visible" : ""}`}>
+        <Link href="/restaurants" className="portal-btn-gold">
+          Find Food <ArrowRight size={14} aria-hidden="true" />
+        </Link>
+      </div>
     </div>
   );
 }

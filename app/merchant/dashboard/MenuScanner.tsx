@@ -70,7 +70,7 @@ export default function MenuScanner({ restaurantId }: { restaurantId: string }) 
         setScanning(true);
         const res = await confirmAIImport(restaurantId, results);
         if (res.success) {
-            setMessage("🚀 Menu successfully imported!");
+            setMessage("Menu successfully imported!");
             setTimeout(() => {
                 setShowResults(false);
                 setMessage("");
@@ -127,7 +127,7 @@ export default function MenuScanner({ restaurantId }: { restaurantId: string }) 
                         <div className="p-8 border-b border-white/5 flex justify-between items-center bg-gradient-to-br from-primary/10 via-transparent to-transparent">
                             <div>
                                 <h3 className="text-2xl font-black flex items-center gap-3 tracking-tight">
-                                    <span className="p-2 bg-primary/10 rounded-xl">🪄</span> Smart Sync
+                                    <span className="p-2 bg-primary/10 rounded-xl"></span> Smart Sync
                                 </h3>
                                 <p className="text-xs text-slate-500 mt-1 font-bold uppercase tracking-widest opacity-60">Comparing Extract with Database</p>
                             </div>
@@ -170,7 +170,7 @@ export default function MenuScanner({ restaurantId }: { restaurantId: string }) 
                                                         item.changeType === 'UPDATE' ? 'bg-secondary text-white' :
                                                             'bg-white/10 text-slate-500'
                                                     }`}>
-                                                    {item.changeType === 'NEW' ? '+' : item.changeType === 'UPDATE' ? '↺' : '✓'}
+                                                    {item.changeType === 'NEW' ? '+' : item.changeType === 'UPDATE' ? 'Update' : 'Done'}
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ export default function MenuScanner({ restaurantId }: { restaurantId: string }) 
                                                     <img src={previewUrl} alt="Preview" className={`w-full h-full object-cover transition-opacity ${scanning ? 'opacity-40 brightness-50' : 'opacity-80'}`} />
                                                 ) : (
                                                     <div className="flex flex-col items-center gap-4 py-8">
-                                                        <span className="text-5xl animate-bounce">📸</span>
+                                                        <span className="text-5xl animate-bounce"></span>
                                                         <div className="text-center">
                                                             <p className="text-white font-black tracking-tight text-lg">Upload your menu</p>
                                                             <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Image or PDF • Max 10MB</p>

@@ -143,7 +143,7 @@ export default function MapWithDirections({
     if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === 'YOUR_GOOGLE_MAPS_API_KEY_HERE') {
         return (
             <div className="h-full w-full min-h-[300px] bg-slate-900 rounded-2xl flex flex-col items-center justify-center gap-4 border border-red-500/30 p-6 text-center" style={{ height: mapHeight }}>
-                <span className="text-4xl">🗺️</span>
+                <span className="text-4xl">Map</span>
                 <div>
                     <p className="font-black text-red-400 text-sm mb-1">Google Maps API Key Missing</p>
                     <p className="text-xs text-slate-400 max-w-xs">
@@ -243,7 +243,7 @@ export default function MapWithDirections({
                     position={routeOrigin}
                     title="Restaurant"
                     label={{
-                        text: "🏪",
+                        text: "Restaurant",
                         fontSize: "20px"
                     }}
                 />
@@ -269,7 +269,7 @@ export default function MapWithDirections({
                                 filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.4))',
                             } as React.CSSProperties}
                         >
-                            🚗
+                            Driver
                         </div>
                     </div>
                 </OverlayView>

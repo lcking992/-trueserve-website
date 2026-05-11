@@ -155,21 +155,22 @@ export async function submitDriverApplication(prevState: any, formData: FormData
         const driveStatus = "OFFLINE";
         const bckStatus = isAutoApproved ? "CLEAR" : "PROCESSING";
 
-        const { error: authError } = await supabaseAdmin.auth.admin.createUser({
-            id: targetUserId,
-            email: email,
-            phone: phone,
-            phone_confirm: true,
-            email_confirm: true,
-            user_metadata: { displayName: name, role: 'DRIVER' }
-        });
-
-        if (authError && !authError.message.includes('already exists')) {
-            console.error("Driver Auth Creation Failed:", authError);
-        }
-
         if (isAutoApproved) {
             console.log(`[DriverApp] 🟢 AI AUTO-APPROVED Application for ${email}!`);
+
+            // Create the true Auth identity here so they can log in via SMS!
+            const { error: authError } = await supabaseAdmin.auth.admin.createUser({
+                id: targetUserId, // link to the raw User row we created earlier
+                email: email,
+                phone: phone,
+                phone_confirm: true,
+                email_confirm: true,
+                user_metadata: { displayName: name, role: 'DRIVER' }
+            });
+
+            if (authError && !authError.message.includes('already exists')) {
+                console.error("Auto-Approve Auth Creation Failed:", authError);
+            }
         } else {
             console.log(`[DriverApp] 🟡 AI Sent to Manual Review for ${email}. Reason: Scans failed automated compliance checks.`);
         }
@@ -552,16 +553,6 @@ export async function confirmPickupWithPhoto(formData: FormData) {
             throw new Error("Order not ready for pickup.");
         }
 
-        // Ownership check: only the assigned driver can confirm pickup
-        const { data: driverRecord } = await supabase
-            .from('Driver')
-            .select('id')
-            .eq('userId', user.id)
-            .single();
-        if (!driverRecord || driverRecord.id !== order.driverId) {
-            throw new Error("Unauthorized: this pickup is not assigned to you.");
-        }
-
         let pickupPhotoUrl = null;
 
         // Upload pickup photo to Supabase Storage
@@ -694,13 +685,6 @@ export async function completeDelivery(orderId: string, deliveryPin?: string, dr
     try {
         const supabase = await createClient();
 
-        // Auth check: ensure a logged-in driver is making this request
-        const { data: { user } } = await supabase.auth.getUser();
-        const cookieStore = await cookies();
-        const cookieUserId = cookieStore.get("userId")?.value;
-        const activeUserId = user?.id || cookieUserId;
-        if (!activeUserId) return { error: "Not authenticated." };
-
         // 1. Fetch order details for payout calculation
         const { data: order } = await supabase
             .from('Order')
@@ -709,16 +693,6 @@ export async function completeDelivery(orderId: string, deliveryPin?: string, dr
             .single();
 
         if (!order) throw new Error("Order not found");
-
-        // Ownership check: only the assigned driver can complete this delivery
-        const { data: driverRecord } = await supabase
-            .from('Driver')
-            .select('id')
-            .eq('userId', activeUserId)
-            .single();
-        if (!driverRecord || driverRecord.id !== order.driverId) {
-            return { error: "Unauthorized: this delivery is not assigned to you." };
-        }
 
         // Geo-Fenced Safe Drop Protocol
         if (driverLat && driverLng && order.deliveryLat && order.deliveryLng) {

@@ -44,16 +44,16 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 const SECTION_ICONS: Record<string, string> = {
-    "backlog": "📋",
-    "to do": "📝",
-    "in progress": "🔄",
-    "in review": "🔍",
-    "done": "✅",
-    "blocked": "🚫",
-    "qa": "🧪",
-    "ready for qa": "🧪",
-    "ready for deploy": "🚀",
-    "deployed": "🟢",
+    "backlog": "Checklist",
+    "to do": "Note",
+    "in progress": "Sync",
+    "in review": "Search",
+    "done": "Done",
+    "blocked": "Blocked",
+    "qa": "Test",
+    "ready for qa": "Test",
+    "ready for deploy": "Launch",
+    "deployed": "Green",
 };
 
 function getSectionIcon(name: string): string {
@@ -61,7 +61,7 @@ function getSectionIcon(name: string): string {
     for (const [key, icon] of Object.entries(SECTION_ICONS)) {
         if (lower.includes(key)) return icon;
     }
-    return "📌";
+    return "Pin";
 }
 
 function getRelativeTime(dateStr: string): string {
@@ -742,7 +742,7 @@ export default function AsanaBoard() {
                         rel="noopener noreferrer"
                         className="asana-link"
                     >
-                        Open in Asana ↗
+                        Open in Asana Open
                     </a>
                 </div>
             </div>
@@ -835,7 +835,7 @@ export default function AsanaBoard() {
                                                     aria-label={`Mark ${task.name} complete`}
                                                     disabled={completingTask === task.gid}
                                                 >
-                                                    ✓
+                                                    Done
                                                 </button>
                                             </div>
                                         </article>
@@ -871,7 +871,7 @@ export default function AsanaBoard() {
                                         aria-label={`Mark ${task.name} complete`}
                                         disabled={completingTask === task.gid}
                                     >
-                                        ✓
+                                        Done
                                     </button>
                                 </div>
                             </div>

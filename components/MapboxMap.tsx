@@ -96,9 +96,9 @@ export default function MapboxMap({ center, zoom = 13, restaurants = [] }: MapPr
                 aria-label="marker"
             >
                 {rest.tags?.includes("Driver") ? (
-                    <div className="text-3xl drop-shadow-md filter drop-shadow-lg">🚗</div>
+                    <div className="text-3xl drop-shadow-md filter drop-shadow-lg">Driver</div>
                 ) : (
-                    <div className="text-3xl drop-shadow-md hover:scale-125 transition-transform">📍</div>
+                    <div className="text-3xl drop-shadow-md hover:scale-125 transition-transform">Location</div>
                 )}
             </div>
         </Marker>
@@ -160,7 +160,7 @@ export default function MapboxMap({ center, zoom = 13, restaurants = [] }: MapPr
 
                             {userLocation && (
                                 <div className="text-xs text-emerald-600 font-bold mb-2 flex items-center gap-1">
-                                    <span>🚶</span> {getDistance(userLocation[0], userLocation[1], popupInfo.coords[0], popupInfo.coords[1])} miles away
+                                    <span>Walk</span> {getDistance(userLocation[0], userLocation[1], popupInfo.coords[0], popupInfo.coords[1])} miles away
                                 </div>
                             )}
 

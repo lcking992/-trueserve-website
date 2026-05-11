@@ -46,7 +46,7 @@ export default function ChangeWorkflow({ pendingRequests, approveAction, rejectA
     if (pendingRequests.length === 0) {
         return (
             <div className="p-12 text-center rounded-[2rem] border border-dashed border-white/10 opacity-50 bg-white/[0.02]">
-                <p className="text-4xl mb-4">🛡️</p>
+                <p className="text-4xl mb-4">Shield</p>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 italic">No pending change requests in queue.</p>
                 <p className="text-[9px] text-slate-600 mt-2 font-medium">All sensitive deployments are currently synchronized.</p>
             </div>

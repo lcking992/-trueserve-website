@@ -30,7 +30,7 @@ export default function IssuesPanel({ pendingCount }: IssuesPanelProps) {
             <div className="issues-toast">
                 <div className="issues-n">{pendingCount}</div>
                 <div className="issues-text">{pendingCount === 1 ? "1 Pending Order" : `${pendingCount} Incoming Orders`}</div>
-                <button className="issues-close" onClick={() => setVisible(false)} aria-label="Dismiss">✕</button>
+                <button className="issues-close" onClick={() => setVisible(false)} aria-label="Dismiss">×</button>
             </div>
         </>
     );

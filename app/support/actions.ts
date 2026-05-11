@@ -158,7 +158,7 @@ export async function sendMessageToSupport(chatId: string | null, messageContent
             // Update chat to HUMAN_REQUIRED
             // Create Jira Ticket
             const jiraDesc = `**AI Escalation Summary:**\n${jiraSummary}\n\n**Chat Link:** https://trueserve.com/admin/support?chatId=${activeChatId}`;
-            const ticketKey = await createJiraIssue(`🚨 URGENT: Copilot Escalation - Support Chat`, jiraDesc);
+            const ticketKey = await createJiraIssue(`Urgent URGENT: Copilot Escalation - Support Chat`, jiraDesc);
 
             await supabaseAdmin
                 .from('SupportChat')

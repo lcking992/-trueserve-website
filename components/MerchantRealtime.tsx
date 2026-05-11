@@ -37,7 +37,7 @@ export default function MerchantRealtime({ restaurantId }: { restaurantId: strin
 
                     // Optional: Show visual notification
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("New Order! 🍕", {
+                        new Notification("New Order! Order", {
                             body: "A new order has arrived. Open the dashboard to view details.",
                             icon: "/logo.png"
                         });

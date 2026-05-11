@@ -85,7 +85,7 @@ function GoogleMapsMap({ center, zoom = 13, restaurants = [] }: MapProps) {
     if (!GOOGLE_MAPS_API_KEY) {
         return (
             <div className="h-full w-full bg-slate-900 rounded-xl flex items-center justify-center flex-col text-red-500 p-4 border border-red-500/20 text-center font-bold">
-                <span className="text-2xl mb-2">🗺️</span>
+                <span className="text-2xl mb-2">Map</span>
                 <span>Error: Missing Google Maps API Key</span>
                 <span className="text-sm font-normal text-slate-400 mt-2">Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env file</span>
             </div>
@@ -95,7 +95,7 @@ function GoogleMapsMap({ center, zoom = 13, restaurants = [] }: MapProps) {
     if (authError) {
         return (
             <div className="h-full w-full bg-slate-900 rounded-xl flex items-center justify-center flex-col text-red-500 p-4 border border-red-500/20 text-center font-bold">
-                <span className="text-2xl mb-2">🗺️</span>
+                <span className="text-2xl mb-2">Map</span>
                 <span>Google Maps authorization failed</span>
                 <span className="text-sm font-normal text-slate-400 mt-2">{authError}</span>
             </div>
@@ -205,7 +205,7 @@ function GoogleMapsMap({ center, zoom = 13, restaurants = [] }: MapProps) {
                                 mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
                             >
                                 <div style={{ transform: `translate(-50%, -50%) rotate(${rest.rotation}deg)` }} className="text-3xl filter drop-shadow-lg">
-                                    🚗
+                                    Driver
                                 </div>
                             </OverlayView>
                         );

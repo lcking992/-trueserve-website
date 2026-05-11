@@ -11,6 +11,13 @@ interface Restaurant {
     visibility: string | null;
     city: string | null;
     state: string | null;
+    stripeAccountId?: string | null;
+    openTime?: string | null;
+    closeTime?: string | null;
+    posSystem?: string | null;
+    posType?: string | null;
+    posClientId?: string | null;
+    menuItems?: { id: string }[] | null;
 }
 
 export default function AdminRestaurantGrid({ restaurants }: { restaurants: Restaurant[] }) {
@@ -73,7 +80,7 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                 .arg-card { background: #141a18; border: 1px solid #1e2420; border-radius: 10px; overflow: hidden; }
                 .arg-thumb { position: relative; height: 150px; background: #0c0f0d; }
                 .arg-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-                .arg-thumb-empty { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #2a3530; }
+                .arg-thumb-empty { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: #58615c; }
                 .arg-body { padding: 14px; }
                 .arg-name { font-size: 14px; font-weight: 700; color: #fff; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
                 .arg-meta { font-size: 11px; color: #555; margin: 0 0 12px; }
@@ -95,17 +102,34 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                 .arg-badge { position: absolute; top: 8px; right: 8px; font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: .1em; }
                 .arg-badge-live { background: rgba(77,202,128,.15); color: #4dca80; border: 1px solid rgba(77,202,128,.3); }
                 .arg-badge-hidden { background: rgba(248,113,113,.1); color: #f87171; border: 1px solid rgba(248,113,113,.25); }
+                .arg-readiness { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 10px 0 12px; }
+                .arg-ready-chip { display: flex; align-items: center; gap: 6px; min-width: 0; border-radius: 8px; padding: 6px 7px; font-size: 9px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+                .arg-ready-chip.ok { color: #4dca80; background: rgba(77,202,128,.09); border: 1px solid rgba(77,202,128,.2); }
+                .arg-ready-chip.wait { color: #a7adba; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); }
+                .arg-ready-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; background: currentColor; }
+                .arg-score { margin-top: 8px; color: #f97316; font-size: 10px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
             `}</style>
 
             <div className="arg-grid">
-                {restaurants.map(r => (
+                {restaurants.map(r => {
+                    const checks = [
+                        { label: "Photo", ok: Boolean(r.imageUrl) },
+                        { label: "Menu", ok: Boolean(r.menuItems?.length) },
+                        { label: "Payout", ok: Boolean(r.stripeAccountId) },
+                        { label: "Hours", ok: Boolean(r.openTime && r.closeTime) },
+                        { label: "POS", ok: Boolean((r.posSystem && r.posSystem !== "None") || (r.posType && r.posType !== "None") || r.posClientId || r.posSystem === "None" || r.posType === "None") },
+                        { label: "Live", ok: r.visibility === "VISIBLE" },
+                    ];
+                    const readyCount = checks.filter((check) => check.ok).length;
+                    const readiness = Math.round((readyCount / checks.length) * 100);
+                    return (
                     <div key={r.id} className="arg-card">
                         {/* Thumbnail */}
                         <div className="arg-thumb">
                             {(previews[r.id] || r.imageUrl) ? (
                                 <img src={previews[r.id] || r.imageUrl!} alt={r.name} />
                             ) : (
-                                <div className="arg-thumb-empty">🍽️</div>
+                                <div className="arg-thumb-empty">Needs photo</div>
                             )}
                             <span className={`arg-badge ${r.visibility === "VISIBLE" ? "arg-badge-live" : "arg-badge-hidden"}`}>
                                 {r.visibility === "VISIBLE" ? "Live" : "Hidden"}
@@ -116,8 +140,17 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                         <div className="arg-body">
                             <p className="arg-name">{r.name}</p>
                             <p className="arg-meta">{[r.cuisineType, r.city, r.state].filter(Boolean).join(" · ")}</p>
+                            <div className="arg-score">Launch readiness {readiness}%</div>
+                            <div className="arg-readiness">
+                                {checks.map((check) => (
+                                    <span key={check.label} className={`arg-ready-chip ${check.ok ? "ok" : "wait"}`}>
+                                        <span className="arg-ready-dot" />
+                                        {check.label}
+                                    </span>
+                                ))}
+                            </div>
 
-                            {saved[r.id] && <p className="arg-saved">✓ Photo saved</p>}
+                            {saved[r.id] && <p className="arg-saved">Photo saved</p>}
 
                             {editing === r.id ? (
                                 <div className="arg-form">
@@ -125,7 +158,7 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                                     <div>
                                         <p className="arg-label">Upload file</p>
                                         <label className="arg-file-btn">
-                                            📁 Choose image
+                                            Choose image
                                             <input
                                                 type="file"
                                                 accept="image/*"
@@ -171,7 +204,7 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                                         onClick={() => handleSave(r.id)}
                                         disabled={isPending}
                                     >
-                                        {isPending ? "Saving…" : "Save Photo"}
+                                        {isPending ? "Saving…" : "Save Changes"}
                                     </button>
                                     <button className="arg-cancel" onClick={() => {
                                         setEditing(null);
@@ -182,12 +215,12 @@ export default function AdminRestaurantGrid({ restaurants }: { restaurants: Rest
                                 </div>
                             ) : (
                                 <button className="arg-edit-btn" onClick={() => setEditing(r.id)}>
-                                    {r.imageUrl ? "✏️ Change Photo" : "📷 Add Photo"}
+                                    {r.imageUrl ? "Edit Restaurant" : "Add Photo"}
                                 </button>
                             )}
                         </div>
                     </div>
-                ))}
+                )})}
             </div>
         </>
     );

@@ -336,7 +336,7 @@ export async function placeOrder(
                 await sendEmail(
                     customerData.email,
                     `Order confirmed #${posRef} — ${restInfo?.name}`,
-                    `<div style="${cardBase}"><p style="font-size:11px;color:#f97316;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin:0 0 8px">TrueServe Delivery</p><h1 style="font-size:26px;font-weight:900;margin:0 0 6px">Order Confirmed! 🎉</h1><p style="color:#aaa;margin:0">Hi ${customerData.name || 'there'}, your order from <strong style="color:#fff">${restInfo?.name}</strong> has been received and the kitchen is being notified.</p>${tableBlock}<a href="${appUrl}/orders/${newOrderId}" style="${btnStyle}">Track Your Order →</a></div>`
+                    `<div style="${cardBase}"><p style="font-size:11px;color:#f97316;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin:0 0 8px">TrueServe Delivery</p><h1 style="font-size:26px;font-weight:900;margin:0 0 6px">Order Confirmed! </h1><p style="color:#aaa;margin:0">Hi ${customerData.name || 'there'}, your order from <strong style="color:#fff">${restInfo?.name}</strong> has been received and the kitchen is being notified.</p>${tableBlock}<a href="${appUrl}/orders/${newOrderId}" style="${btnStyle}">Track Your Order →</a></div>`
                 );
             }
 
@@ -346,7 +346,7 @@ export async function placeOrder(
                 await sendEmail(
                     merchantEmail,
                     `New Order #${posRef} — $${total.toFixed(2)} — Action Required`,
-                    `<div style="${cardBase}"><p style="font-size:11px;color:#f97316;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin:0 0 8px">TrueServe Merchant Alert</p><h1 style="font-size:26px;font-weight:900;margin:0 0 6px">New Order! 📦</h1><p style="color:#aaa;margin:0">A new order just came in for <strong style="color:#fff">${restInfo?.name}</strong>. Open your dashboard to start prep.</p>${tableBlock}<a href="${appUrl}/merchant/dashboard" style="${btnStyle}">Open Dashboard →</a></div>`
+                    `<div style="${cardBase}"><p style="font-size:11px;color:#f97316;font-weight:800;letter-spacing:.15em;text-transform:uppercase;margin:0 0 8px">TrueServe Merchant Alert</p><h1 style="font-size:26px;font-weight:900;margin:0 0 6px">New Order! Order</h1><p style="color:#aaa;margin:0">A new order just came in for <strong style="color:#fff">${restInfo?.name}</strong>. Open your dashboard to start prep.</p>${tableBlock}<a href="${appUrl}/merchant/dashboard" style="${btnStyle}">Open Dashboard →</a></div>`
                 );
             }
         } catch (emailErr) {

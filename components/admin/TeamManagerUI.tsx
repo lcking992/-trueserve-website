@@ -37,7 +37,7 @@ function PhoneEditor({ member, onMessage }: { member: any; onMessage: (msg: { te
                     {saving ? "…" : "Save"}
                 </button>
                 <button className="iam-phone-cancel" onClick={() => { setValue(member.phone || ""); setEditing(false); }}>
-                    ✕
+                    Close
                 </button>
             </div>
         );
@@ -46,8 +46,8 @@ function PhoneEditor({ member, onMessage }: { member: any; onMessage: (msg: { te
     return (
         <div className="iam-phone-row">
             {member.phone
-                ? <span className="iam-phone-text">📞 {member.phone}</span>
-                : <span className="iam-phone-missing">⚠ No phone</span>
+                ? <span className="iam-phone-text">Phone {member.phone}</span>
+                : <span className="iam-phone-missing">Warning No phone</span>
             }
             {!member.isDirectoryEntry && (
                 <button className="iam-phone-edit-btn" title="Edit phone" onClick={() => setEditing(true)}>✏</button>

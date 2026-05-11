@@ -5,7 +5,7 @@ export default function TimelinePreview() {
         { label: 'Preparing Your Food', sub: 'Kitchen is cooking',        eta: 'Kitchen starting soon…' },
         { label: 'Ready for Pickup',  sub: 'Food packed and ready',       eta: 'Almost done cooking…' },
         { label: 'Driver En Route',   sub: 'Driver heading to restaurant', eta: 'Driver is on the way…' },
-        { label: 'Delivered',         sub: 'Enjoy your meal! 🎉',          eta: 'ETA: 8 min' },
+        { label: 'Delivered',         sub: 'Enjoy your meal! ',          eta: 'ETA: 8 min' },
     ];
 
     return (
@@ -59,7 +59,7 @@ export default function TimelinePreview() {
                                 return (
                                     <div key={idx} className={`tl-row${isDone ? ' done' : ''}`}>
                                         <div className={`tl-dot${isDone ? ' done' : isLive ? ' live' : ' wait'}`}>
-                                            {isDone ? '✓' : stepNum}
+                                            {isDone ? 'Done' : stepNum}
                                         </div>
                                         <div className="tl-body">
                                             <div className={`tl-lbl${isLive ? ' active' : ''}`}>{step.label}</div>

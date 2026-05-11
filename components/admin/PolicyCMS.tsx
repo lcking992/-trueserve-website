@@ -43,7 +43,7 @@ export default function PolicyCMS({ policies, onSave }: PolicyCMSProps) {
         <section className="space-y-8">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
-                    📑 Content CMS
+                    Content Content CMS
                     <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-1 rounded-full uppercase font-black">Versioning Active</span>
                 </h2>
             </div>

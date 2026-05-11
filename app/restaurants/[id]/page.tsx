@@ -3,8 +3,10 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
+import { Clock3, MapPin, ReceiptText, Route, ShieldCheck, Store } from "lucide-react";
 import { getFavorites } from "@/app/user/favorite-actions";
 import FavoriteButton from "@/components/FavoriteButton";
+import { getRestaurantDisplayImage } from "@/lib/restaurant-images";
 
 import MenuClient from "./MenuClient";
 
@@ -113,6 +115,16 @@ async function getRestaurant(id: string) {
     }
 }
 
+function toRestaurantHourLabel(value?: string | null) {
+    if (!value) return null;
+    const [hourRaw, minuteRaw = "00"] = String(value).slice(0, 5).split(":");
+    const hour = Number(hourRaw);
+    if (!Number.isFinite(hour)) return null;
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minuteRaw} ${period}`;
+}
+
 
 export default async function RestaurantMenu({
     params,
@@ -152,6 +164,12 @@ export default async function RestaurantMenu({
         notFound();
     }
 
+    const displayImage = getRestaurantDisplayImage(restaurant);
+    const hoursLabel = restaurant.openTime && restaurant.closeTime
+        ? `${toRestaurantHourLabel(restaurant.openTime)} - ${toRestaurantHourLabel(restaurant.closeTime)}`
+        : "Hours vary";
+    const opensAtLabel = toRestaurantHourLabel(restaurant.openTimeDisplay || restaurant.openTime);
+
     return (
         <div className={isEmbedded ? '' : 'food-app-shell'}>
             {!isEmbedded && (
@@ -168,27 +186,52 @@ export default async function RestaurantMenu({
                             marginBottom: 0,
                             background: '#141a18',
                         }}>
-                            {restaurant.imageUrl ? (
-                                <img
-                                    src={restaurant.imageUrl}
-                                    alt={restaurant.name}
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
-                                />
-                            ) : (
-                                /* Silent dark gradient fallback — no internal copy visible to customers */
+                            <img
+                                src={displayImage}
+                                alt={restaurant.name}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+                            />
+                            {!restaurant.isOpen && (
                                 <div style={{
-                                    width: '100%', height: '100%',
-                                    background: 'linear-gradient(135deg, #1a2420 0%, #0f1a14 50%, #141a18 100%)',
-                                }} />
+                                    position: 'absolute',
+                                    inset: 0,
+                                    zIndex: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: 18,
+                                    background: 'rgba(5,7,8,0.34)',
+                                    backdropFilter: 'blur(2.5px) saturate(0.9)',
+                                }}>
+                                    <div style={{
+                                        display: 'grid',
+                                        gap: 4,
+                                        justifyItems: 'center',
+                                        border: '1px solid rgba(255,255,255,0.16)',
+                                        background: 'rgba(8,10,12,0.72)',
+                                        boxShadow: '0 18px 42px rgba(0,0,0,0.28)',
+                                        borderRadius: 999,
+                                        padding: '10px 16px',
+                                        textAlign: 'center',
+                                    }}>
+                                        <span style={{ color: '#fff', fontSize: 12, fontWeight: 950, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                                            Closed now
+                                        </span>
+                                        <span style={{ color: 'rgba(255,255,255,0.66)', fontSize: 11, fontWeight: 700 }}>
+                                            {opensAtLabel ? `Opens at ${opensAtLabel}` : 'Check back soon'}
+                                        </span>
+                                    </div>
+                                </div>
                             )}
                             {/* Gradient overlay — always shown */}
                             <div style={{
-                                position: 'absolute', inset: 0,
+                                position: 'absolute', inset: 0, zIndex: 2,
                                 background: 'linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, rgba(0,0,0,0.55) 100%)',
                             }} />
                             {/* Restaurant name overlay */}
                             <div style={{
                                 position: 'absolute', bottom: 0, left: 0, right: 0,
+                                zIndex: 3,
                                 padding: '16px 20px',
                                 display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 12,
                             }}>
@@ -199,6 +242,16 @@ export default async function RestaurantMenu({
                                     <h2 style={{ margin: 0, fontSize: 'clamp(22px,5vw,34px)', fontWeight: 900, color: '#fff', lineHeight: 1.05, letterSpacing: '-0.01em', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
                                         {restaurant.name}
                                     </h2>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginTop: 8, color: 'rgba(255,255,255,0.74)', fontSize: 12, fontWeight: 650 }}>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                                            <MapPin size={13} style={{ color: '#f97316' }} />
+                                            {[restaurant.address, restaurant.city, restaurant.state].filter(Boolean).join(', ')}
+                                        </span>
+                                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                                            <Clock3 size={13} style={{ color: '#f97316' }} />
+                                            {hoursLabel}
+                                        </span>
+                                    </div>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
                                     <span style={{ fontSize: 13, color: '#fbbf24' }}>★</span>
@@ -230,6 +283,44 @@ export default async function RestaurantMenu({
                                 )}
                             </div>
                         </div>
+
+                        <section className="restaurant-trust-strip" aria-label="Restaurant ordering details">
+                            <div className="restaurant-trust-card">
+                                <Store size={18} aria-hidden="true" />
+                                <div>
+                                    <span>Local partner</span>
+                                    <strong>{restaurant.city && restaurant.state ? `${restaurant.city}, ${restaurant.state}` : "Verified merchant"}</strong>
+                                </div>
+                            </div>
+                            <div className="restaurant-trust-card">
+                                <Clock3 size={18} aria-hidden="true" />
+                                <div>
+                                    <span>{restaurant.isOpen ? "Accepting orders" : "Ordering paused"}</span>
+                                    <strong>{restaurant.isOpen ? `Prep time ${restaurant.prepTime}` : opensAtLabel ? `Opens at ${opensAtLabel}` : "Check hours"}</strong>
+                                </div>
+                            </div>
+                            <div className="restaurant-trust-card">
+                                <Route size={18} aria-hidden="true" />
+                                <div>
+                                    <span>Delivery route</span>
+                                    <strong>Enter address for ETA</strong>
+                                </div>
+                            </div>
+                            <div className="restaurant-trust-card">
+                                <ReceiptText size={18} aria-hidden="true" />
+                                <div>
+                                    <span>Fees shown early</span>
+                                    <strong>Review before payment</strong>
+                                </div>
+                            </div>
+                            <div className="restaurant-trust-card">
+                                <ShieldCheck size={18} aria-hidden="true" />
+                                <div>
+                                    <span>Kitchen status</span>
+                                    <strong>{restaurant.healthGrade && restaurant.healthGrade !== "—" ? `Health grade ${restaurant.healthGrade}` : "Compliance tracked"}</strong>
+                                </div>
+                            </div>
+                        </section>
 
                         <MenuClient
                             userId={userId}

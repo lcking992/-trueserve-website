@@ -18,11 +18,11 @@ function getConditionKey(condition: string): "clear" | "rain" | "snow" | "clouds
 
 const CONDITION_EMOJI: Record<string, string> = {
   clear: "☀️",
-  rain: "🌧️",
+  rain: "Rain",
   snow: "❄️",
   clouds: "☁️",
   storm: "⛈️",
-  mist: "🌫️",
+  mist: "Mist",
 };
 
 export default function WeatherCard({ temperature, condition, locationLabel }: Props) {

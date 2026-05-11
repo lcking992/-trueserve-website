@@ -1,13 +1,14 @@
 import dotenv from "dotenv";
-import { seedDankBurrito } from "../lib/dankBurritoSeed";
 
 dotenv.config({ path: ".env.local" });
 
 async function main() {
-  if (process.env.VERCEL !== "1" && process.env.RUN_DANK_BURRITO_SEED !== "true") {
-    console.log("Skipping Dank Burrito seed outside Vercel.");
+  if (process.env.RUN_DANK_BURRITO_SEED !== "true") {
+    console.log("Skipping Dank Burrito seed.");
     return;
   }
+
+  const { seedDankBurrito } = await import("../lib/dankBurritoSeed");
 
   console.log("Seeding Dank Burrito...");
   const result = await seedDankBurrito();

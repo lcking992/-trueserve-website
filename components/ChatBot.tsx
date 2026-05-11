@@ -101,12 +101,17 @@ export default function ChatBot({
     }
 
     return (
-        <div className={`flex flex-col rounded-lg border border-white/10 bg-[#0b0f17] shadow-xl overflow-hidden ${compact ? 'fixed bottom-4 right-4 w-80 h-96 z-50' : 'w-full h-full'}`}>
+        <div className={`flex flex-col rounded-xl border border-white/10 bg-[#0b0f17] shadow-xl overflow-hidden ${compact ? 'fixed bottom-4 right-4 z-50 h-[420px] w-[min(360px,calc(100vw-32px))]' : 'w-full h-full min-h-[280px]'}`}>
             {/* Header */}
-            <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-[#10131b] px-4 py-3">
+            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 bg-[#10131b] px-4 py-3">
                 <div className="flex items-center gap-2">
-                    <MessageCircle className="h-5 w-5 text-[#f97316]" />
-                    <h3 className="font-bold text-white">{title}</h3>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#f97316]/25 bg-[#f97316]/10">
+                        <MessageCircle className="h-4 w-4 text-[#f97316]" />
+                    </span>
+                    <div>
+                        <h3 className="text-sm font-bold text-white">{title}</h3>
+                        <p className="text-[11px] font-medium text-white/45">Answers based on your restaurant compliance profile.</p>
+                    </div>
                 </div>
                 {compact && (
                     <button
@@ -123,20 +128,20 @@ export default function ChatBot({
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto space-y-4 p-4">
+            <div className="min-h-0 flex-1 overflow-y-auto space-y-3 p-4">
                 {messages.map((msg) => (
                     <div
                         key={msg.id}
                         className={`flex ${msg.sender === 'USER' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`max-w-xs rounded-lg px-4 py-2 ${
+                            className={`max-w-[min(620px,92%)] rounded-xl px-4 py-3 shadow-sm break-words ${
                                 msg.sender === 'USER'
                                     ? 'bg-[#f97316] text-black'
-                                    : 'bg-white/10 text-white/90'
+                                    : 'bg-white/10 text-white/90 border border-white/5'
                             }`}
                         >
-                            <p className="text-sm leading-relaxed">{msg.content}</p>
+                            <p className="text-sm leading-6 whitespace-pre-wrap break-words">{msg.content}</p>
                             {msg.resourceLinks && msg.resourceLinks.length > 0 && (
                                 <div className="mt-2 space-y-1">
                                     {msg.resourceLinks.map((link, idx) => (
@@ -151,7 +156,7 @@ export default function ChatBot({
                                                     : 'text-[#68c7cc]'
                                             } hover:opacity-80`}
                                         >
-                                            📎 {link.title}
+                                            Attachment {link.title}
                                         </a>
                                     ))}
                                 </div>
@@ -161,7 +166,7 @@ export default function ChatBot({
                 ))}
                 {isLoading && (
                     <div className="flex justify-start">
-                        <div className="bg-white/10 text-white/90 rounded-lg px-4 py-2">
+                        <div className="bg-white/10 text-white/90 rounded-lg px-4 py-3">
                             <div className="flex gap-1">
                                 <div className="h-2 w-2 rounded-full bg-white/50 animate-bounce" />
                                 <div className="h-2 w-2 rounded-full bg-white/50 animate-bounce" style={{ animationDelay: '0.1s' }} />
@@ -176,7 +181,7 @@ export default function ChatBot({
             {/* Input */}
             <form
                 onSubmit={handleSend}
-                className="border-t border-white/10 bg-[#10131b] p-3 flex gap-2"
+                className="flex shrink-0 gap-2 border-t border-white/10 bg-[#10131b] p-3"
             >
                 <input
                     ref={inputRef}
@@ -185,7 +190,7 @@ export default function ChatBot({
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={placeholder}
                     disabled={isLoading}
-                    className="flex-1 rounded-lg bg-white/5 px-3 py-2 text-sm text-white placeholder-white/50 border border-white/10 focus:outline-none focus:border-[#f97316]/50 disabled:opacity-50"
+                    className="min-w-0 flex-1 rounded-lg bg-white/5 px-3 py-2 text-sm text-white placeholder-white/50 border border-white/10 focus:outline-none focus:border-[#f97316]/50 disabled:opacity-50"
                 />
                 <button
                     type="submit"

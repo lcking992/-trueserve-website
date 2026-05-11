@@ -153,22 +153,22 @@ function extractResourceLinks(content: string): Array<{ title: string; url: stri
 export function generateQuickTip(context: ComplianceContext, userType: 'DRIVER' | 'MERCHANT'): string {
     if (userType === 'DRIVER') {
         if (context.incompleteItems.includes('Food Safety Training')) {
-            return "💡 Tip: Complete your food safety training to unlock full compliance status. This is essential for keeping your active driver badge.";
+            return "Tip Tip: Complete your food safety training to unlock full compliance status. This is essential for keeping your active driver badge.";
         }
         if (context.incompleteItems.includes('Bag Sanitation')) {
-            return "💡 Tip: Ensure your delivery bag is clean and in good condition. Clean bags prevent food contamination and improve customer ratings.";
+            return "Tip Tip: Ensure your delivery bag is clean and in good condition. Clean bags prevent food contamination and improve customer ratings.";
         }
         if (context.incompleteItems.includes('Temperature Control')) {
-            return "💡 Tip: Use hot/cold packs appropriately. Keep hot items above 140°F and cold items below 40°F during delivery.";
+            return "Tip Tip: Use hot/cold packs appropriately. Keep hot items above 140°F and cold items below 40°F during delivery.";
         }
-        return "💡 Tip: Your compliance is looking good! Keep up the great work maintaining your standards.";
+        return "Tip Tip: Your compliance is looking good! Keep up the great work maintaining your standards.";
     } else {
         if (context.complianceStatus === 'FLAGGED') {
-            return "⚠️ Action Needed: Your location has been flagged. Review recent violations and submit a corrective action plan to your health inspector.";
+            return "Warning Action Needed: Your location has been flagged. Review recent violations and submit a corrective action plan to your health inspector.";
         }
         if (context.complianceScore < 70) {
-            return "💡 Tip: Your compliance score is below target. Focus on high-impact improvements like staff training and cleaning procedures.";
+            return "Tip Tip: Your compliance score is below target. Focus on high-impact improvements like staff training and cleaning procedures.";
         }
-        return "💡 Tip: Maintain regular cleaning schedules and staff training to keep your compliance score strong.";
+        return "Tip Tip: Maintain regular cleaning schedules and staff training to keep your compliance score strong.";
     }
 }

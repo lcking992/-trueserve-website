@@ -107,7 +107,7 @@ export default async function TrueServeStatusPage() {
                                             {isPause ? 'Incident Identified' : 'Service Restored'}
                                         </h4>
                                         <p className="text-slate-400 font-medium leading-relaxed max-w-xl">
-                                            {incident.message.replace('⚠️ EMERGENCY PAUSE:', '').replace('✅ SYSTEM RESUME:', '').trim()}
+                                            {incident.message.replace('Warning EMERGENCY PAUSE:', '').replace('Done SYSTEM RESUME:', '').trim()}
                                         </p>
                                     </div>
                                 );

@@ -32,7 +32,7 @@ export default function DriverCallButton({ orderId }: { orderId: string }) {
             className={`btn bg-white/10 text-white px-4 flex items-center justify-center border border-white/10 hover:bg-emerald-500/20 transition-all text-lg ${loading ? 'opacity-50 animate-pulse' : ''}`}
             title="Call Customer (Masked)"
         >
-            📞
+            Phone
         </button>
     );
 }

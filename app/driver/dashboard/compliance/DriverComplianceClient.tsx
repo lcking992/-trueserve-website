@@ -199,7 +199,7 @@ export default function DriverComplianceClient({
                     cursor: pointer; font-family: inherit; transition: all 0.15s; margin-bottom: 12px;
                 }
                 .comp-chat-toggle:hover { color: #f97316; border-color: rgba(249,115,22,0.35); background: rgba(249,115,22,0.05); }
-                .comp-chat-wrap { border: 1px solid #1e2420; border-radius: 8px; overflow: hidden; height: 420px; margin-bottom: 12px; }
+                .comp-chat-wrap { border: 1px solid #1e2420; border-radius: 8px; overflow: hidden; height: 420px; max-height: 70vh; margin-bottom: 12px; background: #0b0f17; box-shadow: 0 18px 44px rgba(0,0,0,0.28); }
 
                 @media (max-width: 767px) {
                     .comp-wrap { padding-bottom: 0; }
@@ -308,7 +308,7 @@ export default function DriverComplianceClient({
 
                         {message && (
                             <div className={`comp-msg ${messageOk ? 'ok' : 'err'}`}>
-                                {messageOk ? '✓ ' : '⚠ '}{message}
+                                {messageOk ? 'Saved: ' : 'Issue: '}{message}
                             </div>
                         )}
                     </div>
@@ -323,7 +323,7 @@ export default function DriverComplianceClient({
                                 </p>
                                 {allChecked ? (
                                     <div style={{ fontSize: 10, color: '#3ecf6e', fontWeight: 700, marginBottom: 10, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                                        ✓ All items checked — ready to submit
+                                        All items checked — ready to submit
                                     </div>
                                 ) : (
                                     <div style={{ fontSize: 10, color: '#f97316', fontWeight: 700, marginBottom: 10, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -374,7 +374,7 @@ export default function DriverComplianceClient({
 
                 {/* AI Help toggle */}
                 <button className="comp-chat-toggle" onClick={() => setChatOpen(!chatOpen)}>
-                    {chatOpen ? '✕ Close Compliance Help' : '💬 Ask Compliance Assistant'}
+                    {chatOpen ? '× Close Compliance Help' : 'Ask Compliance Assistant'}
                 </button>
                 {chatOpen && (
                     <div className="comp-chat-wrap">

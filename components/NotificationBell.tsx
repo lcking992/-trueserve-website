@@ -115,7 +115,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                                     <div className="flex gap-3">
                                         <div className={`shrink-0 w-10 h-10 rounded-xl flex items-center justify-center text-xl
                                             ${notif.type === 'ORDER_UPDATE' ? 'bg-primary/10 text-primary' : 'bg-blue-500/10 text-blue-400'}`}>
-                                            {notif.type === 'ORDER_UPDATE' ? '📦' : '✨'}
+                                            {notif.type === 'ORDER_UPDATE' ? 'Order' : '✨'}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between items-start mb-0.5">

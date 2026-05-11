@@ -52,12 +52,12 @@ export default async function AnalyticsPage() {
         : "Missing";
 
     const stats = [
-        { icon: '🏪', label: 'Visible Restaurants',      value: totalRestaurants },
-        { icon: '🚗', label: 'Verified Drivers',         value: totalDrivers },
-        { icon: '📦', label: 'Orders (Last 500)',        value: orders.length },
-        { icon: '✅', label: 'Completed Orders',         value: completed.length },
-        { icon: '📅', label: 'Orders Today',             value: todayOrders },
-        { icon: '💵', label: 'Revenue (Completed)',      value: `$${totalRevenue.toFixed(2)}` },
+        { icon: 'Restaurant', label: 'Visible Restaurants',      value: totalRestaurants },
+        { icon: 'Driver', label: 'Verified Drivers',         value: totalDrivers },
+        { icon: 'Order', label: 'Orders (Last 500)',        value: orders.length },
+        { icon: 'Done', label: 'Completed Orders',         value: completed.length },
+        { icon: 'Date', label: 'Orders Today',             value: todayOrders },
+        { icon: 'Revenue', label: 'Revenue (Completed)',      value: `$${totalRevenue.toFixed(2)}` },
     ];
 
     return (

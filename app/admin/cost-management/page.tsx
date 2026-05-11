@@ -123,7 +123,7 @@ export default async function CostManagementPage() {
                                         }`}
                                     >
                                         {s.name}
-                                        <span className="ml-1">↗</span>
+                                        <span className="ml-1">Open</span>
                                     </a>
                                 ))}
                             </div>
@@ -134,7 +134,7 @@ export default async function CostManagementPage() {
 
                     {monthlyCosts.length === 0 ? (
                         <div className="adm-card text-center">
-                            <div className="mb-3 text-3xl">📊</div>
+                            <div className="mb-3 text-3xl">Analytics</div>
                             <div className="mb-2 text-sm font-semibold text-white">No cost data yet</div>
                             <div className="mx-auto mb-5 max-w-xl text-sm leading-6 text-white/55">
                                 Use the sync manager above to import spending data from your service providers. Once Stripe data

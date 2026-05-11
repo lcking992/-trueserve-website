@@ -8,7 +8,7 @@ const TIERS = [
     {
         key: 'ROOKIE',
         label: 'Rookie',
-        icon: '🚗',
+        mark: 'R',
         color: '#64748b',
         glow: 'rgba(100,116,139,0.25)',
         range: [0, 24],
@@ -17,7 +17,7 @@ const TIERS = [
     {
         key: 'FLEET',
         label: 'Fleet Driver',
-        icon: '⚡',
+        mark: 'F',
         color: '#f97316',
         glow: 'rgba(249,115,22,0.25)',
         range: [25, 99],
@@ -26,7 +26,7 @@ const TIERS = [
     {
         key: 'ELITE',
         label: 'Elite',
-        icon: '🏆',
+        mark: 'E',
         color: '#a78bfa',
         glow: 'rgba(167,139,250,0.25)',
         range: [100, 249],
@@ -35,7 +35,7 @@ const TIERS = [
     {
         key: 'LEGEND',
         label: 'Legend',
-        icon: '👑',
+        mark: 'L',
         color: '#fbbf24',
         glow: 'rgba(251,191,36,0.3)',
         range: [250, Infinity],
@@ -171,7 +171,7 @@ export default async function DriverRatings() {
                 <div className="tier-hero" style={{ background: `linear-gradient(135deg, ${currentTier.glow}, rgba(0,0,0,0) 70%)` }}>
                     <div className="tier-hero-top">
                         <div className="tier-icon-wrap" style={{ background: `${currentTier.glow}`, border: `1px solid ${currentTier.color}33` }}>
-                            {currentTier.icon}
+                            {currentTier.mark}
                         </div>
                         <div className="tier-info">
                             <div className="tier-label-sm" style={{ color: currentTier.color }}>Current Tier</div>
@@ -187,7 +187,7 @@ export default async function DriverRatings() {
                     <div className="tier-progress-wrap">
                         <div className="tier-progress-header">
                             <span className="tier-progress-label">
-                                {nextTier ? `Progress to ${nextTier.label}` : 'Max Tier Reached 👑'}
+                                {nextTier ? `Progress to ${nextTier.label}` : 'Max Tier Reached'}
                             </span>
                             <span className="tier-progress-count">
                                 {lifetimeDeliveries} / {nextTier ? nextTier.range[0] : lifetimeDeliveries} trips
@@ -205,7 +205,7 @@ export default async function DriverRatings() {
                         </div>
                         <div className="tier-next-hint">
                             {nextTier
-                                ? `${tripsToNext} more ${tripsToNext === 1 ? 'delivery' : 'deliveries'} to unlock ${nextTier.icon} ${nextTier.label} — ${nextTier.unlocks[0]}`
+                                ? `${tripsToNext} more ${tripsToNext === 1 ? 'delivery' : 'deliveries'} to unlock ${nextTier.label} — ${nextTier.unlocks[0]}`
                                 : 'You are at the top of the TrueServe driver ranks.'}
                         </div>
                     </div>
@@ -230,7 +230,7 @@ export default async function DriverRatings() {
                                         Active
                                     </div>
                                 )}
-                                <div className="roadmap-tier-icon">{tier.icon}</div>
+                                <div className="roadmap-tier-icon">{tier.mark}</div>
                                 <div className="roadmap-tier-name" style={{ color: isUnlocked ? tier.color : '#444' }}>
                                     {tier.label}
                                 </div>

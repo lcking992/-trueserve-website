@@ -2,14 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useActionState, useEffect, useRef, useState, Suspense } from "react";
+import { useActionState, useEffect, useState, Suspense } from "react";
 import Logo from "@/components/Logo";
 import { signupWithPassword } from "@/app/auth/actions";
-import { normalizePhoneNumber } from "@/lib/phoneUtils";
-import { capturePostHogEvent } from "@/lib/posthog-events";
-
-const MIN_PASSWORD_LENGTH = 8;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function SignupForm() {
   const router = useRouter();
@@ -24,62 +19,14 @@ function SignupForm() {
   const [addressLine, setAddressLine] = useState("");
   const [city, setCity] = useState("");
   const [zip, setZip] = useState("");
-  const [deliveryNotes, setDeliveryNotes] = useState("");
-  const [step1Error, setStep1Error] = useState("");
   const [stateData, formAction, isPending] = useActionState(signupWithPassword, { message: "" });
-  const hasTrackedSubmission = useRef(false);
 
   useEffect(() => {
     if (stateData?.success) {
-      if (!hasTrackedSubmission.current) {
-        capturePostHogEvent("customer_signup_submitted", {
-          has_phone: Boolean(normalizedPhone),
-          has_delivery_notes: Boolean(deliveryNotes.trim()),
-          city: city.trim() || null,
-          referred_signup: Boolean(refCode),
-        });
-        hasTrackedSubmission.current = true;
-      }
       router.push("/restaurants");
       router.refresh();
     }
-  }, [city, deliveryNotes, normalizedPhone, refCode, router, stateData?.success]);
-
-  const normalizedPhone = normalizePhoneNumber(phone);
-  const hasValidEmail = EMAIL_PATTERN.test(email.trim());
-  const hasValidPassword = password.length >= MIN_PASSWORD_LENGTH;
-  const hasValidPhone = !phone.trim() || normalizedPhone.length === 12;
-
-  const handleContinue = () => {
-    const trimmedEmail = email.trim();
-
-    if (!firstName || !lastName || !trimmedEmail || !password) {
-      setStep1Error("Please complete all required fields before continuing.");
-      return;
-    }
-
-    if (!EMAIL_PATTERN.test(trimmedEmail)) {
-      setStep1Error("Please enter a valid email address.");
-      return;
-    }
-
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      setStep1Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
-      return;
-    }
-
-    if (!hasValidPhone) {
-      setStep1Error("Please enter a valid US phone number or leave the field blank.");
-      return;
-    }
-
-    capturePostHogEvent("customer_signup_started", {
-      has_phone: Boolean(normalizedPhone),
-      referred_signup: Boolean(refCode),
-    });
-    setStep1Error("");
-    setStep(2);
-  };
+  }, [stateData?.success, router]);
 
   return (
     <div className="food-app-shell">
@@ -162,9 +109,8 @@ function SignupForm() {
               {refCode && <input type="hidden" name="referredBy" value={refCode} />}
               <input type="hidden" name="name" value={`${firstName} ${lastName}`.trim()} />
               <input type="hidden" name="address" value={[addressLine, city, zip].filter(Boolean).join(", ")} />
-              <input type="hidden" name="deliveryNotes" value={deliveryNotes} />
-              <input type="hidden" name="email" value={email.trim()} />
-              <input type="hidden" name="phone" value={normalizedPhone} />
+              <input type="hidden" name="email" value={email} />
+              <input type="hidden" name="phone" value={phone} />
               <input type="hidden" name="password" value={password} />
 
               {step === 1 && (
@@ -174,29 +120,24 @@ function SignupForm() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="fg">
                         <label>First Name</label>
-                        <input type="text" placeholder="Jordan" value={firstName} onChange={(e) => { setFirstName(e.target.value); setStep1Error(""); }} required />
+                        <input type="text" placeholder="Jordan" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
                       </div>
                       <div className="fg">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Lee" value={lastName} onChange={(e) => { setLastName(e.target.value); setStep1Error(""); }} required />
+                        <input type="text" placeholder="Lee" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
                       </div>
                     </div>
                     <div className="fg">
                       <label>Email Address</label>
-                      <input type="email" placeholder="jordan@example.com" value={email} onChange={(e) => { setEmail(e.target.value); setStep1Error(""); }} required />
+                      <input type="email" placeholder="jordan@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
-                    <div className="fg"><label>Phone Number</label><input type="tel" placeholder="(555) 000-0000" value={phone} onChange={(e) => { setPhone(e.target.value.replace(/[^\d()+\-\s]/g, "")); setStep1Error(""); }} inputMode="tel" /></div>
+                    <div className="fg"><label>Phone Number</label><input type="tel" placeholder="(555) 000-0000" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
                     <div className="fg">
                       <label>Create Password</label>
-                      <input type="password" placeholder="At least 8 characters" minLength={MIN_PASSWORD_LENGTH} value={password} onChange={(e) => { setPassword(e.target.value); setStep1Error(""); }} required />
+                      <input type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </div>
                   </div>
-                  {step1Error && (
-                    <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.11em] text-red-300">
-                      {step1Error}
-                    </div>
-                  )}
-                  <button type="button" className="place-btn" onClick={handleContinue} disabled={!firstName || !lastName || !email || !password || isPending}>
+                  <button type="button" className="place-btn" onClick={() => setStep(2)} disabled={!firstName || !lastName || !email || !password || isPending}>
                     Continue
                   </button>
                 </div>
@@ -222,7 +163,7 @@ function SignupForm() {
                     </div>
                     <div className="fg">
                       <label>Delivery Notes</label>
-                      <textarea placeholder="Gate code, building entry, or leave at door." rows={3} value={deliveryNotes} onChange={(e) => setDeliveryNotes(e.target.value)} name="deliveryNotes" />
+                      <textarea placeholder="Gate code, building entry, or leave at door." rows={3} />
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">

@@ -53,7 +53,7 @@ export async function logAudit({
             try {
                 const { sendEmail } = await import("@/lib/email");
                 const alertBody = `
-🚨 Admin Action Alert
+Urgent Admin Action Alert
 ---------------------
 Action: ${action}
 Entity: ${entityType}

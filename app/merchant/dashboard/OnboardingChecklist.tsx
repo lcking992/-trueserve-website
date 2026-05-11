@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2, Circle, ChevronDown, ChevronUp, X } from "lucide-react";
+import { createMerchantTestOrder } from "@/app/merchant/actions";
 
 type Step = {
   id: string;
@@ -18,12 +19,18 @@ export default function OnboardingChecklist({
   hasStripe,
   hasImage,
   isVisible,
+  hasHours,
+  hasPos,
+  hasTestOrder,
   restaurantId,
 }: {
   hasMenuItems: boolean;
   hasStripe: boolean;
   hasImage: boolean;
   isVisible: boolean;
+  hasHours?: boolean;
+  hasPos?: boolean;
+  hasTestOrder?: boolean;
   restaurantId: string;
 }) {
   const steps: Step[] = [
@@ -36,12 +43,28 @@ export default function OnboardingChecklist({
       done: hasMenuItems,
     },
     {
+      id: "hours",
+      label: "Confirm ordering hours",
+      description: "Customers should see when ordering is available and when it reopens.",
+      href: "/merchant/dashboard/storefront",
+      cta: "Set Hours",
+      done: Boolean(hasHours),
+    },
+    {
       id: "stripe",
       label: "Connect your payout account",
       description: "Link Stripe to receive payments directly to your bank.",
       href: "/merchant/dashboard",
       cta: "Connect Stripe",
       done: hasStripe,
+    },
+    {
+      id: "pos",
+      label: "Confirm POS or direct ordering",
+      description: "Connect Toast, Square, Clover, or mark the store as direct ordering.",
+      href: "/merchant/dashboard/integrations",
+      cta: "Review POS",
+      done: Boolean(hasPos),
     },
     {
       id: "image",
@@ -58,6 +81,14 @@ export default function OnboardingChecklist({
       href: "/merchant/dashboard/storefront",
       cta: "Go Live",
       done: isVisible,
+    },
+    {
+      id: "test-order",
+      label: "Run a test order",
+      description: "Confirm orders appear in the merchant portal before launch day.",
+      href: "/merchant/dashboard",
+      cta: "Test Order",
+      done: Boolean(hasTestOrder),
     },
   ];
 
@@ -200,7 +231,7 @@ export default function OnboardingChecklist({
               </div>
 
               {/* CTA */}
-              {!step.done && (
+              {!step.done && step.id !== "test-order" && (
                 <Link
                   href={step.href}
                   style={{
@@ -221,6 +252,29 @@ export default function OnboardingChecklist({
                 >
                   {step.cta}
                 </Link>
+              )}
+              {!step.done && step.id === "test-order" && (
+                <form action={createMerchantTestOrder} style={{ flexShrink: 0 }}>
+                  <button
+                    type="submit"
+                    style={{
+                      background: "rgba(249,115,22,0.12)",
+                      border: "1px solid rgba(249,115,22,0.3)",
+                      color: "#f97316",
+                      borderRadius: 8,
+                      padding: "6px 12px",
+                      fontSize: 11,
+                      fontWeight: 800,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      whiteSpace: "nowrap",
+                      fontFamily: "inherit",
+                      cursor: "pointer",
+                    }}
+                  >
+                    {step.cta}
+                  </button>
+                </form>
               )}
             </div>
           ))}
