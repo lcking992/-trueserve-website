@@ -26,7 +26,14 @@ function createRoleClient(token: string) {
     );
 }
 
-describe("Order Flow Integration Test", () => {
+const hasSupabase = !!(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock') &&
+    process.env.SUPABASE_SERVICE_ROLE_KEY &&
+    !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('mock')
+);
+
+(hasSupabase ? describe : describe.skip)("Order Flow Integration Test", () => {
     let merchantUser: { id: string, token: string };
     let customerUser: { id: string, token: string };
     let driverUser: { id: string, token: string, driverId: string };

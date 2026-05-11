@@ -4,10 +4,11 @@ import { redirect } from "next/navigation";
 import { getAuthSession } from "@/app/auth/actions";
 import { canAccessAdminSection } from "@/lib/rbac";
 import AdminDashboard from "./admin-dashboard";
-import { isMockAdminRecord } from "@/lib/admin-data";
+import { isMockAdminRecord, shouldHideMockAdminData } from "@/lib/admin-data";
 
 async function getRestaurantCount() {
     try {
+        const hideMockData = shouldHideMockAdminData();
         const { data, error } = await supabaseAdmin
             .from('Restaurant')
             .select('visibility, isMock, owner:User(email, name, isMock)');
@@ -17,7 +18,7 @@ async function getRestaurantCount() {
         return data.filter((restaurant: any) =>
             restaurant.visibility === 'VISIBLE' &&
             !restaurant.isMock &&
-            !isMockAdminRecord(restaurant.owner)
+            (!hideMockData || !isMockAdminRecord(restaurant.owner))
         ).length;
     } catch (e) {
         console.log("Error fetching restaurant count:", e);
@@ -27,6 +28,7 @@ async function getRestaurantCount() {
 
 async function getDriverCount() {
     try {
+        const hideMockData = shouldHideMockAdminData();
         const { data, error } = await supabaseAdmin
             .from('Driver')
             .select('status, vehicleVerified, backgroundCheckStatus, user:User(email, name, isMock)');
@@ -36,7 +38,7 @@ async function getDriverCount() {
         return data.filter((driver: any) =>
             driver.vehicleVerified === true &&
             driver.status !== 'REJECTED' &&
-            !isMockAdminRecord(driver.user)
+            (!hideMockData || !isMockAdminRecord(driver.user))
         ).length;
     } catch (e) {
         console.log("Error fetching driver count:", e);
@@ -49,7 +51,7 @@ async function getTodayOrderCount() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const { count } = await supabase
+        const { count } = await supabaseAdmin
             .from('Order')
             .select('*', { count: 'exact', head: true })
             .gte('createdAt', today.toISOString());
@@ -65,15 +67,15 @@ async function getTodayRevenue() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('Order')
-            .select('totalAmount')
+            .select('total')
             .gte('createdAt', today.toISOString())
             .in('status', ['COMPLETED', 'DELIVERED']);
 
         if (error || !data) return 0;
 
-        return data.reduce((sum, order) => sum + (Number(order.totalAmount) || 0), 0);
+        return data.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
     } catch (e) {
         console.log("Error fetching today's revenue:", e);
         return 0;
@@ -82,7 +84,7 @@ async function getTodayRevenue() {
 
 async function getRecentActivity() {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from('AuditLog')
             .select('*')
             .order('createdAt', { ascending: false })
@@ -91,7 +93,7 @@ async function getRecentActivity() {
         if (error || !data) return [];
 
         return data.map(log => ({
-            id: log.id,
+            id: String(log.id),
             message: `${log.action.replace(/_/g, ' ')} on ${log.entityType}`,
             timestamp: new Date(log.createdAt).toLocaleTimeString('en-US', {
                 hour: '2-digit',
@@ -99,9 +101,9 @@ async function getRecentActivity() {
                 month: 'short',
                 day: 'numeric'
             }),
-            type: log.action.includes('APPROVE') ? 'merchant' :
+            type: (log.action.includes('APPROVE') ? 'merchant' :
                   log.action.includes('REJECT') ? 'order' :
-                  log.action.includes('CREATE') ? 'driver' : 'system'
+                  log.action.includes('CREATE') ? 'driver' : 'system') as 'merchant' | 'driver' | 'order' | 'system'
         }));
     } catch (e) {
         console.log("Error fetching recent activity:", e);

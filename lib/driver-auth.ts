@@ -22,5 +22,14 @@ export async function getDriverOrRedirect() {
         redirect("/driver");
     }
 
+    const backgroundStatus = String(driver.backgroundCheckStatus || "").toUpperCase();
+    const isApprovedDriver =
+        driver.vehicleVerified === true &&
+        (backgroundStatus === "CLEAR" || backgroundStatus === "CLEARED");
+
+    if (!isApprovedDriver) {
+        redirect("/driver/pending-review");
+    }
+
     return driver;
 }

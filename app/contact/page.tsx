@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import FadeInSection from "@/components/FadeInSection";
-import { motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { submitContactForm } from "./actions";
-import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Package, Store, Car, CreditCard } from "lucide-react";
+import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Package, Store, Car, CreditCard, Menu, X } from "lucide-react";
 
 const ROLES = [
     { value: "customer", label: "Customer" },
@@ -25,8 +25,13 @@ const FAQ_QUICK = [
 ];
 
 export default function ContactPage() {
+    const [menuOpen, setMenuOpen] = useState(false);
     const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
     const [errorMsg, setErrorMsg] = useState("");
+    const shouldReduceMotion = useReducedMotion();
+    const revealTransition = shouldReduceMotion
+        ? undefined
+        : { duration: 0.56, ease: [0.22, 1, 0.36, 1] as const };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -47,14 +52,50 @@ export default function ContactPage() {
                 <Logo size="sm" />
                 <div className="nav-links hidden md:flex">
                     <Link href="/restaurants">Order Food</Link>
-                    <Link href="/pricing">Pricing</Link>
+                    <Link href="/about">About</Link>
                     <Link href="/merchant/signup">For Merchants</Link>
+                    <Link href="/driver/signup">For Drivers</Link>
                 </div>
-                <div className="flex gap-2">
+                <div className="hidden md:flex gap-2">
                     <Link href="/login" className="btn btn-ghost">Sign In</Link>
-                    <Link href="/merchant/signup" className="btn btn-gold">Get Started</Link>
+                    <Link href="/signup" className="btn btn-gold">Get Started</Link>
                 </div>
+                <button className="md:hidden p-2 text-white/70 hover:text-white transition-colors" onClick={() => setMenuOpen(!menuOpen)}>
+                    {menuOpen ? <X size={22} /> : <Menu size={22} />}
+                </button>
             </nav>
+            <AnimatePresence>
+                {menuOpen && (
+                    <motion.div
+                        initial={shouldReduceMotion ? false : { opacity: 0 }}
+                        animate={shouldReduceMotion ? undefined : { opacity: 1 }}
+                        exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="md:hidden bg-[#111] border-b border-white/10 px-4 py-3 flex flex-col gap-1 z-40"
+                    >
+                        {[
+                            { href: "/restaurants", label: "Order Food" },
+                            { href: "/about", label: "About" },
+                            { href: "/merchant/signup", label: "For Merchants" },
+                            { href: "/driver/signup", label: "For Drivers" },
+                            { href: "/login", label: "Sign In" },
+                        ].map((item, index) => (
+                            <motion.div
+                                key={item.href}
+                                initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+                                animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                                exit={shouldReduceMotion ? undefined : { opacity: 0, y: -4 }}
+                                transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: index * 0.03 }}
+                            >
+                                <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}
+                                    className="block py-2.5 px-3 text-sm text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+                                    {item.label}
+                                </Link>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <main className="food-app-main">
 
@@ -113,11 +154,18 @@ export default function ContactPage() {
                                 { icon: Clock, label: "Replies within 1 business day" },
                                 { icon: MessageCircle, label: "Friendly support team" },
                                 { icon: Mail, label: "support@trueserve.delivery" },
-                            ].map(({ icon: Icon, label }) => (
-                                <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] font-bold text-white/50">
+                            ].map(({ icon: Icon, label }, index) => (
+                                <motion.div
+                                    key={label}
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] font-bold text-white/50"
+                                    initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                                    animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
+                                    transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.34 + index * 0.04 }}
+                                    whileHover={shouldReduceMotion ? undefined : { y: -2, borderColor: "rgba(249,115,22,0.3)" }}
+                                >
                                     <Icon size={11} className="text-[#f97316]" />
                                     {label}
-                                </div>
+                                </motion.div>
                             ))}
                         </motion.div>
                     </div>
@@ -264,7 +312,14 @@ export default function ContactPage() {
                     <div className="flex flex-col gap-4">
 
                         {/* Direct contact */}
-                        <div className="food-panel">
+                        <motion.div
+                            className="food-panel"
+                            initial={shouldReduceMotion ? false : { opacity: 0, x: 16 }}
+                            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                            whileHover={shouldReduceMotion ? undefined : { y: -2 }}
+                            viewport={{ once: true, amount: 0.25 }}
+                            transition={revealTransition}
+                        >
                             <p className="food-kicker mb-3">Direct Contact</p>
                             <div className="space-y-4">
                                 <a href="mailto:support@trueserve.delivery" className="flex items-start gap-3 group">
@@ -295,10 +350,17 @@ export default function ContactPage() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Service area */}
-                        <div className="food-panel">
+                        <motion.div
+                            className="food-panel"
+                            initial={shouldReduceMotion ? false : { opacity: 0, x: 16 }}
+                            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                            whileHover={shouldReduceMotion ? undefined : { y: -2 }}
+                            viewport={{ once: true, amount: 0.25 }}
+                            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.05 }}
+                        >
                             <p className="food-kicker mb-3">Service Area</p>
                             <div className="space-y-2">
                                 {["Pineville, NC", "Rock Hill, SC"].map(city => (
@@ -309,17 +371,24 @@ export default function ContactPage() {
                                 ))}
                                 <p className="text-xs text-white/30 mt-3 leading-relaxed">Pilot launch. More markets coming soon.</p>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* Quick links */}
-                        <div className="food-panel">
+                        <motion.div
+                            className="food-panel"
+                            initial={shouldReduceMotion ? false : { opacity: 0, x: 16 }}
+                            whileInView={shouldReduceMotion ? undefined : { opacity: 1, x: 0 }}
+                            whileHover={shouldReduceMotion ? undefined : { y: -2 }}
+                            viewport={{ once: true, amount: 0.25 }}
+                            transition={shouldReduceMotion ? undefined : { ...revealTransition, delay: 0.1 }}
+                        >
                             <p className="food-kicker mb-3">Quick Links</p>
                             <div className="space-y-1">
                                 {[
+                                    { label: "About TrueServe", href: "/about" },
                                     { label: "Order Food", href: "/restaurants" },
                                     { label: "Merchant Signup", href: "/merchant/signup" },
                                     { label: "Drive for TrueServe", href: "/driver/signup" },
-                                    { label: "Pricing", href: "/pricing" },
                                     { label: "Privacy Policy", href: "/privacy" },
                                     { label: "Terms of Service", href: "/terms" },
                                 ].map(l => (
@@ -329,7 +398,7 @@ export default function ContactPage() {
                                     </Link>
                                 ))}
                             </div>
-                        </div>
+                        </motion.div>
                     </div>
                 </FadeInSection>
 
@@ -339,6 +408,7 @@ export default function ContactPage() {
                 <div className="mx-auto flex max-w-7xl flex-col items-center gap-5">
                     <Logo size="md" />
                     <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                        <Link href="/about" className="hover:text-[#f97316] transition-colors">About</Link>
                         <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
                         <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
                         <Link href="/contact" className="hover:text-[#f97316] transition-colors">Contact</Link>

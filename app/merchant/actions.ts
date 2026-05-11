@@ -22,6 +22,9 @@ export type MerchantActionState = {
     error?: boolean;
 };
 
+const MIN_PASSWORD_LENGTH = 8;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export async function addMenuItem(prevState: MerchantActionState, formData: FormData): Promise<MerchantActionState> {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -579,20 +582,30 @@ export async function generateApiKey() {
 export async function submitMerchantInquiry(prevState: any, formData: FormData): Promise<MerchantActionState> {
     const restaurantName = formData.get("restaurantName") as string;
     const contactName = formData.get("contactName") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
+    const email = ((formData.get("email") as string) || "").trim().toLowerCase();
+    const password = ((formData.get("password") as string) || "");
     const address = formData.get("address") as string;
     const city = formData.get("city") as string;
     const state = formData.get("state") as string;
     const zip = formData.get("zip") as string;
+    const cuisineType = ((formData.get("cuisineType") as string) || "").trim();
     const plan = formData.get("plan") as string;
     const posSystem = formData.get("posSystem") as string || "None";
     const posClientId = formData.get("posClientId") as string || "";
     const posClientSecret = formData.get("posClientSecret") as string || "";
-    const phone = formData.get("phone") as string || "";
+    const ghlUrl = ((formData.get("ghlUrl") as string) || "").trim();
+    const phone = normalizePhoneNumber((formData.get("phone") as string) || "");
 
     if (!restaurantName || !contactName || !email || !password || !address || !city || !state) {
         return { message: "Please fill in all required fields.", error: true };
+    }
+
+    if (!EMAIL_PATTERN.test(email)) {
+        return { message: "Please enter a valid email address.", error: true };
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        return { message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`, error: true };
     }
 
     try {
@@ -623,6 +636,7 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
             name: contactName,
             role: 'MERCHANT',
             address: `${address}, ${city}, ${state} ${zip}`,
+            phone: phone || null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         });
@@ -655,6 +669,7 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
             address: `${address}, ${city}, ${state} ${zip}`,
             city,
             state,
+            cuisineType: cuisineType || null,
             lat,
             lng,
             imageUrl: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200',
@@ -662,7 +677,8 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
             posSystem,
             posClientId,
             posClientSecret,
-            phone,
+            ghlUrl: ghlUrl || null,
+            phone: phone || null,
             visibility: 'HIDDEN',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -685,6 +701,7 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
                 "Merchant Pending Review",
                 `Plan ${plan || "Flex Options"}`,
                 `POS ${posSystem || "None"}`,
+                ...(cuisineType ? [`Cuisine ${cuisineType}`] : []),
             ],
         });
 
@@ -722,7 +739,7 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
             notificationPromises.push(
                 sendSMS(
                     phone,
-                    `TrueServe: Welcome ${contactName}! ${restaurantName} is now live on our platform. Log in to your dashboard to add menu items and start receiving orders: trueserve.delivery/merchant/login`
+                    `TrueServe: Welcome ${contactName}! We received ${restaurantName}'s application and will text you again once your merchant account is approved.`
                 )
             );
         }

@@ -160,7 +160,7 @@ async function syncState(state: string): Promise<SyncResult> {
     }
 
     // Get all restaurants in this state with externalEstablishmentId
-    const { data: restaurants, error: queryError } = await supabaseAdmin
+    const { data: restaurants, error: queryError } = await getSupabaseAdmin()
       .from('Restaurant')
       .select('id, externalEstablishmentId, state')
       .eq('state', state)
@@ -175,6 +175,7 @@ async function syncState(state: string): Promise<SyncResult> {
         recordsSynced: 0,
         recordsFailed: 0,
         errors: [{ restaurantId: 'ALL', error: queryError.message }],
+        duration: 0,
       };
     }
 
@@ -186,6 +187,7 @@ async function syncState(state: string): Promise<SyncResult> {
         recordsSynced: 0,
         recordsFailed: 0,
         errors: [],
+        duration: 0,
       };
     }
 
@@ -260,6 +262,7 @@ async function syncState(state: string): Promise<SyncResult> {
       recordsSynced,
       recordsFailed,
       errors,
+      duration: 0,
     };
   } catch (error: any) {
     console.error(`[${state}] Sync error:`, error);
@@ -269,6 +272,7 @@ async function syncState(state: string): Promise<SyncResult> {
       recordsSynced: 0,
       recordsFailed: 1,
       errors: [{ restaurantId: 'ALL', error: error?.message || String(error) }],
+      duration: 0,
     };
   }
 }
@@ -282,7 +286,7 @@ async function updateRestaurant(
   state: string
 ): Promise<string | null> {
   try {
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from('Restaurant')
       .update({
         healthGrade: inspection.grade,
@@ -324,7 +328,7 @@ async function logSyncResults(results: SyncResult[]): Promise<void> {
       errorDetails: r.errors,
     }));
 
-    const { error } = await supabaseAdmin
+    const { error } = await getSupabaseAdmin()
       .from('StateAPISyncLog')
       .insert(logs);
 

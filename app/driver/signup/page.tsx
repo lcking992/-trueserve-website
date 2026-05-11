@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
 import { submitDriverApplication } from "@/app/driver/actions";
 import DriverEarningsCalc from "@/components/DriverEarningsCalc";
+import { capturePostHogEvent } from "@/lib/posthog-events";
+
+const MIN_DRIVER_AGE = 18;
 
 export default function DriverSignupPage() {
   const [step, setStep] = useState(1);
@@ -21,13 +24,22 @@ export default function DriverSignupPage() {
   const [lat, setLat] = useState("");
   const [lng, setLng] = useState("");
   const [geoMessage, setGeoMessage] = useState("");
+  const [step1Error, setStep1Error] = useState("");
   const [stateData, formAction, isPending] = useActionState(submitDriverApplication, { message: "" });
+  const hasTrackedSubmission = useRef(false);
 
   useEffect(() => {
     if (stateData?.success) {
+      if (!hasTrackedSubmission.current) {
+        capturePostHogEvent("driver_application_submitted", {
+          vehicle_type: vehicleType,
+          has_location: Boolean(lat && lng),
+        });
+        hasTrackedSubmission.current = true;
+      }
       setStep(3);
     }
-  }, [stateData?.success]);
+  }, [lat, lng, stateData?.success, vehicleType]);
 
   const useCurrentLocation = () => {
     setGeoMessage("");
@@ -47,6 +59,43 @@ export default function DriverSignupPage() {
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
+  };
+
+  const getDriverAge = (dateOfBirth: string) => {
+    if (!dateOfBirth) return 0;
+
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDifference < 0 ||
+      (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age -= 1;
+    }
+
+    return age;
+  };
+
+  const handleNextStep = () => {
+    if (!fullName || !email || !phone || !dob || !address || !vehicleMake || !vehicleModel || !vehicleColor || !licensePlate) {
+      setStep1Error("Please complete all required profile and vehicle fields before continuing.");
+      return;
+    }
+
+    if (getDriverAge(dob) < MIN_DRIVER_AGE) {
+      setStep1Error(`Drivers must be at least ${MIN_DRIVER_AGE} years old to apply.`);
+      return;
+    }
+
+    capturePostHogEvent("driver_application_started", {
+      vehicle_type: vehicleType,
+      driver_age: getDriverAge(dob),
+    });
+    setStep1Error("");
+    setStep(2);
   };
 
   return (
@@ -114,7 +163,7 @@ export default function DriverSignupPage() {
               <div className={`prog-s ${step >= 1 ? 'on' : ''}`}></div>
               <div className={`prog-s ${step >= 2 ? 'on' : ''}`}></div>
               <div className={`prog-s ${step >= 3 ? 'on' : ''}`}></div>
-              <span className="prog-label">{step < 3 ? `Step ${step} of 2` : "Application Sent"}</span>
+              <span className="prog-label">{`Step ${Math.min(step, 3)} of 3`}</span>
             </div>
 
             <form action={formAction}>
@@ -135,18 +184,18 @@ export default function DriverSignupPage() {
                 <div id="ds-1" className="step active">
                   <div className="sc">
                     <h3><span className="sn">1</span> Profile and Vehicle</h3>
-                    <div className="fg"><label>Full Name</label><input type="text" placeholder="Alex Smith" value={fullName} onChange={(e) => setFullName(e.target.value)} required /></div>
+                    <div className="fg"><label>Full Name</label><input type="text" placeholder="Alex Smith" value={fullName} onChange={(e) => { setFullName(e.target.value); setStep1Error(""); }} required /></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="fg"><label>Email</label><input type="email" placeholder="alex@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-                      <div className="fg"><label>Phone (US)</label><input type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => setPhone(e.target.value)} required /></div>
+                      <div className="fg"><label>Email</label><input type="email" placeholder="alex@example.com" value={email} onChange={(e) => { setEmail(e.target.value); setStep1Error(""); }} required /></div>
+                      <div className="fg"><label>Phone (US)</label><input type="tel" placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => { setPhone(e.target.value); setStep1Error(""); }} required /></div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="fg"><label>Date of Birth</label><input type="date" value={dob} onChange={(e) => setDob(e.target.value)} required /></div>
-                      <div className="fg"><label>Home Address</label><input type="text" placeholder="123 Main St, Charlotte, NC" value={address} onChange={(e) => setAddress(e.target.value)} required /></div>
+                      <div className="fg"><label>Date of Birth</label><input type="date" value={dob} onChange={(e) => { setDob(e.target.value); setStep1Error(""); }} required /></div>
+                      <div className="fg"><label>Home Address</label><input type="text" placeholder="123 Main St, Charlotte, NC" value={address} onChange={(e) => { setAddress(e.target.value); setStep1Error(""); }} required /></div>
                     </div>
                     <div className="fg">
                       <label>Vehicle Type</label>
-                      <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full bg-[#0c0e13] border border-[#1c1f28] rounded-lg p-3">
+                      <select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)} className="w-full rounded-lg border border-[#1c1f28] bg-[#0c0e13] p-3 text-white">
                         <option value="CAR">Car</option>
                         <option value="SCOOTER">Scooter / Moped</option>
                         <option value="MOTORCYCLE">Motorcycle</option>
@@ -154,16 +203,21 @@ export default function DriverSignupPage() {
                       </select>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="fg"><label>Vehicle Make</label><input type="text" placeholder="Toyota" value={vehicleMake} onChange={(e) => setVehicleMake(e.target.value)} required /></div>
-                      <div className="fg"><label>Vehicle Model</label><input type="text" placeholder="Corolla" value={vehicleModel} onChange={(e) => setVehicleModel(e.target.value)} required /></div>
-                      <div className="fg"><label>Vehicle Color</label><input type="text" placeholder="Black" value={vehicleColor} onChange={(e) => setVehicleColor(e.target.value)} required /></div>
+                      <div className="fg"><label>Vehicle Make</label><input type="text" placeholder="Toyota" value={vehicleMake} onChange={(e) => { setVehicleMake(e.target.value); setStep1Error(""); }} required /></div>
+                      <div className="fg"><label>Vehicle Model</label><input type="text" placeholder="Corolla" value={vehicleModel} onChange={(e) => { setVehicleModel(e.target.value); setStep1Error(""); }} required /></div>
+                      <div className="fg"><label>Vehicle Color</label><input type="text" placeholder="Black" value={vehicleColor} onChange={(e) => { setVehicleColor(e.target.value); setStep1Error(""); }} required /></div>
                     </div>
-                    <div className="fg"><label>License Plate</label><input type="text" placeholder="ABC-1234" value={licensePlate} onChange={(e) => setLicensePlate(e.target.value)} required /></div>
+                    <div className="fg"><label>License Plate</label><input type="text" placeholder="ABC-1234" value={licensePlate} onChange={(e) => { setLicensePlate(e.target.value); setStep1Error(""); }} required /></div>
                   </div>
+                  {step1Error && (
+                    <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.11em] text-red-300">
+                      {step1Error}
+                    </div>
+                  )}
                   <button
                     className="place-btn"
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={handleNextStep}
                     disabled={isPending || !fullName || !email || !phone || !dob || !address || !vehicleMake || !vehicleModel || !vehicleColor || !licensePlate}
                   >
                     Next: Compliance

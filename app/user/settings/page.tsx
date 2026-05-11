@@ -78,6 +78,13 @@ export default async function UserSettings() {
                     </article>
 
                     <article className="food-card">
+                        <p className="food-kicker mb-2">Favorites</p>
+                        <h3 className="food-heading !text-[30px] mb-2">Saved & Reorder</h3>
+                        <p className="text-sm leading-7 text-white/70 mb-4">Keep your go-to restaurants close and jump back into past favorites faster.</p>
+                        <Link href="/user/favorites" className="btn btn-gold">Open Favorites</Link>
+                    </article>
+
+                    <article className="food-card">
                         <p className="food-kicker mb-2">Security</p>
                         <h3 className="food-heading !text-[30px] mb-2">Password</h3>
                         <p className="text-sm leading-7 text-white/70 mb-4">Manage your account password and sign-in safety.</p>
@@ -98,6 +105,13 @@ export default async function UserSettings() {
                             Current tier: <span className="text-[#f97316] font-bold">{user.plan || "Basic"}</span>. Manage points and membership here.
                         </p>
                         <Link href="/rewards" className="btn btn-gold">Open Rewards</Link>
+                    </article>
+
+                    <article className="food-card">
+                        <p className="food-kicker mb-2">Support</p>
+                        <h3 className="food-heading !text-[30px] mb-2">Need Help?</h3>
+                        <p className="text-sm leading-7 text-white/70 mb-4">Reach support for account, delivery, or payment questions without digging through the footer.</p>
+                        <Link href="/contact" className="btn btn-ghost">Contact Support</Link>
                     </article>
 
                     <ReferralCard userId={userId} />

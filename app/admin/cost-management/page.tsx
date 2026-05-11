@@ -61,7 +61,7 @@ export default async function CostManagementPage() {
                 });
             }
             const entry = costMap.get(month)!;
-            entry.byService[cost.service as any] = cost.cost;
+            entry.byService[cost.service as keyof typeof entry.byService] = cost.cost;
             entry.totalCost += cost.cost;
         });
         monthlyCosts = Array.from(costMap.values()).sort((a, b) => a.month.localeCompare(b.month));

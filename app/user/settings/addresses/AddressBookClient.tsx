@@ -13,6 +13,7 @@ interface FormState {
     label: LabelOption;
     customLabel: string;
     address: string;
+    notes: string;
     isDefault: boolean;
 }
 
@@ -21,6 +22,7 @@ const emptyForm = (): FormState => ({
     label: 'Home',
     customLabel: '',
     address: '',
+    notes: '',
     isDefault: false,
 });
 
@@ -52,6 +54,7 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
             label: isCustom ? 'Custom' : (addr.label as LabelOption),
             customLabel: isCustom ? addr.label : '',
             address: addr.address,
+            notes: addr.notes || '',
             isDefault: addr.isDefault,
         });
         setErrorMsg('');
@@ -79,6 +82,7 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
             id: form.id,
             label: resolvedLabel,
             address: form.address.trim(),
+            notes: form.notes.trim() || undefined,
             isDefault: form.isDefault,
         };
 
@@ -190,6 +194,19 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
                                 >
                                     {addr.address}
                                 </p>
+                                {addr.notes && (
+                                    <p
+                                        style={{
+                                            marginTop: '8px',
+                                            fontSize: '13px',
+                                            color: 'rgba(255,255,255,0.55)',
+                                            lineHeight: 1.5,
+                                            wordBreak: 'break-word',
+                                        }}
+                                    >
+                                        Notes: {addr.notes}
+                                    </p>
+                                )}
                             </div>
                             <div
                                 style={{
@@ -317,6 +334,18 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
                                 onChange={(e) =>
                                     setForm((f) => ({ ...f, address: e.target.value }))
                                 }
+                            />
+                        </div>
+
+                        <div className="fg md:col-span-2">
+                            <label>Delivery Notes (Optional)</label>
+                            <textarea
+                                placeholder="Gate code, call box instructions, or leave-at-door details"
+                                value={form.notes}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, notes: e.target.value }))
+                                }
+                                rows={3}
                             />
                         </div>
                     </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PaymentElement, ExpressCheckoutElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { capturePostHogEvent } from "@/lib/posthog-events";
 
 interface CheckoutFormProps {
     onSuccess: (paymentIntentId: string) => void;
@@ -30,6 +31,10 @@ export default function CheckoutForm({ onSuccess, totalAmount, disabled }: Check
         }
 
         console.log("[Stripe] Confirming payment with elements...");
+        capturePostHogEvent("checkout_started", {
+            total_amount: Number(totalAmount.toFixed(2)),
+            payment_method: "card",
+        });
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             confirmParams: {
@@ -58,6 +63,10 @@ export default function CheckoutForm({ onSuccess, totalAmount, disabled }: Check
             return;
         }
 
+        capturePostHogEvent("checkout_started", {
+            total_amount: Number(totalAmount.toFixed(2)),
+            payment_method: "express",
+        });
         const { error, paymentIntent } = await stripe.confirmPayment({
             elements,
             confirmParams: {
