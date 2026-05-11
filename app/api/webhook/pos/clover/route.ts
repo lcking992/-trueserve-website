@@ -17,6 +17,11 @@ export async function POST(req: Request) {
 
     const supabase = await createClient();
 
+    // Handle Clover webhook verification challenge
+    if (body.verificationCode) {
+      return NextResponse.json({ verificationCode: body.verificationCode });
+    }
+
     // Map Clover Order Event
     if (body.type === 'ORDER_CREATED') {
         await supabase.from('Order').insert({
