@@ -211,25 +211,23 @@ export default function RestaurantCard({
             <span>★</span> {r.rating || "4.9"}
           </div>
           <div>•</div>
-          {typeof r.distanceMiles === "number" ? (
-            <>
-              <div>
-                <span style={{ fontWeight: 800, fontSize: 14 }}>
-                  🕐 {Math.round(r.distanceMiles * 4 + 15)} min
-                </span>
-              </div>
-              <div>{r.distanceMiles.toFixed(1)} mi</div>
-            </>
-          ) : (
-            <div>
-              <span style={{ fontWeight: 800, fontSize: 14 }}>🕐 18-24 min</span>
-            </div>
-          )}
-          <span style={{background:'rgba(77,202,128,0.12)',border:'1px solid rgba(77,202,128,0.2)',color:'#4dca80',borderRadius:999,padding:'2px 8px',fontSize:10,fontWeight:800}}>$0 delivery</span>
+          <div>
+            {typeof r.distanceMiles === "number"
+              ? `${r.distanceMiles.toFixed(1)} mi`
+              : "18-24 mins"}
+          </div>
           <div>•</div>
           <div>
             {r.city}, {r.state}
           </div>
+        </div>
+
+        {/* Mobile-only: delivery time + $0 delivery badge */}
+        <div className="md:hidden flex items-center gap-2 mt-1 flex-wrap">
+          <span style={{ fontWeight: 800, fontSize: 13 }}>
+            🕐 {typeof r.distanceMiles === "number" ? `${Math.round(r.distanceMiles * 4 + 15)} min` : "18-24 min"}
+          </span>
+          <span style={{background:'rgba(77,202,128,0.12)',border:'1px solid rgba(77,202,128,0.2)',color:'#4dca80',borderRadius:999,padding:'2px 8px',fontSize:10,fontWeight:800}}>$0 delivery</span>
         </div>
 
         {/* Compliance / trust badges */}

@@ -160,7 +160,7 @@ function RestaurantFinderContent() {
               <button>Top Rated</button>
             </div>
 
-            <div className="cat-pills">
+            <div className="cat-pills md:hidden">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat}
