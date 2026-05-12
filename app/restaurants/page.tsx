@@ -32,6 +32,7 @@ function RestaurantFinderContent() {
   const [userId, setUserId] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [filterOpenNow, setFilterOpenNow] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
   const revealTransition = shouldReduceMotion
     ? { duration: 0 }
     : { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const };
@@ -97,13 +98,35 @@ function RestaurantFinderContent() {
     fetchRestaurants();
   }, [address, latParam, lngParam, search]);
 
+  const CATEGORIES = [
+    'All',
+    '🍕 Pizza',
+    '🍔 Burgers',
+    '🍣 Sushi',
+    '🍗 Wings',
+    '🌮 Tacos',
+    '🥗 Salads',
+    '🍝 Pasta',
+    '☕ Breakfast',
+    '🍦 Desserts',
+  ];
+
   const filteredRestaurants = restaurants.filter((r) => {
-    if (!filterOpenNow) return true;
-    const o = r.openTime?.slice(0, 5);
-    const c = r.closeTime?.slice(0, 5);
-    if (!o || !c) return true;
-    const now = new Date().toTimeString().slice(0, 5);
-    return now >= o && now <= c;
+    if (filterOpenNow) {
+      const o = r.openTime?.slice(0, 5);
+      const c = r.closeTime?.slice(0, 5);
+      if (o && c) {
+        const now = new Date().toTimeString().slice(0, 5);
+        if (!(now >= o && now <= c)) return false;
+      }
+    }
+    if (activeCategory !== 'All') {
+      const keyword = activeCategory.replace(/^\S+\s/, '').toLowerCase();
+      const name = (r.name || '').toLowerCase();
+      const category = (r.category || '').toLowerCase();
+      if (!name.includes(keyword) && !category.includes(keyword)) return false;
+    }
+    return true;
   });
 
   return (
@@ -135,6 +158,22 @@ function RestaurantFinderContent() {
               <button className={!filterOpenNow ? "on" : ""} onClick={() => setFilterOpenNow(false)}>All Restaurants</button>
               <button className={filterOpenNow ? "on" : ""} onClick={() => setFilterOpenNow(v => !v)}>Open Now</button>
               <button>Top Rated</button>
+            </div>
+
+            <div className="cat-pills">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap border transition-colors ${
+                    activeCategory === cat
+                      ? 'bg-[#f97316] border-[#f97316] text-black'
+                      : 'bg-white/5 border-white/10 text-white/60'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </section>
 

@@ -84,7 +84,7 @@ export default function RestaurantCard({
   return (
     <Link key={r.id} href={`/restaurants/${r.id}${menuQuery}`} className="block">
       <motion.article
-        className="rest-card"
+        className="rest-card active:scale-[0.97] transition-transform"
         initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
         whileInView={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
@@ -211,11 +211,21 @@ export default function RestaurantCard({
             <span>★</span> {r.rating || "4.9"}
           </div>
           <div>•</div>
-          <div>
-            {typeof r.distanceMiles === "number"
-              ? `${r.distanceMiles.toFixed(1)} mi`
-              : "18-24 mins"}
-          </div>
+          {typeof r.distanceMiles === "number" ? (
+            <>
+              <div>
+                <span style={{ fontWeight: 800, fontSize: 14 }}>
+                  🕐 {Math.round(r.distanceMiles * 4 + 15)} min
+                </span>
+              </div>
+              <div>{r.distanceMiles.toFixed(1)} mi</div>
+            </>
+          ) : (
+            <div>
+              <span style={{ fontWeight: 800, fontSize: 14 }}>🕐 18-24 min</span>
+            </div>
+          )}
+          <span style={{background:'rgba(77,202,128,0.12)',border:'1px solid rgba(77,202,128,0.2)',color:'#4dca80',borderRadius:999,padding:'2px 8px',fontSize:10,fontWeight:800}}>$0 delivery</span>
           <div>•</div>
           <div>
             {r.city}, {r.state}

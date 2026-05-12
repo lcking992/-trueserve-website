@@ -1038,6 +1038,10 @@ nav {
 
 .rest-filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
 .rest-filters::-webkit-scrollbar { display: none; }
+
+.cat-pills { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.cat-pills::-webkit-scrollbar { display: none; }
+
 .rest-filters button {
   white-space: nowrap; padding: 10px 20px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
   border-radius: 999px; color: rgba(255,255,255,.76); font-size: 13px; font-weight: 700; transition: all .15s;
@@ -1358,8 +1362,9 @@ nav {
   .signup-right { padding: 32px 20px; }
   .signup-right h1 { font-size: 20px; }
   
-  /* Restaurant & Stats Grid */
-  .rest-grid { grid-template-columns: 1fr; }
+  /* Restaurant card image height & grid on mobile */
+  .rc-img { height: 180px; }
+  .rest-grid { grid-template-columns: 1fr; gap: 14px; padding: 0 2px; }
   .md-stat-grid { grid-template-columns: 1fr; gap: 14px; }
   .md-two-col, .md-bottom-grid { grid-template-columns: 1fr; gap: 14px; }
   .portal-header-inner { width: min(1240px, calc(100% - 16px)); align-items: flex-start; }
