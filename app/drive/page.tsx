@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/components/Logo";
 import { submitDriveApplication } from "./actions";
 
@@ -20,14 +20,22 @@ const STEPS = [
     { num: "04", label: "Start earning", desc: "Go online and accept your first delivery." },
 ];
 
-export default function DrivePage() {
+function DrivePageInner() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [state, formAction, isPending] = useActionState(submitDriveApplication, null);
     const [submitted, setSubmitted] = useState(false);
 
+    const utmSource   = searchParams.get("utm_source")   || searchParams.get("ref") || "";
+    const utmMedium   = searchParams.get("utm_medium")   || "";
+    const utmCampaign = searchParams.get("utm_campaign") || "";
+
+    const fromRidersUnite = utmSource.toLowerCase().includes("ridersunite") || utmSource.toLowerCase().includes("riders");
+
     if (state?.success && !submitted) {
         setSubmitted(true);
-        router.push("/drive/success");
+        const successUrl = utmSource ? `/drive/success?ref=${encodeURIComponent(utmSource)}` : "/drive/success";
+        router.push(successUrl);
     }
 
     return (
@@ -113,12 +121,29 @@ export default function DrivePage() {
                     border: "1px solid rgba(249,115,22,0.2)",
                     borderRadius: 20, padding: "40px 32px",
                 }}>
+                    {fromRidersUnite && (
+                        <div style={{
+                            background: "rgba(249,115,22,0.1)",
+                            border: "1px solid rgba(249,115,22,0.3)",
+                            borderRadius: 10, padding: "10px 14px",
+                            marginBottom: 16, fontSize: 13,
+                            color: "rgba(255,255,255,0.8)",
+                            display: "flex", alignItems: "center", gap: 8,
+                        }}>
+                            <span style={{ fontSize: 18 }}>👋</span>
+                            <span>Welcome from <strong style={{ color: "#f97316" }}>Riders Unite</strong>! You're in the right place.</span>
+                        </div>
+                    )}
+
                     <h2 style={{ fontSize: 26, fontWeight: 900, marginBottom: 6 }}>Apply in 60 seconds</h2>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", marginBottom: 28 }}>
                         We'll text you a link to upload your documents — no account needed yet.
                     </p>
 
                     <form action={formAction} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                        <input type="hidden" name="utmSource"   value={utmSource} />
+                        <input type="hidden" name="utmMedium"   value={utmMedium} />
+                        <input type="hidden" name="utmCampaign" value={utmCampaign} />
                         <input name="name" required placeholder="Full name" style={inputStyle} />
                         <input name="email" type="email" required placeholder="Email address" style={inputStyle} />
                         <input name="phone" type="tel" required placeholder="Phone number" style={inputStyle} />
@@ -146,13 +171,21 @@ export default function DrivePage() {
                     </form>
 
                     <p style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", textAlign: "center", marginTop: 16 }}>
-                        By applying you agree to our{" "}
-                        <Link href="/terms" style={{ color: "#f97316" }}>Terms</Link> and{" "}
+                        By applying you agree to our{"\ "}
+                        <Link href="/terms" style={{ color: "#f97316" }}>Terms</Link> and{"\ "}
                         <Link href="/privacy" style={{ color: "#f97316" }}>Privacy Policy</Link>.
                     </p>
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function DrivePage() {
+    return (
+        <Suspense fallback={<div style={{ minHeight: "100vh", background: "#09090c" }} />}>
+            <DrivePageInner />
+        </Suspense>
     );
 }
 
