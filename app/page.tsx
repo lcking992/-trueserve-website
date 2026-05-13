@@ -192,8 +192,8 @@ export default function Home() {
     {
       title: "For Drivers",
       detail: "Onboard cleanly, upload docs, complete payout setup, and stay supported while you deliver.",
-      href: "/driver",
-      cta: "Explore Driver Page",
+      href: "/drive",
+      cta: "Apply to Drive",
       icon: CarFront,
     },
   ];
@@ -296,7 +296,7 @@ export default function Home() {
           <Link href="/restaurants">Order Food</Link>
           <Link href="/rewards">Rewards</Link>
           <Link href="/merchant">For Merchants</Link>
-          <Link href="/driver">For Drivers</Link>
+          <Link href="/drive">Drive & Earn</Link>
           <Link href="/contact">Contact</Link>
         </div>
         <div className="nav-r">
@@ -335,7 +335,7 @@ export default function Home() {
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:8,paddingTop:8}}>
                 {[
-                  { href:"/driver", icon:CarFront, label:"For Drivers", sub:"Earn delivering food" },
+                  { href:"/drive", icon:CarFront, label:"Drive & Earn", sub:"Deliver local, keep 100% tips" },
                   { href:"/merchant", icon:Store, label:"For Merchants", sub:"List your restaurant" },
                   { href:"/restaurants", icon:UtensilsCrossed, label:"Order Food", sub:"Browse local restaurants" },
                   { href:"/rewards", icon:Star, label:"Rewards", sub:"Earn points on every order" },
@@ -804,7 +804,7 @@ export default function Home() {
               );
             })}
           </div>
-          <Link href="/driver" className="portal-btn-gold home-driver-recruit-cta">
+          <Link href="/drive" className="portal-btn-gold home-driver-recruit-cta">
             Join the Fleet <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </motion.section>
@@ -841,7 +841,7 @@ export default function Home() {
               <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
               <Link href="/rewards" className="hover:text-[#f97316] transition-colors">Rewards</Link>
               <Link href="/merchant" className="hover:text-[#f97316] transition-colors">Merchants</Link>
-              <Link href="/driver" className="hover:text-[#f97316] transition-colors">Drivers</Link>
+              <Link href="/drive" className="hover:text-[#f97316] transition-colors">Drivers</Link>
               <Link href="/contact" className="hover:text-[#f97316] transition-colors">Contact</Link>
               <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             </div>
