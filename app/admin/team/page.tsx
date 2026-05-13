@@ -4,7 +4,7 @@ import { getAuthSession } from "@/app/auth/actions";
 import { canAccessAdminSection } from "@/lib/rbac";
 import { getTeamMembers } from "./actions";
 import TeamManagerUI from "@/components/admin/TeamManagerUI";
-import AsanaBoard from "@/components/admin/AsanaBoard";
+import ClickUpBoard from "@/components/admin/ClickUpBoard";
 import AdminPortalWrapper from "../AdminPortalWrapper";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export default async function TeamManagementPage() {
             <div className="adm-page-body" style={{ paddingTop: '28px' }}>
                 <TeamManagerUI initialMembers={teamMembers} />
                 <div style={{ marginTop: 28 }}>
-                    <AsanaBoard />
+                    <ClickUpBoard />
                 </div>
             </div>
         </AdminPortalWrapper>
