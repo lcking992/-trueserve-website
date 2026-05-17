@@ -180,40 +180,43 @@ ON CONFLICT (provider, provider_id) DO UPDATE SET
 -- STEP 5: Create QA driver User profile + Driver record (pre-approved)
 -- ─────────────────────────────────────────────────────────────────────────────
 
-INSERT INTO "User" (id, email, name, role, "createdAt", "updatedAt")
+INSERT INTO "User" (id, email, name, phone, role, "createdAt", "updatedAt")
 VALUES (
   'aa000000-0000-0000-0000-000000000003',
   'testdriver@trueserve.com',
   'Test Driver QA',
+  '+15555550103',
   'DRIVER',
   now(), now()
 )
 ON CONFLICT (id) DO UPDATE SET
   email      = EXCLUDED.email,
   name       = EXCLUDED.name,
+  phone      = EXCLUDED.phone,
   role       = EXCLUDED.role,
   "updatedAt" = now();
 
 -- vehicleVerified = true + backgroundCheckStatus = 'CLEAR' bypasses pending-review redirect
 INSERT INTO "Driver" (
-  id, "userId", name, email,
-  "isAvailable", "vehicleVerified", "backgroundCheckStatus",
+  id, "userId", status, "vehicleType",
+  "vehicleVerified", "backgroundCheckStatus", "complianceStatus",
   "currentLat", "currentLng",
   "createdAt", "updatedAt"
 )
 VALUES (
   'aa000000-0000-0000-0000-000000000004',
   'aa000000-0000-0000-0000-000000000003',
-  'Test Driver QA',
-  'testdriver@trueserve.com',
-  true, true, 'CLEAR',
+  'OFFLINE', 'CAR',
+  true, 'CLEAR', 'ACTIVE',
   35.2271, -80.8431,
   now(), now()
 )
 ON CONFLICT (id) DO UPDATE SET
+  status                  = 'OFFLINE',
+  "vehicleType"           = 'CAR',
   "vehicleVerified"       = true,
   "backgroundCheckStatus" = 'CLEAR',
-  "isAvailable"           = true,
+  "complianceStatus"      = 'ACTIVE',
   "updatedAt"             = now();
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -257,9 +260,10 @@ WHERE r.id = 'aa000000-0000-0000-0000-000000000001';
 
 -- Driver account + approval status
 SELECT
-  d.id, d.name, d.email,
-  d."vehicleVerified", d."backgroundCheckStatus", d."isAvailable"
+  d.id, u.name, u.email, u.phone,
+  d.status, d."vehicleType", d."vehicleVerified", d."backgroundCheckStatus", d."complianceStatus"
 FROM "Driver" d
+LEFT JOIN "User" u ON u.id = d."userId"
 WHERE d.id = 'aa000000-0000-0000-0000-000000000004';
 
 -- Heatmap seed orders (should return 9 rows)
