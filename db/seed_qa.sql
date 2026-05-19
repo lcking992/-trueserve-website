@@ -235,6 +235,9 @@ ON CONFLICT (id) DO UPDATE SET
 -- Spread across the last 48 hrs so freshness weighting kicks in properly
 -- ─────────────────────────────────────────────────────────────────────────────
 
+ALTER TABLE "Order"
+  ADD COLUMN IF NOT EXISTS total DECIMAL(10,2) DEFAULT 0.00;
+
 INSERT INTO "Order" (id, "restaurantId", "userId", status, total, "createdAt", "updatedAt")
 VALUES
   -- Carolina BBQ Pit — recent heavy orders (high heat)
