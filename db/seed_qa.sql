@@ -231,7 +231,7 @@ ON CONFLICT (id) DO UPDATE SET
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- STEP 6: Seed mock orders so the heatmap has data to display
--- Uses the Charlotte mock restaurants from seed_mocks.sql (IDs 001–003)
+-- Uses the QA restaurant created above so this file can run by itself.
 -- Spread across the last 48 hrs so freshness weighting kicks in properly
 -- ─────────────────────────────────────────────────────────────────────────────
 
@@ -240,20 +240,20 @@ ALTER TABLE "Order"
 
 INSERT INTO "Order" (id, "restaurantId", "userId", status, total, "createdAt", "updatedAt")
 VALUES
-  -- Carolina BBQ Pit — recent heavy orders (high heat)
-  ('bb000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 42.50, now() - interval '1 hour',  now()),
-  ('bb000000-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 38.00, now() - interval '2 hours', now()),
-  ('bb000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 55.75, now() - interval '3 hours', now()),
-  ('bb000000-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 29.00, now() - interval '6 hours', now()),
+  -- Recent heavy orders (high heat)
+  ('bb000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 42.50, now() - interval '1 hour',  now()),
+  ('bb000000-0000-0000-0000-000000000002', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 38.00, now() - interval '2 hours', now()),
+  ('bb000000-0000-0000-0000-000000000003', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 55.75, now() - interval '3 hours', now()),
+  ('bb000000-0000-0000-0000-000000000004', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 29.00, now() - interval '6 hours', now()),
 
-  -- Queen City Burger — moderate activity (medium heat)
-  ('bb000000-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000002', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 22.00, now() - interval '4 hours',  now()),
-  ('bb000000-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000002', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 18.50, now() - interval '8 hours',  now()),
-  ('bb000000-0000-0000-0000-000000000007', '00000000-0000-0000-0000-000000000002', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 31.00, now() - interval '12 hours', now()),
+  -- Moderate activity (medium heat)
+  ('bb000000-0000-0000-0000-000000000005', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 22.00, now() - interval '4 hours',  now()),
+  ('bb000000-0000-0000-0000-000000000006', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 18.50, now() - interval '8 hours',  now()),
+  ('bb000000-0000-0000-0000-000000000007', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 31.00, now() - interval '12 hours', now()),
 
-  -- North Star Diner — older/lighter orders (low heat, shows gradient edge)
-  ('bb000000-0000-0000-0000-000000000008', '00000000-0000-0000-0000-000000000003', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 15.00, now() - interval '20 hours', now()),
-  ('bb000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000003', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 12.50, now() - interval '36 hours', now())
+  -- Older/lighter orders (low heat, shows gradient edge)
+  ('bb000000-0000-0000-0000-000000000008', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 15.00, now() - interval '20 hours', now()),
+  ('bb000000-0000-0000-0000-000000000009', 'aa000000-0000-0000-0000-000000000001', 'aa000000-0000-0000-0000-000000000003', 'DELIVERED', 12.50, now() - interval '36 hours', now())
 ON CONFLICT (id) DO UPDATE SET
   status     = EXCLUDED.status,
   total      = EXCLUDED.total,
