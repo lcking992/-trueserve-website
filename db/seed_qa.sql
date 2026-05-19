@@ -196,6 +196,16 @@ ON CONFLICT (id) DO UPDATE SET
   role       = EXCLUDED.role,
   "updatedAt" = now();
 
+-- Keep this seed runnable on QA databases that are a migration or two behind.
+ALTER TABLE "Driver"
+  ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'OFFLINE',
+  ADD COLUMN IF NOT EXISTS "vehicleType" TEXT,
+  ADD COLUMN IF NOT EXISTS "vehicleVerified" BOOLEAN DEFAULT FALSE,
+  ADD COLUMN IF NOT EXISTS "backgroundCheckStatus" TEXT DEFAULT 'PENDING',
+  ADD COLUMN IF NOT EXISTS "complianceStatus" TEXT DEFAULT 'PENDING',
+  ADD COLUMN IF NOT EXISTS "currentLat" DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS "currentLng" DOUBLE PRECISION;
+
 -- vehicleVerified = true + backgroundCheckStatus = 'CLEAR' bypasses pending-review redirect
 INSERT INTO "Driver" (
   id, "userId", status, "vehicleType",
