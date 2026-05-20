@@ -159,7 +159,7 @@ export default function MerchantLanding() {
               <div key={item.step} className="merchant-timeline-step">
                 <div className="merchant-timeline-node">{item.step}</div>
                 <div>
-                  <h4 style={{ fontFamily: "var(--font-bebas), sans-serif", fontSize: 20, letterSpacing: "0.04em", textTransform: "uppercase", color: "#fff", marginBottom: 6 }}>{item.title}</h4>
+                  <h4 style={{ fontFamily: 'var(--font-fraunces), Georgia, "Times New Roman", serif', fontSize: 20, letterSpacing: "-0.03em", textTransform: "none", color: "#fff", marginBottom: 6 }}>{item.title}</h4>
                   <p style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,0.6)" }}>{item.desc}</p>
                 </div>
               </div>

@@ -155,7 +155,7 @@ export default function POSIntegration({ currentApiKey, posType = "None" }: POSI
                 .disconnected-tag { font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 10px; background: #1a0808; color: #e24b4a; border: 1px solid #3a1010; border-radius: 999px; }
 
                 /* ── API WATERMARK ── */
-                .api-watermark { font-family: 'Barlow Condensed', sans-serif; font-size: 80px; font-weight: 800; font-style: italic; color: rgba(249, 115, 22, 0.04); letter-spacing: 0.05em; text-align: right; line-height: 1; margin-top: -8px; pointer-events: none; user-select: none; position: absolute; bottom: 10px; right: 20px; }
+                .api-watermark { font-family: var(--font-fraunces), Georgia, serif; font-size: 72px; font-weight: 800; font-style: normal; color: rgba(249, 115, 22, 0.04); letter-spacing: -0.04em; text-align: right; line-height: 1; margin-top: -8px; pointer-events: none; user-select: none; position: absolute; bottom: 10px; right: 20px; }
                 
                 .divider { height: 1px; background: #1c1f28; margin: 16px 0; }
                 .action-row { display: flex; align-items: center; gap: 8px; }

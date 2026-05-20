@@ -176,7 +176,7 @@ function DrivePageContent() {
                             borderRadius: 14, padding: "20px 24px",
                         }}>
                             <span style={{
-                                fontFamily: "var(--font-bebas)", fontSize: 36, lineHeight: 1,
+                                fontFamily: "var(--font-fraunces), Georgia, serif", fontSize: 30, lineHeight: 1.08,
                                 color: "#f97316", opacity: 0.7, minWidth: 44,
                             }}>{s.num}</span>
                             <div>

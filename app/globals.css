@@ -2011,7 +2011,7 @@ nav {
 }
 
 .logo {
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   text-transform: uppercase;
   letter-spacing: .03em;
 }
@@ -2645,7 +2645,7 @@ nav {
 }
 
 .hero-preview-title {
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: 24px;
   line-height: 0.95;
   letter-spacing: 0.04em;
@@ -2825,7 +2825,7 @@ nav {
 
 .home-route-video-copy strong {
   max-width: 180px;
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: 28px;
   line-height: 0.95;
   letter-spacing: 0.04em;
@@ -3146,7 +3146,7 @@ nav {
 
 .food-stat strong {
   display: block;
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: clamp(28px, 4vw, 42px);
   letter-spacing: .04em;
   color: var(--gold);
@@ -3978,7 +3978,7 @@ nav {
 .home-proof-video-copy strong {
   display: block;
   color: #fff;
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: clamp(30px, 4.8vw, 54px);
   line-height: .94;
   letter-spacing: .04em;
@@ -4091,7 +4091,7 @@ nav {
 .home-featured-copy strong {
   display: block;
   color: #fff;
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: 32px;
   line-height: .95;
   letter-spacing: .04em;
@@ -4904,7 +4904,7 @@ nav {
 .driver-metric-row strong {
   display: block;
   color: var(--gold);
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: 30px;
   letter-spacing: .04em;
   line-height: 1;
@@ -5486,7 +5486,7 @@ nav {
   max-width: 680px;
   margin: 18px 0 10px;
   color: #fff;
-  font-family: var(--font-bebas), sans-serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
   font-size: clamp(42px, 6vw, 76px);
   line-height: .92;
   text-transform: uppercase;
@@ -5651,7 +5651,7 @@ nav {
   color: #070707;
 }
 .rest-top { margin-bottom: 32px; }
-.rest-top h2 { font-family: var(--font-bebas), sans-serif; font-size: clamp(34px, 5vw, 54px); letter-spacing: .04em; margin-bottom: 8px; line-height: .92; text-transform: uppercase; }
+.rest-top h2 { font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; font-size: clamp(34px, 5vw, 54px); letter-spacing: .04em; margin-bottom: 8px; line-height: .92; text-transform: uppercase; }
 .rest-top .lead { font-size: 14px; color: rgba(255,255,255,.68); margin-bottom: 24px; }
 
 .rest-filters { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
@@ -5750,7 +5750,7 @@ nav {
   padding: 6px 11px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; z-index: 1; letter-spacing: .12em;
 }
 .rc-info { padding: 20px; min-width: 0; }
-.rc-name { font-size: 24px; font-family: var(--font-bebas), sans-serif; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; line-height: 1.04; overflow-wrap: anywhere; }
+.rc-name { font-size: 24px; font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px; line-height: 1.04; overflow-wrap: anywhere; }
 .rc-meta { display: flex; align-items: center; gap: 12px; min-width: 0; font-size: 13px; color: rgba(255,255,255,.68); flex-wrap: wrap; }
 .rc-rating { color: var(--gold); font-weight: 800; display: flex; align-items: center; gap: 4px; }
 .rc-detail-row { display: grid; gap: 6px; margin-top: 11px; color: rgba(255,255,255,.58); font-size: 12px; line-height: 1.35; }
@@ -5879,7 +5879,7 @@ nav {
 .menu-page{display:grid;gap:24px}
 .menu-hd{background:linear-gradient(180deg, rgba(18,24,21,.96), rgba(12,15,13,.98));border:1px solid rgba(255,255,255,.08);
   border-radius:32px;padding:28px 30px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;box-shadow:0 24px 70px rgba(0,0,0,.26)}
-.menu-hd h2{font-family:var(--font-bebas),sans-serif;font-size:clamp(34px,5vw,52px);letter-spacing:.04em;line-height:.92;text-transform:uppercase}
+.menu-hd h2{font-family:var(--font-fraunces),Georgia,"Times New Roman",serif;font-size:clamp(30px,4vw,42px);letter-spacing:-.035em;line-height:1.08;text-transform:none}
 .menu-hd p{font-size:13px;color:rgba(255,255,255,.68);margin-top:8px;line-height:1.6}
 .restaurant-trust-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
 .restaurant-trust-card{display:flex;align-items:center;gap:10px;min-width:0;padding:14px 15px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.075)}
@@ -5957,7 +5957,7 @@ nav {
 /* TRACKING SIDEBAR CLASSES */
 #view-tracking{padding:8px 0 48px}
 .track-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
-.track-top h2{font-family:var(--font-bebas),sans-serif;font-size:44px;letter-spacing:.04em;line-height:.94;text-transform:uppercase}
+.track-top h2{font-family:var(--font-fraunces),Georgia,"Times New Roman",serif;font-size:clamp(30px,4vw,40px);letter-spacing:-.035em;line-height:1.08;text-transform:none}
 .track-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);margin-bottom:5px}
 .track-grid{display:grid;grid-template-columns:1fr 300px;gap:18px}
 .track-left{display:flex;flex-direction:column;gap:14px}
@@ -6696,7 +6696,7 @@ nav {
 .hero { display: flex; align-items: center; justify-content: space-between; padding: 24px 32px; border-bottom: 1px solid #1c2420; background: #0c0f0d; }
 .hero-left { display: flex; align-items: center; gap: 20px; }
 .hero-icon { width: 56px; height: 56px; background: #141a18; border: 1px solid #252d28; display: flex; align-items: center; justify-content: center; border-radius: 14px; font-size: 28px; }
-.hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: 40px; font-weight: 800; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.9; letter-spacing: -0.02em; }
+.hero-title { font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; font-size: 40px; font-weight: 800; font-style: italic; text-transform: uppercase; color: #fff; line-height: 0.9; letter-spacing: -0.02em; }
 .hero-title span { color: #f97316; }
 .hero-sub { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #555; margin-top: 6px; }
 
@@ -6714,7 +6714,7 @@ nav {
 .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: #1c2420; min-height: calc(100vh - 250px); }
 .panel { background: #080808; padding: 32px; }
 .panel-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
-.panel-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; letter-spacing: 0.05em; line-height: 1; }
+.panel-title { font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 900; font-style: italic; text-transform: uppercase; color: #fff; letter-spacing: 0.05em; line-height: 1; }
 .panel-title span { color: #f97316; }
 .panel-sub { font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: #333; margin-bottom: 24px; display: block; }
 
@@ -6723,7 +6723,7 @@ nav {
 
 .order-card { background: #0c0f0d; border: 1px solid #1c2420; margin-bottom: 12px; border-radius: 16px; overflow: hidden; transition: all 0.3s; }
 .order-card-hd { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #1c2420; background: #141a18; }
-.order-name { font-size: 16px; font-weight: 800; color: #fff; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; font-style: italic; }
+.order-name { font-size: 16px; font-weight: 800; color: #fff; font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; text-transform: uppercase; font-style: italic; }
 .order-body { padding: 20px; }
 .yield-tag { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #3dd68c; background: #0a1e12; border: 1px solid #1a4a2a; padding: 4px 10px; border-radius: 4px; }
 .dist-tag { font-size: 11px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #666; background: #141a18; border: 1px solid #252d28; padding: 4px 10px; border-radius: 4px; }
@@ -6746,17 +6746,30 @@ nav {
    FONT UTILITIES
    ────────────────────────────────────────────────────────────────────────── */
 
-.bebas { font-family: var(--font-bebas), sans-serif; }
-.fraunces { font-family: var(--font-fraunces), Georgia, "Times New Roman", serif; }
-.barlow-cond { font-family: var(--font-barlow-cond), sans-serif; }
-.dm-sans { font-family: var(--font-dm-sans), sans-serif; }
+.bebas,
+.barlow-cond,
+.font-barlow-cond,
+.font-bebas {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif !important;
+  letter-spacing: -0.03em;
+  text-transform: none;
+}
+
+.fraunces {
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+}
+
+.dm-sans,
+.font-dm-sans {
+  font-family: var(--font-plus-jakarta), var(--font-dm-sans), system-ui, -apple-system, sans-serif !important;
+}
 .dm-mono { font-family: var(--font-dm-mono), monospace; }
 
 /* Global Override for Dashboard Titles */
 .hero-title, .panel-title, .bebas-title {
-    font-family: var(--font-bebas), sans-serif;
-    text-transform: uppercase;
-    font-style: italic;
+    font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    text-transform: none;
+    font-style: normal;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────

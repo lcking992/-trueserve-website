@@ -49,9 +49,7 @@ export default function ReviewModal({ orderId, driverId, customerId, isOpen, onC
         return (
             <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-3xl animate-in fade-in duration-500 p-4">
                 <style dangerouslySetInnerHTML={{ __html: `
-                    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,700;1,800&family=Bebas+Neue&display=swap');
-                    .bebas { font-family: 'Bebas Neue', sans-serif; }
-                    .barlow-cond { font-family: 'Barlow Condensed', sans-serif; }
+                    .bebas, .barlow-cond { font-family: var(--font-fraunces), Georgia, serif; }
                 ` }} />
                 <div className="w-full max-w-sm bg-[#0a0a0a] border border-[#f97316]/40 p-10 text-center rounded-[2.5rem] shadow-[0_0_80px_rgba(249,115,22,0.2)] animate-in zoom-in-95 duration-500">
                     <div className="w-20 h-20 bg-[#f97316]/20 rounded-full flex items-center justify-center text-4xl mb-6 mx-auto border border-[#f97316]/30 shadow-inner">Done</div>
