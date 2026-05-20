@@ -48,7 +48,7 @@ const Logo: React.FC<LogoProps> = ({
                     fontWeight: 900,
                     letterSpacing: '-0.055em',
                     whiteSpace: 'nowrap',
-                    color: '#fff',
+                    color: 'inherit',
                     lineHeight: 1,
                 }}
             >

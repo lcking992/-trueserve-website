@@ -1,421 +1,604 @@
 "use client";
 
 import type { ComponentType } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
-  Bike,
-  CarFront,
-  CheckCircle2,
-  Clock3,
+  Award,
+  BarChart3,
+  ChevronRight,
+  Clock,
   Heart,
   MapPin,
-  Menu,
   Navigation,
-  PackageCheck,
-  Search,
-  Sparkles,
-  Star,
+  Percent,
+  ShieldCheck,
   Store,
-  UtensilsCrossed,
-  X,
+  TrendingUp,
+  Truck,
+  Users,
+  Wallet,
 } from "lucide-react";
-import Logo from "@/components/Logo";
+import { motion, useReducedMotion } from "motion/react";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import LandingSearch from "@/components/LandingSearch";
 import { supabase } from "@/lib/supabase";
 import {
-  addDistanceMiles,
   getLiveRestaurants,
-  normalizeSearchText,
-  summarizeRestaurantNetwork,
   type PublicRestaurantRecord,
 } from "@/lib/public-restaurants";
-import { getRestaurantDisplayImage } from "@/lib/restaurant-images";
-import { getAccountHomeHref } from "@/lib/account-routing";
 
 type FeaturedRestaurant = PublicRestaurantRecord & {
   distanceMiles?: number | null;
 };
 
-function cityFromAddress(address: string | null) {
-  if (!address) return "";
-  const parts = address
-    .split(",")
-    .map((part) => normalizeSearchText(part))
-    .filter(Boolean);
+type LiveKitchen = {
+  name: string;
+  cuisine: string;
+  rating?: string;
+  eta: string;
+  distance: string;
+  Icon: ComponentType<{ size?: number; "aria-hidden"?: boolean | "true" | "false" }>;
+  popular?: boolean;
+};
 
-  if (parts.length >= 3) return parts[parts.length - 2];
-  if (parts.length >= 2) return parts[0];
-  return parts[0] || "";
+const LOCATION_PROMPTS: LiveKitchen[] = [
+  { name: "Enter your address", cuisine: "Show kitchens that deliver to you", eta: "Start here", distance: "Local", Icon: MapPin },
+  { name: "Live order tracking", cuisine: "Prep, pickup, and doorstep updates", eta: "Included", distance: "Clear ETAs", Icon: Navigation },
+  { name: "Rewards on every order", cuisine: "Earn TruePoints when you create an account", eta: "Ready", distance: "Member perks", Icon: Award },
+];
+
+const INTRO_MARQUEE = [
+  { name: "Enter your address", cuisine: "Unlock nearby kitchens" },
+  { name: "Real local restaurants", cuisine: "No ghost feeds" },
+  { name: "Live delivery updates", cuisine: "Clear handoffs" },
+  { name: "TrueServe Rewards", cuisine: "Earn on every bite" },
+  { name: "Drive & Earn", cuisine: "$20/hr daily pay" },
+  { name: "Restaurant partners", cuisine: "Fairer local fees" },
+];
+
+function fadeIn(delay = 0) {
+  return {
+    initial: { opacity: 0, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-80px" },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
+  };
 }
 
-function etaFor(distanceMiles?: number | null) {
-  if (typeof distanceMiles !== "number") return "25-35 min";
-  if (distanceMiles <= 1) return "15-20 min";
-  if (distanceMiles <= 2) return "20-28 min";
-  if (distanceMiles <= 4) return "25-35 min";
-  return "35-45 min";
-}
+function LiveNearYouCard({ kitchens, hasLocation }: { kitchens: LiveKitchen[]; hasLocation: boolean }) {
+  const shouldReduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(2);
 
-function restaurantImage(restaurant: FeaturedRestaurant) {
-  return restaurant.imageUrl ? getRestaurantDisplayImage(restaurant) : "/hero_food_delivery.png";
-}
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+    const id = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % kitchens.length);
+    }, 2600);
+    return () => clearInterval(id);
+  }, [kitchens.length, shouldReduceMotion]);
 
-function Stat({ value, label }: { value: string; label: string }) {
   return (
-    <div className="ts-app-stat">
-      <strong>{value}</strong>
-      <span>{label}</span>
+    <motion.div
+      className="ts-fig-live-card"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <div className="ts-fig-live-card-head">
+        <span className="ts-fig-live-dot">{hasLocation ? "Live near you" : "Ready when you are"}</span>
+        <span className="updated">{hasLocation ? "Updated just now" : "Location first"}</span>
+      </div>
+      <div>
+        {kitchens.map((k, i) => (
+          <div key={k.name} className={`ts-fig-live-row${i === activeIndex ? " is-active" : ""}`}>
+            <div className="ts-fig-emoji">
+              <k.Icon size={18} aria-hidden="true" />
+            </div>
+            <div>
+              <div className="ts-fig-live-name">
+                {k.name}
+                {k.popular ? <span className="ts-fig-live-pop">Popular</span> : null}
+              </div>
+              <div className="ts-fig-live-meta">
+                {k.rating ? (
+                  <>
+                    <span>★ {k.rating}</span>
+                    <span>·</span>
+                  </>
+                ) : null}
+                <span><Clock size={12} /> {k.eta}</span>
+                <span>·</span>
+                <span>{k.distance}</span>
+              </div>
+            </div>
+            <span className="ts-fig-live-chev"><ChevronRight size={16} /></span>
+          </div>
+        ))}
+      </div>
+      <div className="ts-fig-live-progress">
+        <strong>{hasLocation ? "Delivery updates stay visible" : "Restaurants appear after address"}</strong>
+        <span className="eta">{hasLocation ? "ETA 11 min" : "1 tap"}</span>
+        <div className="ts-fig-live-progress-bar">
+          <motion.span
+            initial={{ width: "15%" }}
+            animate={{ width: ["15%", "35%", "60%", "85%", "15%"] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            style={{ display: "block", height: "100%", background: "linear-gradient(90deg, #FF6B35, #14B8A6)", borderRadius: "999px" }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function CuisineMarquee({ items }: { items: { name: string; cuisine: string }[] }) {
+  const list = [...items, ...items];
+  return (
+    <section className="ts-fig-marquee" aria-label="Local kitchens">
+      <div className="ts-fig-marquee-track">
+        {list.map((item, i) => (
+          <span key={`${item.name}-${i}`}>
+            {item.name}
+            <small>{item.cuisine}</small>
+            <i>•</i>
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CommissionBar({ percent, color, label }: { percent: number; color: "bad" | "good"; label: string }) {
+  return (
+    <div className={`ts-fig-commission-row ${color}`}>
+      <div className="row-head">
+        <span>{label}</span>
+        <span>{percent}%</span>
+      </div>
+      <div className="row-bar">
+        <motion.span
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: percent / 30 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          style={{ display: "block", height: "100%", borderRadius: "999px" }}
+        />
+      </div>
     </div>
   );
 }
 
-function InfoCard({
-  icon: Icon,
-  eyebrow,
-  title,
-  detail,
-  href,
-}: {
-  icon: ComponentType<{ size?: number; "aria-hidden"?: boolean | "true" | "false" }>;
-  eyebrow: string;
-  title: string;
-  detail: string;
-  href: string;
-}) {
-  return (
-    <Link href={href} className="ts-app-info-card">
-      <div className="ts-app-info-icon">
-        <Icon size={18} aria-hidden="true" />
-      </div>
-      <span>{eyebrow}</span>
-      <strong>{title}</strong>
-      <small>{detail}</small>
-    </Link>
-  );
-}
-
-function TrackingPreview({ isSignedIn }: { isSignedIn: boolean }) {
-  return (
-    <div className="ts-app-phone ts-app-order-preview" aria-label="TrueServe order preview">
-      <div className="ts-app-phone-status">
-        <span>9:41</span>
-        <div className="ts-app-phone-brand">
-          <i aria-hidden="true" />
-          <Logo size="xs" className="ts-app-phone-logo" href="/" />
-        </div>
-      </div>
-      <div className="ts-app-delivered-badge">
-        <CheckCircle2 size={15} aria-hidden="true" />
-        Delivered in 28 min
-      </div>
-      <div className="ts-app-phone-copy">
-        <span>{isSignedIn ? "Good evening" : "Local kitchens ready"}</span>
-        <h2>What are we craving tonight?</h2>
-      </div>
-      <div className="ts-app-phone-search">
-        <Search size={18} aria-hidden="true" />
-        <span>Try "tacos near me"</span>
-      </div>
-      <div className="ts-app-reorder-card">
-        <div>
-          <span>{isSignedIn ? "Order again" : "Start here"}</span>
-          <small><Clock3 size={15} aria-hidden="true" /> 22 min</small>
-        </div>
-        <strong>{isSignedIn ? "Dhan's Kitchen favorite" : "Find your local favorite"}</strong>
-        <p>{isSignedIn ? "Your recent orders and points stay ready when you sign in." : "Enter an address first. We only show restaurants that can serve your area."}</p>
-        <Link href={isSignedIn ? "/orders" : "/restaurants"}> {isSignedIn ? "Reorder in 1 tap" : "Find food near you"} </Link>
-      </div>
-      <div className="ts-app-mini-categories" aria-hidden="true">
-        <span><UtensilsCrossed size={18} /> Tacos</span>
-        <span><Store size={18} /> Sushi</span>
-        <span><PackageCheck size={18} /> Pizza</span>
-      </div>
-      <div className="ts-app-tier-pill">
-        <Sparkles size={17} aria-hidden="true" />
-        <span>Rewards ready</span>
-        <strong>+120 pts</strong>
-      </div>
-    </div>
-  );
-}
-
-function RestaurantTile({ restaurant }: { restaurant: FeaturedRestaurant }) {
-  const image = restaurantImage(restaurant).replace(/"/g, "%22");
-  const cityLabel = [restaurant.city, restaurant.state].filter(Boolean).join(", ");
-  const distanceLabel =
-    typeof restaurant.distanceMiles === "number"
-      ? `${restaurant.distanceMiles.toFixed(1)} mi away`
-      : cityLabel;
-
-  return (
-    <Link href={`/restaurants/${restaurant.id}`} className="ts-app-restaurant-card">
-      <div className="ts-app-restaurant-image" style={{ backgroundImage: `url("${image}")` }}>
-        <div className="ts-app-card-badges">
-          <span><Clock3 size={13} /> {etaFor(restaurant.distanceMiles)}</span>
-          <span><Star size={13} fill="currentColor" /> {restaurant.rating || "4.9"}</span>
-        </div>
-        <button type="button" aria-label="Save restaurant">
-          <Heart size={16} aria-hidden="true" />
-        </button>
-      </div>
-      <div className="ts-app-restaurant-body">
-        <h3>{restaurant.name}</h3>
-        <p>{distanceLabel}{cityLabel && distanceLabel !== cityLabel ? ` - ${cityLabel}` : ""}</p>
-        <span>Partner restaurant - direct ordering</span>
-      </div>
-    </Link>
-  );
+function CountUp({ to, prefix = "", suffix = "", duration = 1.2 }: { to: number; prefix?: string; suffix?: string; duration?: number }) {
+  const shouldReduceMotion = useReducedMotion();
+  const [value, setValue] = useState(shouldReduceMotion ? to : 0);
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setValue(to);
+      return;
+    }
+    let start: number | null = null;
+    let raf = 0;
+    const tick = (t: number) => {
+      if (start === null) start = t;
+      const p = Math.min(1, (t - start) / (duration * 1000));
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(to * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to, duration, shouldReduceMotion]);
+  return <>{prefix}{value.toLocaleString()}{suffix}</>;
 }
 
 export default function Home() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [accountHref, setAccountHref] = useState("/user/settings");
-  const [menuOpen, setMenuOpen] = useState(false);
   const [networkStats, setNetworkStats] = useState({
     totalRestaurants: 0,
-    verifiedCount: 0,
-    markets: 0,
     averageRating: null as number | null,
   });
-  const [featuredRestaurants, setFeaturedRestaurants] = useState<FeaturedRestaurant[]>([]);
-  const [featuredLocationLabel, setFeaturedLocationLabel] = useState<string | null>(null);
-  const [canShowNearbyRestaurants, setCanShowNearbyRestaurants] = useState(false);
+  const [liveRestaurants, setLiveRestaurants] = useState<FeaturedRestaurant[]>([]);
+  const [hasLocationContext, setHasLocationContext] = useState(false);
 
   useEffect(() => {
     let mounted = true;
-
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!mounted || !data.user?.id) return;
-      setUserId(data.user.id);
-
-      const { data: profile } = await supabase
-        .from("User")
-        .select("role")
-        .eq("id", data.user.id)
-        .maybeSingle();
-
-      if (mounted) setAccountHref(getAccountHomeHref(profile?.role));
-    });
+    try {
+      const savedAddress = localStorage.getItem("ts.delivery.address");
+      const savedLat = localStorage.getItem("ts.delivery.lat");
+      const savedLng = localStorage.getItem("ts.delivery.lng");
+      setHasLocationContext(Boolean(savedAddress?.trim() || (savedLat && savedLng)));
+    } catch {
+      setHasLocationContext(false);
+    }
 
     supabase
       .from("Restaurant")
       .select("*, healthGrade, complianceStatus, complianceScore, createdAt")
       .limit(80)
       .then((result) => {
-        if (!mounted) return;
-        if (result.error) {
-          console.error("Restaurant fetch error:", JSON.stringify(result.error));
-          return;
-        }
-
+        if (!mounted || result.error) return;
         const live = getLiveRestaurants(result.data || []);
-        setNetworkStats(summarizeRestaurantNetwork(live));
-
-        try {
-          const savedAddress = localStorage.getItem("ts.delivery.address");
-          const savedLatRaw = localStorage.getItem("ts.delivery.lat");
-          const savedLngRaw = localStorage.getItem("ts.delivery.lng");
-          const savedLat = savedLatRaw ? Number(savedLatRaw) : NaN;
-          const savedLng = savedLngRaw ? Number(savedLngRaw) : NaN;
-          const hasSavedAddress = Boolean(savedAddress?.trim());
-          const hasCoords = Number.isFinite(savedLat) && Number.isFinite(savedLng);
-          const savedCity = cityFromAddress(savedAddress);
-
-          let nearby: FeaturedRestaurant[] = [];
-
-          if (hasCoords) {
-            nearby = addDistanceMiles(live, savedLat, savedLng)
-              .filter((restaurant) => typeof restaurant.distanceMiles === "number" && Number(restaurant.distanceMiles) <= 20)
-              .sort((a, b) => Number(a.distanceMiles ?? 9999) - Number(b.distanceMiles ?? 9999));
-          } else if (hasSavedAddress && savedCity) {
-            nearby = live.filter((restaurant) => normalizeSearchText(String(restaurant.city || "")) === savedCity);
-          }
-
-          setCanShowNearbyRestaurants(hasSavedAddress && nearby.length > 0);
-          setFeaturedRestaurants(nearby.slice(0, 6));
-          setFeaturedLocationLabel(savedAddress?.split(",")[0]?.trim() || null);
-        } catch {
-          setCanShowNearbyRestaurants(false);
-          setFeaturedRestaurants([]);
-        }
+        const ratings = live.map((r) => Number(r.rating)).filter((n) => Number.isFinite(n) && n > 0);
+        const avg = ratings.length ? ratings.reduce((s, n) => s + n, 0) / ratings.length : null;
+        setNetworkStats({ totalRestaurants: live.length, averageRating: avg });
+        setLiveRestaurants(live as FeaturedRestaurant[]);
       });
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  const navLinks = [
-    { href: "/restaurants", label: "Order" },
-    { href: "/rewards", label: "Rewards" },
-    { href: "/merchant", label: "For Merchants" },
-    { href: "/drive", label: "Drive & Earn" },
-    { href: "/contact", label: "Help" },
-  ];
+  const liveKitchens = useMemo(() => {
+    if (!hasLocationContext || liveRestaurants.length < 3) return LOCATION_PROMPTS;
+    return liveRestaurants.slice(0, 3).map((r, i) => {
+      return {
+        name: r.name ?? "Local Kitchen",
+        cuisine: String(r.cuisineType || r.category || "Local"),
+        rating: r.rating ? String(r.rating) : "4.8",
+        eta: ["12 min", "18 min", "25 min"][i] || "25 min",
+        distance: ["0.8 mi", "1.3 mi", "2.1 mi"][i] || "2.0 mi",
+        Icon: Store,
+        popular: i === 2,
+      };
+    });
+  }, [hasLocationContext, liveRestaurants]);
 
-  const categoryLabels = Array.from(
-    new Set(
-      featuredRestaurants
-        .map((restaurant) => String(restaurant.cuisineType || restaurant.category || "Local").trim())
-        .filter(Boolean)
-    )
-  ).slice(0, 8);
+  const marqueeItems = useMemo(() => {
+    if (!hasLocationContext || liveRestaurants.length < 4) return INTRO_MARQUEE;
+    return liveRestaurants.slice(0, 8).map((r) => ({
+      name: r.name ?? "Local Kitchen",
+      cuisine: String(r.cuisineType || r.category || "Local"),
+    }));
+  }, [hasLocationContext, liveRestaurants]);
+
+  const handleLocate = () => {
+    if (!navigator.geolocation) {
+      window.location.href = "/restaurants";
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        try {
+          localStorage.setItem("ts.delivery.address", "Current location");
+          localStorage.setItem("ts.delivery.lat", String(coords.latitude));
+          localStorage.setItem("ts.delivery.lng", String(coords.longitude));
+        } catch {}
+        window.location.href = `/restaurants?lat=${coords.latitude}&lng=${coords.longitude}&address=${encodeURIComponent("Current location")}`;
+      },
+      () => {
+        window.location.href = "/restaurants";
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+    );
+  };
 
   return (
-    <div className="ts-app-shell">
-      <header className="ts-app-header">
-        <button className="ts-app-menu-button" type="button" onClick={() => setMenuOpen((value) => !value)} aria-label="Open navigation">
-          {menuOpen ? <X size={21} /> : <Menu size={21} />}
-        </button>
-        <Logo size="sm" />
-        <nav className="ts-app-desktop-nav" aria-label="Primary navigation">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={link.href === "/restaurants" ? "active" : undefined}>{link.label}</Link>
-          ))}
-        </nav>
-        <Link href={userId ? accountHref : "/login"} className="ts-app-signin">
-          {userId ? "Account" : "Sign In"}
-        </Link>
-        <Link href="/restaurants" className="ts-app-order-now">
-          Order now
-        </Link>
-      </header>
+    <div className="ts-fig">
+      <SiteHeader />
 
-      {menuOpen && (
-        <div className="ts-app-mobile-menu">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>{link.label}</Link>
-          ))}
-          <Link href={userId ? accountHref : "/login"} onClick={() => setMenuOpen(false)}>
-            {userId ? "Account" : "Sign In"}
-          </Link>
-        </div>
-      )}
-
-      <main>
-        <section className="ts-app-hero">
-          <div className="ts-app-hero-copy">
-            <span className="ts-app-chip">
-              <UtensilsCrossed size={15} />
-              {canShowNearbyRestaurants ? "Hot kitchens near you" : "Enter an address first"}
-            </span>
-            <h1>Hungry? We&apos;ve got <em>your block.</em></h1>
-            <p>
-              Order from real neighborhood kitchens, watch every handoff, and rack up rewards on every bite. No marketplace fluff.
-            </p>
-            <div className="ts-app-search-wrap">
+      {/* HERO */}
+      <section className="ts-fig-hero">
+        <div className="ts-fig-container ts-fig-hero-inner">
+          <div>
+            <motion.span
+              className="ts-fig-chip"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="ts-fig-chip-dot" />
+              Neighborhood kitchens, real food
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Your block&apos;s{" "}
+              <span className="o">best food,</span>
+              <span className="t">delivered.</span>
+            </motion.h1>
+            <motion.p
+              className="ts-fig-hero-sub"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Real restaurants from your neighborhood — not ghost kitchens, not chains. Enter your address to discover what&apos;s cooking nearby.
+            </motion.p>
+            <motion.div
+              className="ts-fig-hero-search"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            >
               <LandingSearch />
-            </div>
-            <div className="ts-app-hero-stats">
-              <Stat value={networkStats.averageRating?.toFixed(1) || "4.8"} label="avg rating" />
-              <Stat value="30 min" label="avg delivery" />
-              <Stat value={`${networkStats.totalRestaurants || 7}+`} label="local kitchens" />
-            </div>
-          </div>
-          <div className="ts-app-hero-preview">
-            <TrackingPreview isSignedIn={Boolean(userId)} />
-          </div>
-        </section>
-
-        {canShowNearbyRestaurants && categoryLabels.length > 0 && (
-          <section className="ts-app-category-strip" aria-label="Cuisine categories">
-            {categoryLabels.map((label) => (
-              <Link key={label} href={`/restaurants?search=${encodeURIComponent(label)}`}>
-                <Search size={15} aria-hidden="true" />
-                {label}
-              </Link>
-            ))}
-          </section>
-        )}
-
-        <section className="ts-app-info-grid" aria-label="Quick actions">
-          <InfoCard icon={MapPin} eyebrow="Start here" title="Enter your address" detail="See restaurants that can deliver to you." href="/restaurants" />
-          <InfoCard icon={Sparkles} eyebrow={userId ? "Your perks" : "Create account"} title={userId ? "Open rewards" : "Save orders and rewards"} detail="Keep addresses, TruePoints, and order history in one place." href={userId ? "/rewards" : "/signup"} />
-          <InfoCard icon={Clock3} eyebrow="Delivery modes" title="Now or scheduled" detail="Choose the timing that fits." href="/restaurants" />
-        </section>
-
-        <section className="ts-app-section">
-          <div className="ts-app-section-head">
-            <div>
-              <span className="ts-app-kicker">
-                {canShowNearbyRestaurants && featuredLocationLabel ? `Near ${featuredLocationLabel}` : "Start here"}
-              </span>
-              <h2>
-                {canShowNearbyRestaurants ? "Kitchens worth knowing." : "Enter an address to see nearby kitchens."}
-              </h2>
-            </div>
-            <Link href="/restaurants">View all <ArrowRight size={16} /></Link>
+            </motion.div>
+            <motion.button
+              type="button"
+              className="ts-fig-locate"
+              onClick={handleLocate}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <Navigation size={16} /> Or <u>use my current location</u>
+            </motion.button>
           </div>
 
-          {canShowNearbyRestaurants && featuredRestaurants.length > 0 ? (
-            <div className="ts-app-restaurant-grid">
-              {featuredRestaurants.map((restaurant) => (
-                <RestaurantTile key={restaurant.id} restaurant={restaurant} />
-              ))}
-            </div>
-          ) : (
-            <div className="ts-app-location-gate">
-              <div>
-                <MapPin size={25} aria-hidden="true" />
-              </div>
-              <section>
-                <span className="ts-app-kicker">No random restaurant feed</span>
-                <h3>Enter your address first.</h3>
-                <p>
-                  TrueServe only shows restaurants that match the customer&apos;s saved address or active delivery location.
-                </p>
-              </section>
-              <Link href="/restaurants" className="ts-app-primary">Find Food</Link>
-            </div>
-          )}
-        </section>
+          <LiveNearYouCard kitchens={liveKitchens} hasLocation={hasLocationContext} />
+        </div>
+      </section>
 
-        <section className="ts-app-how">
-          <div>
-            <span className="ts-app-chip"><PackageCheck size={15} /> How it works</span>
-            <h2>From craving to <em>doorstep</em>, without guessing.</h2>
-          </div>
-          <div className="ts-app-steps">
+      <CuisineMarquee items={marqueeItems} />
+
+      {/* HOW IT WORKS */}
+      <section className="ts-fig-section">
+        <div className="ts-fig-container">
+          <motion.div {...fadeIn(0)}>
+            <span className="ts-fig-kicker">How it works</span>
+            <h2>Three steps, then dinner.</h2>
+          </motion.div>
+          <div className="ts-fig-steps">
+            <div className="ts-fig-steps-connector" aria-hidden="true" />
             {[
-              ["01", "Drop your address", "Start with your delivery location so we can show the right local market."],
-              ["02", "Pick your kitchen", "Browse real partner restaurants once your address is known."],
-              ["03", "Track every handoff", "See kitchen status, driver movement, and delivery timing in one place."],
-            ].map(([num, title, detail]) => (
-              <article key={num}>
-                <span>{num}</span>
-                <h3>{title}</h3>
-                <p>{detail}</p>
-              </article>
+              {
+                icon: <MapPin size={28} />,
+                num: "01",
+                title: "Drop your pin",
+                copy: "Tell us where you are and we'll surface kitchens that can actually reach you — no algorithm-ranked guesses.",
+              },
+              {
+                icon: <Heart size={28} />,
+                num: "02",
+                title: "Browse real menus",
+                copy: "Actual neighborhood restaurants, updated daily. Not algorithm-ranked feeds.",
+              },
+              {
+                icon: <Truck size={28} />,
+                num: "03",
+                title: "Watch it arrive",
+                copy: "Live GPS tracking from the moment your driver picks up. No guessing, no wondering.",
+              },
+            ].map((step, i) => (
+              <motion.article key={step.num} className="ts-fig-step" {...fadeIn(0.1 * (i + 1))}>
+                <div className="ts-fig-step-icon">{step.icon}</div>
+                <span className="ts-fig-step-num">{step.num}</span>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </motion.article>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="ts-app-cta-grid">
-          <Link href="/drive" className="ts-app-cta-card">
-            <span><Bike size={19} /> Drivers</span>
-            <h2>Drive on your schedule. Earn $20/hr plus tips.</h2>
-            <p>Keep 100% of tips and see route details before accepting a delivery.</p>
-            <strong>Apply to drive <ArrowRight size={16} /></strong>
-          </Link>
-          <Link href="/merchant" className="ts-app-cta-card secondary">
-            <span><Store size={19} /> Restaurants</span>
-            <h2>Grow your kitchen. Keep more control.</h2>
-            <p>Lower fees, direct customer relationships, and cleaner order visibility.</p>
-            <strong>Partner with us <ArrowRight size={16} /></strong>
-          </Link>
-        </section>
+      {/* TRUST BAND */}
+      <section className="ts-fig-section ts-fig-section-haze">
+        <div className="ts-fig-container">
+          <div className="ts-fig-trust">
+            <motion.div className="ts-fig-trust-card dark" {...fadeIn(0)}>
+              <div className="ts-fig-trust-icon"><ShieldCheck size={20} /></div>
+              <h3>Safe &amp; secure</h3>
+              <p>Bank-level encryption. Your payment info stays yours.</p>
+              <div className="ts-fig-trust-badge">256-bit SSL</div>
+            </motion.div>
 
-        <section className="ts-app-rewards">
-          <div>
-            <span><Sparkles size={16} /> Free to join</span>
-            <h2>TrueServe Rewards. <em>Eat more, earn more.</em></h2>
-            <p>Earn TruePoints on completed orders and unlock perks after your account is created.</p>
+            <motion.div className="ts-fig-trust-card" {...fadeIn(0.1)}>
+              <div className="ts-fig-trust-icon"><Navigation size={20} /></div>
+              <h3>Real-time tracking</h3>
+              <p>Know exactly where your order is, the moment it moves.</p>
+              <div className="ts-fig-trust-slider">
+                <div className="ts-fig-trust-slider-track">
+                  <motion.div
+                    className="ts-fig-trust-slider-fill"
+                    initial={{ width: 0 }}
+                    whileInView={{ width: "64%" }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                  <motion.div
+                    className="ts-fig-trust-slider-thumb"
+                    initial={{ left: 0 }}
+                    whileInView={{ left: "64%" }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </div>
+                <div className="ts-fig-trust-slider-labels">
+                  <span>Kitchen</span>
+                  <span>Your door</span>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div className="ts-fig-trust-card teal" {...fadeIn(0.2)}>
+              <div className="ts-fig-trust-icon"><Users size={20} /></div>
+              <h3>
+                {networkStats.totalRestaurants ? (
+                  <><CountUp to={networkStats.totalRestaurants} suffix="+" /> local kitchens</>
+                ) : (
+                  "Local kitchens"
+                )}
+              </h3>
+              <p>Real neighborhood restaurants. Not chains, not ghost kitchens.</p>
+              <div className="ts-fig-trust-emojis" aria-hidden="true">
+                <span>ETA</span>
+                <span>GPS</span>
+                <span>Pay</span>
+                <span>Tips</span>
+                <span>Care</span>
+                <span className="more">+{Math.max(95, (networkStats.totalRestaurants || 100) - 5)}</span>
+              </div>
+            </motion.div>
           </div>
-          <Link href="/rewards" className="ts-app-primary">See Rewards</Link>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* WHY TRUESERVE */}
+      <section className="ts-fig-section">
+        <div className="ts-fig-container">
+          <motion.div {...fadeIn(0)}>
+            <span className="ts-fig-kicker teal">Why TrueServe</span>
+            <h2>Built for your block,<br />not the algorithm.</h2>
+          </motion.div>
+          <div className="ts-fig-why">
+            <motion.div className="ts-fig-why-card orange" {...fadeIn(0)}>
+              <div className="ts-fig-why-icon"><Award size={20} /></div>
+              <div className="ts-fig-why-glyph" aria-hidden="true">
+                <Award size={220} strokeWidth={1.2} />
+              </div>
+              <h3>Earn with every order</h3>
+              <p>Points that actually add up. Redeem for free delivery, discounts, and exclusive kitchen perks.</p>
+              <div className="ts-fig-why-foot">{networkStats.averageRating ? networkStats.averageRating.toFixed(1) : "4.8"}★ avg rating</div>
+            </motion.div>
+            <motion.div className="ts-fig-why-card teal" {...fadeIn(0.1)}>
+              <div className="ts-fig-why-icon"><Heart size={20} /></div>
+              <div className="ts-fig-why-glyph" aria-hidden="true">
+                <Heart size={220} strokeWidth={1.2} />
+              </div>
+              <h3>Support local</h3>
+              <p>Every order keeps a neighborhood kitchen alive. Not a chain, not a ghost kitchen — your neighbor&apos;s livelihood.</p>
+              <div className="ts-fig-why-foot">100% of tips to drivers</div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOR RESTAURANTS */}
+      <section className="ts-fig-section ts-fig-section-haze">
+        <div className="ts-fig-container">
+          <div className="ts-fig-merchant">
+            <motion.div {...fadeIn(0)}>
+              <div className="ts-fig-commission">
+                <div className="ts-fig-commission-title">Commission comparison</div>
+                <CommissionBar percent={30} color="bad" label="Other platforms" />
+                <CommissionBar percent={15} color="good" label="TrueServe" />
+                <div className="ts-fig-commission-savings">
+                  <small>On $10,000/month in sales</small>
+                  <strong>You keep <span className="accent">$1,500 more</span> every month.</strong>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div className="ts-fig-merchant-copy" {...fadeIn(0.1)}>
+              <span className="ts-fig-kicker">For restaurants</span>
+              <h2>Grow your restaurant on fair terms.</h2>
+              <p>Lower fees, more customers, and direct relationships with your community. You built the food — you should keep the upside.</p>
+              <ul className="ts-fig-feature-list">
+                <li>
+                  <div className="ts-fig-feat-icon"><Percent size={16} /></div>
+                  <div>
+                    <strong>15% commission (not 30%)</strong>
+                    <span>Keep more of what you earn vs 30% on other platforms</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="ts-fig-feat-icon"><Users size={16} /></div>
+                  <div>
+                    <strong>Own your customers</strong>
+                    <span>Build direct relationships, not marketplace dependency</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="ts-fig-feat-icon"><BarChart3 size={16} /></div>
+                  <div>
+                    <strong>Simple dashboard</strong>
+                    <span>Manage orders and track performance in real-time</span>
+                  </div>
+                </li>
+              </ul>
+              <Link href="/merchant" className="ts-fig-btn ts-fig-btn-dark">
+                Become a Partner <span className="ts-fig-btn-icon"><ArrowRight size={16} /></span>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* DRIVE WITH US */}
+      <section className="ts-fig-section">
+        <div className="ts-fig-container">
+          <div className="ts-fig-drive">
+            <motion.div {...fadeIn(0)}>
+              <span className="ts-fig-kicker teal">Drive with us</span>
+              <h2>Earn on your terms.<br />Keep your tips.</h2>
+              <p style={{ color: "var(--fig-muted)", fontSize: 16, lineHeight: 1.65, margin: "0 0 28px", maxWidth: 460 }}>
+                Flexible hours, real earnings, and you keep every cent of your tips.
+              </p>
+              <ul className="ts-fig-feature-list">
+                <li>
+                  <div className="ts-fig-feat-icon" style={{ background: "var(--fig-teal-soft)", color: "var(--fig-teal-deep)" }}><Wallet size={16} /></div>
+                  <div>
+                    <strong>Earn $20+/hour</strong>
+                    <span>Plus 100% of tips straight to you</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="ts-fig-feat-icon" style={{ background: "var(--fig-teal-soft)", color: "var(--fig-teal-deep)" }}><Clock size={16} /></div>
+                  <div>
+                    <strong>Work when you want</strong>
+                    <span>No minimums, no schedules, just flexibility</span>
+                  </div>
+                </li>
+                <li>
+                  <div className="ts-fig-feat-icon" style={{ background: "var(--fig-teal-soft)", color: "var(--fig-teal-deep)" }}><TrendingUp size={16} /></div>
+                  <div>
+                    <strong>Weekly bonuses</strong>
+                    <span>Peak-hour pay and top-performer rewards</span>
+                  </div>
+                </li>
+              </ul>
+              <Link href="/drive" className="ts-fig-btn ts-fig-btn-teal">
+                Start Driving Today <span className="ts-fig-btn-icon"><ArrowRight size={16} /></span>
+              </Link>
+            </motion.div>
+
+            <motion.div className="ts-fig-earnings" {...fadeIn(0.1)}>
+              <div className="ts-fig-earnings-title">This week&apos;s earnings</div>
+              <div className="ts-fig-earnings-amount">
+                $<CountUp to={233} />
+              </div>
+              <div className="ts-fig-earnings-days">
+                {[
+                  { lbl: "M", h: 28, active: true },
+                  { lbl: "T", h: 52, active: true },
+                  { lbl: "W", h: 36, active: true },
+                  { lbl: "T", h: 64, active: true },
+                  { lbl: "F", h: 78, active: true },
+                  { lbl: "S", h: 44, active: false },
+                  { lbl: "S", h: 20, active: false },
+                ].map((d, i) => (
+                  <div key={i} className={`ts-fig-earnings-day${d.active ? " active" : ""}`}>
+                    <motion.div
+                      className="bar"
+                      initial={{ height: 12 }}
+                      whileInView={{ height: d.h }}
+                      viewport={{ once: true, margin: "-80px" }}
+                      transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                    <span className="lbl">{d.lbl}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="ts-fig-earnings-tip">
+                <div>
+                  <small>Tips earned</small>
+                  <strong>$48.00</strong>
+                </div>
+                <div>
+                  <small>Yours to keep</small>
+                  <strong>100%</strong>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <SiteFooter />
     </div>
   );
 }
