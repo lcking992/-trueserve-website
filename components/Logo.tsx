@@ -42,8 +42,17 @@ const Logo: React.FC<LogoProps> = ({
                     objectFit: 'cover'
                 }}
             />
-            <span style={{ fontWeight: 900, letterSpacing: '-0.02em', whiteSpace: 'nowrap', color: '#fff' }}>
-                True<em style={{ color: '#68c7cc', fontStyle: 'normal', fontWeight: 900, letterSpacing: '-0.02em' }}>Serve</em>
+            <span
+                style={{
+                    fontFamily: 'var(--font-fraunces), Georgia, serif',
+                    fontWeight: 900,
+                    letterSpacing: '-0.055em',
+                    whiteSpace: 'nowrap',
+                    color: '#fff',
+                    lineHeight: 1,
+                }}
+            >
+                True<em style={{ color: '#68c7cc', fontStyle: 'normal', fontWeight: 900, letterSpacing: '-0.055em' }}>Serve</em>
             </span>
         </Link>
     );

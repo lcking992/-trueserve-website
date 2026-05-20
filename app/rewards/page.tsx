@@ -95,7 +95,7 @@ function AnniversaryRewardCard({
 
     return (
         <FadeInSection className="mt-8" delay={0.05}>
-            <section className="food-panel relative overflow-hidden">
+            <section className="food-panel rewards-anniversary-panel relative overflow-hidden">
                 <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_42%)]" />
                 <div className="relative z-10 grid gap-5 md:grid-cols-[0.8fr_1.2fr] md:items-center">
                     <div className="rounded-3xl border border-[#f97316]/30 bg-[#f97316]/10 p-5">
@@ -186,9 +186,9 @@ function MessageBanner({ update, tier }: { update?: string; tier?: string }) {
 }
 
 const TIER_IMAGES: Record<string, string> = {
-    Basic: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=70",   // pizza
-    Plus: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=70",        // grill
-    Premium: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=70",  // spread
+    Basic: "/hero-pizza.png",
+    Plus: "/littlerichards_bbq_plate.png",
+    Premium: "/old_north_state_charcuterie.png",
 };
 
 function TierCard({
@@ -315,7 +315,7 @@ export default async function RewardsPage({
                     <div className="pointer-events-none absolute inset-0">
                         <div
                             className="rewards-hero-poster absolute inset-0 bg-cover bg-center opacity-[0.12]"
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400&q=80')" }}
+                            style={{ backgroundImage: "url('/community_section.png')" }}
                         />
                         <video
                             className="rewards-hero-video decorative-video absolute inset-0 h-full w-full object-cover"

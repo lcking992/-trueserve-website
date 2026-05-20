@@ -120,7 +120,7 @@ export default function LoginPage() {
           <section className="food-hero-card food-auth-hero">
             <div
               className="food-auth-image"
-              style={{ backgroundImage: "url('https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80')" }}
+              style={{ backgroundImage: "url('/hero_food_delivery.png')" }}
             />
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Customer and team access</div>

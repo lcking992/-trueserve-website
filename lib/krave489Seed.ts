@@ -21,7 +21,7 @@ const RESTAURANT = {
   description:
     "Coastal comfort, thoughtfully elevated. A relaxed seafood and comfort dining experience inspired by the Krave 489 menu and atmosphere.",
   imageUrl:
-    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2000&auto=format&fit=crop",
+    "/merchant_hero.png",
   openTime: "11:00:00",
   closeTime: "22:00:00",
 };

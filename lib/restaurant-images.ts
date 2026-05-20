@@ -5,14 +5,14 @@ type RestaurantImageInput = {
 };
 
 const FALLBACK_RESTAURANT_IMAGES = {
-  burger: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1200&q=80&auto=format&fit=crop",
-  diner: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200&q=80&auto=format&fit=crop",
-  pizza: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&q=80&auto=format&fit=crop",
-  steak: "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80&auto=format&fit=crop",
-  sushi: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=1200&q=80&auto=format&fit=crop",
-  mexican: "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=1200&q=80&auto=format&fit=crop",
-  cafe: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=80&auto=format&fit=crop",
-  general: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80&auto=format&fit=crop",
+  burger: "/hero-burger.png",
+  diner: "/olympia_western_omelet.png",
+  pizza: "/hero-pizza.png",
+  steak: "/thirteen_bones_ribs.png",
+  sushi: "/hero-sushi.png",
+  mexican: "/snappy_pork_chop.png",
+  cafe: "/barneys_club_sandwich.png",
+  general: "/hero_food_delivery.png",
 };
 
 export function getRestaurantDisplayImage(restaurant: RestaurantImageInput) {
@@ -21,7 +21,7 @@ export function getRestaurantDisplayImage(restaurant: RestaurantImageInput) {
   if (restaurant.imageUrl && restaurant.imageUrl.trim()) return restaurant.imageUrl;
 
   if (text.includes("dhan")) {
-    return "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=1200&q=80&auto=format&fit=crop";
+    return "/snappy_pork_chop.png";
   }
 
   if (text.includes("steak 'n shake") || text.includes("steak n shake")) {

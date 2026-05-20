@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 
 const images = [
-    "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop", // Pizza
-    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1000&auto=format&fit=crop", // Burger
-    "https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1000&auto=format&fit=crop", // Sushi
-    "https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1000&auto=format&fit=crop", // Pasta
-    "https://images.unsplash.com/photo-1626074353765-517a681e40be?q=80&w=1000&auto=format&fit=crop", // Tacos
+    "/hero-pizza.png",
+    "/hero-burger.png",
+    "/hero-sushi.png",
+    "/barneys_club_sandwich.png",
+    "/snappy_pork_chop.png",
 ];
 
 export default function HeroCarousel() {

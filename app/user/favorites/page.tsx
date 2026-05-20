@@ -88,7 +88,7 @@ export default async function FavoriteRestaurantsPage() {
                     <div
                       style={{
                         height: 180,
-                        backgroundImage: `linear-gradient(180deg, rgba(7,10,14,0.15), rgba(7,10,14,0.7)), url('${restaurant.imageUrl || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80"}')`,
+                        backgroundImage: `linear-gradient(180deg, rgba(7,10,14,0.15), rgba(7,10,14,0.7)), url('${restaurant.imageUrl || "/hero_food_delivery.png"}')`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }}

@@ -657,7 +657,7 @@ export async function submitMerchantInquiry(prevState: any, formData: FormData):
             state,
             lat,
             lng,
-            imageUrl: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=1200',
+            imageUrl: '/merchant_hero.png',
             plan: plan || 'Flex Options',
             posSystem,
             posClientId,

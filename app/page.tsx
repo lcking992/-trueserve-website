@@ -297,7 +297,10 @@ export default function Home() {
       <main>
         <section className="ts-app-hero">
           <div className="ts-app-hero-copy">
-            <span className="ts-app-chip"><UtensilsCrossed size={15} /> Hot kitchens near you</span>
+            <span className="ts-app-chip">
+              <UtensilsCrossed size={15} />
+              {canShowNearbyRestaurants ? "Hot kitchens near you" : "Enter an address first"}
+            </span>
             <h1>Hungry? We&apos;ve got <em>your block.</em></h1>
             <p>
               Order from real neighborhood kitchens, watch every handoff, and rack up rewards on every bite. No marketplace fluff.

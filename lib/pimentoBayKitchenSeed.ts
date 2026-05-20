@@ -20,7 +20,7 @@ const RESTAURANT = {
   description:
     "A Taste of the island To-Go. Authentic Caribbean cuisine with island market favorites, roti, patties, oxtail, jerk chicken, and fresh daily specials.",
   imageUrl:
-    "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2000&auto=format&fit=crop",
+    "/littlerichards_bbq_plate.png",
   openTime: "09:00:00",
   closeTime: "20:00:00",
 };

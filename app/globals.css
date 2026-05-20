@@ -22,9 +22,9 @@
 }
 
 .ts-app-shell main {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 26px 0 76px;
+  padding: 24px 0 72px;
 }
 
 .ts-app-header {
@@ -118,11 +118,11 @@
 
 .ts-app-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(360px, .76fr);
+  grid-template-columns: minmax(0, 1.02fr) minmax(320px, .72fr);
   align-items: center;
-  gap: clamp(30px, 6vw, 70px);
-  min-height: min(720px, calc(100vh - 86px));
-  padding: clamp(28px, 5vw, 66px) 0;
+  gap: clamp(28px, 5vw, 56px);
+  min-height: min(620px, calc(100vh - 86px));
+  padding: clamp(26px, 4vw, 48px) 0;
 }
 
 .ts-app-hero-copy {
@@ -150,13 +150,13 @@
 
 .ts-app-hero h1 {
   margin: 18px 0 18px;
-  max-width: 650px;
+  max-width: 590px;
   color: #fff;
   font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-size: clamp(70px, 9.2vw, 118px);
+  font-size: clamp(48px, 6.4vw, 82px);
   font-weight: 800;
-  line-height: .95;
-  letter-spacing: -.055em;
+  line-height: 1.02;
+  letter-spacing: -.045em;
   text-transform: none;
 }
 
@@ -168,10 +168,10 @@
 }
 
 .ts-app-hero p {
-  max-width: 540px;
+  max-width: 520px;
   margin: 0;
   color: rgba(255, 255, 255, .74);
-  font-size: clamp(15px, 1.5vw, 18px);
+  font-size: clamp(14px, 1.3vw, 16px);
   line-height: 1.65;
 }
 
@@ -287,20 +287,20 @@
 .ts-app-phone {
   position: relative;
   z-index: 1;
-  width: min(390px, 100%);
+  width: min(350px, 100%);
   margin: 0 auto;
   border: 2px solid rgba(255, 255, 255, .16);
-  border-radius: 40px;
+  border-radius: 34px;
   background:
     radial-gradient(circle at 80% 8%, rgba(31, 198, 214, .12), transparent 38%),
     linear-gradient(180deg, rgba(7, 18, 31, .98), rgba(7, 14, 24, .98));
-  padding: 20px;
+  padding: 18px;
   box-shadow: 0 34px 90px rgba(0, 0, 0, .44);
 }
 
 .ts-app-order-preview {
-  min-height: 620px;
-  padding: 30px;
+  min-height: 540px;
+  padding: 24px;
 }
 
 .ts-app-phone-status,
@@ -348,8 +348,8 @@
 
 .ts-app-delivered-badge {
   position: absolute;
-  left: -38px;
-  top: 118px;
+  left: -28px;
+  top: 104px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -359,7 +359,7 @@
   background: #081522;
   color: #fff;
   padding: 9px 16px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 950;
   box-shadow: 0 14px 28px rgba(0, 0, 0, .34);
 }
@@ -369,7 +369,7 @@
 }
 
 .ts-app-phone-copy {
-  margin-top: 58px;
+  margin-top: 46px;
 }
 
 .ts-app-phone-copy span {
@@ -381,12 +381,12 @@
 }
 
 .ts-app-phone-copy h2 {
-  max-width: 320px;
+  max-width: 290px;
   margin: 10px 0 0;
   color: #fff9ee;
   font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-size: clamp(34px, 4vw, 46px);
-  line-height: .98;
+  font-size: clamp(28px, 3vw, 36px);
+  line-height: 1.04;
   font-weight: 950;
   letter-spacing: -.04em;
 }
@@ -395,13 +395,13 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-height: 58px;
-  margin: 30px 0;
+  min-height: 50px;
+  margin: 22px 0;
   border: 2px solid rgba(255, 255, 255, .16);
   border-radius: 999px;
   padding: 0 18px;
   color: rgba(255, 255, 255, .64);
-  font-size: 17px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -411,10 +411,10 @@
 
 .ts-app-reorder-card {
   border: 2px solid rgba(255, 255, 255, .18);
-  border-radius: 30px;
+  border-radius: 24px;
   background: linear-gradient(135deg, #ff7b24, #d84c12);
   color: #07131f;
-  padding: 22px;
+  padding: 18px;
   box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .08);
 }
 
@@ -440,7 +440,7 @@
   display: block;
   margin-top: 18px;
   color: #07131f;
-  font-size: 24px;
+  font-size: 20px;
   line-height: 1.1;
   font-weight: 950;
 }
@@ -468,14 +468,14 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .ts-app-mini-categories span {
   display: grid;
   place-items: center;
   gap: 9px;
-  min-height: 96px;
+  min-height: 78px;
   border: 2px solid rgba(255, 255, 255, .14);
   border-radius: 22px;
   color: rgba(255, 255, 255, .82);
@@ -488,8 +488,8 @@
 }
 
 .ts-app-tier-pill {
-  min-height: 54px;
-  margin-top: 28px;
+  min-height: 46px;
+  margin-top: 20px;
   border-radius: 999px;
   background: #ffd23f;
   color: #07131f;
@@ -621,9 +621,9 @@
   margin: 9px 0 0;
   color: #fff;
   font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-size: clamp(38px, 5vw, 68px);
-  line-height: 1;
-  letter-spacing: -.045em;
+  font-size: clamp(30px, 4vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -.035em;
   text-transform: none;
 }
 
@@ -1587,11 +1587,12 @@
   .ts-app-hero {
     min-height: auto;
     gap: 28px;
-    padding: 28px 0;
+    padding: 24px 0;
   }
 
   .ts-app-hero h1 {
-    font-size: clamp(54px, 17vw, 78px);
+    font-size: clamp(40px, 11.8vw, 56px);
+    line-height: 1.03;
   }
 
   .ts-app-search-wrap form {
@@ -1633,24 +1634,31 @@
   }
 
   .ts-app-phone {
-    border-radius: 30px;
+    width: min(100%, 344px);
+    border-radius: 28px;
   }
 
   .ts-app-order-preview {
     min-height: auto;
-    padding: 22px;
+    padding: 18px;
   }
 
   .ts-app-delivered-badge {
-    left: -12px;
-    top: 112px;
+    position: static;
+    width: fit-content;
+    margin-top: 18px;
+    transform: none;
     font-size: 13px;
     padding: 8px 12px;
   }
 
+  .ts-app-phone-copy {
+    margin-top: 18px;
+  }
+
   .ts-app-phone-copy h2 {
-    max-width: 280px;
-    font-size: 34px;
+    max-width: 250px;
+    font-size: 27px;
   }
 
   .ts-app-phone-search {
@@ -1665,7 +1673,7 @@
   }
 
   .ts-app-reorder-card strong {
-    font-size: 19px;
+    font-size: 18px;
   }
 
   .ts-app-mini-categories {
@@ -1699,12 +1707,27 @@
   .ts-app-how h2,
   .ts-app-cta-card h2,
   .ts-app-rewards h2 {
-    font-size: clamp(38px, 12vw, 52px);
+    font-size: clamp(28px, 8.6vw, 38px);
+    line-height: 1.12;
   }
 
   .ts-help-page main,
   .ts-account-page main {
     width: min(100% - 24px, 720px);
+  }
+
+  .food-app-shell .food-title {
+    font-size: clamp(34px, 10vw, 46px) !important;
+    line-height: 1.08 !important;
+  }
+
+  .food-app-shell .food-heading {
+    font-size: clamp(24px, 8vw, 34px) !important;
+    line-height: 1.12 !important;
+  }
+
+  .food-auth-hero .food-heading {
+    font-size: clamp(36px, 11vw, 42px) !important;
   }
 
   .ts-help-hero {
@@ -2533,11 +2556,12 @@ nav {
 
 .food-title {
   font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-size: clamp(42px, 8vw, 86px);
-  line-height: 0.98;
-  letter-spacing: -.045em;
+  font-size: clamp(34px, 5.8vw, 64px);
+  line-height: 1.02;
+  letter-spacing: -.035em;
   text-transform: none;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .food-title .accent,
@@ -2547,11 +2571,12 @@ nav {
 
 .food-heading {
   font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  font-size: clamp(28px, 4vw, 44px);
-  line-height: 1;
+  font-size: clamp(24px, 3.2vw, 38px);
+  line-height: 1.06;
   text-transform: none;
-  letter-spacing: -.04em;
+  letter-spacing: -.032em;
   text-wrap: balance;
+  overflow-wrap: anywhere;
 }
 
 .food-subtitle {
@@ -6221,8 +6246,8 @@ nav {
   .tracking-info { width: 100%; border-right: none; border-bottom: 1px solid var(--border); padding: 20px; height: auto; }
   .tracking-map { height: 300px; width: 100%; }
 
-  .food-title { font-size: 30px; line-height: 1; }
-  .food-heading { font-size: 28px; line-height: 1.04; }
+  .food-title { font-size: 32px; line-height: 1.05; }
+  .food-heading { font-size: 25px; line-height: 1.1; }
   .food-subtitle { line-height: 1.65; font-size: 14px; }
   .food-hero-card { padding: 18px 14px 20px; border-radius: 24px; }
   .food-hero-content { gap: 18px; padding: 26px 6px 22px; }
@@ -6532,12 +6557,14 @@ nav {
   .hero-preview-copy { padding: 14px; }
   .hero-preview-title { font-size: 22px; }
   .rewards-chip-row {
-    flex-wrap: nowrap;
-    overflow-x: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    overflow: visible;
   }
   .rewards-chip-row .food-chip {
     width: auto;
-    white-space: nowrap;
+    min-width: 0;
+    white-space: normal;
     align-items: center;
     line-height: 1.5;
   }
@@ -6642,8 +6669,8 @@ nav {
     .login-box { padding: 24px 20px; }
     .role-tab { font-size: 11px; padding: 7px; }
     .food-auth-wrap { padding-top: 20px; }
-    .food-title { font-size: 38px; line-height: 1; }
-    .food-heading { font-size: 28px; line-height: 1.04; }
+    .food-title { font-size: 32px; line-height: 1.06; }
+    .food-heading { font-size: 24px; line-height: 1.12; }
     .home-bg-img { filter: none; }
     .portal-controls { gap: 5px; }
     .portal-btn-compact { padding: 7px 10px; font-size: 9px; }
@@ -7424,8 +7451,8 @@ nav {
   display: block;
   margin-top: 6px;
   color: #fff;
-  font-family: var(--font-bebas), sans-serif;
-  font-size: 56px;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  font-size: clamp(36px, 4.4vw, 52px);
   line-height: 1;
 }
 
@@ -7447,6 +7474,41 @@ nav {
 
 .rewards-tier-card:hover {
   transform: translateY(-4px) scale(1.02);
+}
+
+.rewards-tier-matrix .food-heading {
+  font-size: clamp(26px, 3vw, 34px) !important;
+  line-height: 1.08 !important;
+}
+
+.rewards-tier-card,
+.rewards-wallet-summary,
+.food-panel,
+.food-card {
+  min-width: 0;
+}
+
+.rewards-anniversary-panel {
+  padding: clamp(18px, 2.6vw, 24px);
+}
+
+.rewards-anniversary-panel .food-heading {
+  font-size: clamp(24px, 3vw, 32px) !important;
+  line-height: 1.08 !important;
+}
+
+.food-auth-hero .food-heading {
+  font-size: clamp(34px, 4vw, 48px) !important;
+  line-height: 1.08 !important;
+}
+
+.rewards-tier-card p,
+.rewards-tier-card span,
+.rewards-tier-card strong,
+.rewards-wallet-summary p,
+.rewards-wallet-summary span,
+.rewards-wallet-summary strong {
+  overflow-wrap: anywhere;
 }
 
 .contact-hub-grid {
@@ -7716,6 +7778,11 @@ nav {
   }
 
   .rewards-wallet-balance strong {
-    font-size: 46px;
+    font-size: 38px;
+  }
+
+  .rewards-anniversary-panel .food-heading {
+    font-size: 22px !important;
+    line-height: 1.12 !important;
   }
 }
