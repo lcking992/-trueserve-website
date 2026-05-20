@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 interface LogoProps {
     className?: string;
-    size?: 'sm' | 'md' | 'lg' | 'xl';
+    size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     href?: string;
 }
 
@@ -13,6 +13,7 @@ const Logo: React.FC<LogoProps> = ({
     href = "/"
 }) => {
     const sizes = {
+        xs: { text: 'text-[12px]', icon: 22 },
         sm: { text: 'text-[18px]', icon: 32 },
         md: { text: 'text-[24px]', icon: 40 },
         lg: { text: 'text-[32px]', icon: 48 },

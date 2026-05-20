@@ -18,6 +18,7 @@ import DriverPhotoReportCard from "./DriverPhotoReportCard";
 import HustleAssistant from "./HustleAssistant";
 import DriverIncidentTimeline from "./DriverIncidentTimeline";
 import OrderTransparencyLog from "@/components/OrderTransparencyLog";
+import DriverShiftPayoutCard from "./DriverShiftPayoutCard";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,9 @@ export default async function DriverDashboard() {
     let myActiveOrders: any[] = [];
     let weather = { temperature: 68, condition: "Clear", multiplier: 1.0 };
     let stats = { totalEarnings: 0, balance: 0, trips: 0, rating: 0 };
+    let activeShift: { id: string; startedAt: string; hourlyRate: number } | null = null;
+    let todayShiftMinutes = 0;
+    let todayShiftPay = 0;
 
     if (isPreview) {
         availableOrders = [
@@ -80,6 +84,8 @@ export default async function DriverDashboard() {
             customer: { name: "Alex Johnson" },
             restaurant: { name: "Emerald Kitchen", address: "120 S Tryon St, Charlotte NC", lat: 35.2271, lng: -80.8431, complianceScore: 95, complianceStatus: "ACTIVE" },
         }];
+        todayShiftMinutes = 185;
+        todayShiftPay = Number(((todayShiftMinutes / 60) * 20).toFixed(2));
     } else {
         const supabase = await createClient();
 
@@ -105,6 +111,35 @@ export default async function DriverDashboard() {
 
         availableOrders = rawAvailable || [];
         myActiveOrders = rawActive || [];
+
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const { data: shifts, error: shiftsError } = await supabase
+            .from("DriverShift")
+            .select("id, startedAt, endedAt, hourlyRate, minutesWorked, estimatedPay, status")
+            .eq("driverId", driver.id)
+            .gte("startedAt", startOfDay.toISOString())
+            .order("startedAt", { ascending: false });
+
+        if (!shiftsError && shifts) {
+            const active = shifts.find((shift: any) => shift.status === "ACTIVE");
+            activeShift = active
+                ? {
+                    id: active.id,
+                    startedAt: active.startedAt,
+                    hourlyRate: Number(active.hourlyRate || 20),
+                }
+                : null;
+            todayShiftMinutes = shifts
+                .filter((shift: any) => shift.status === "COMPLETED")
+                .reduce((sum: number, shift: any) => sum + Number(shift.minutesWorked || 0), 0);
+            todayShiftPay = shifts
+                .filter((shift: any) => shift.status === "COMPLETED")
+                .reduce((sum: number, shift: any) => sum + Number(shift.estimatedPay || 0), 0);
+        } else if (shiftsError) {
+            console.warn("[DriverShift] Shift tracking unavailable:", shiftsError.message);
+        }
     }
 
     stats = {
@@ -115,6 +150,7 @@ export default async function DriverDashboard() {
     };
 
     const hasStripe = Boolean((driver as any)?.stripeAccountId);
+    const stripeReady = Boolean((driver as any)?.stripeAccountId && (driver as any)?.stripeOnboardingComplete);
     const primaryOrder = myActiveOrders[0] || null;
     const additionalOrders = myActiveOrders.slice(1);
     const pickupAddress = primaryOrder?.restaurant?.address || "";
@@ -624,9 +660,123 @@ export default async function DriverDashboard() {
                 display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px;
             }
 
+            .driver-shift-card {
+                margin-bottom: 16px;
+                padding: 18px;
+                border: 1px solid rgba(249,115,22,0.24);
+                border-radius: 12px;
+                background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(20,26,24,0.96) 42%, rgba(9,11,10,0.98));
+                box-shadow: 0 18px 45px rgba(0,0,0,0.24);
+            }
+            .driver-shift-top {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 14px;
+            }
+            .driver-shift-kicker {
+                margin: 0 0 4px;
+                color: #f97316;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: 0.16em;
+                text-transform: uppercase;
+            }
+            .driver-shift-top h2 {
+                margin: 0;
+                color: #fff;
+                font-size: 22px;
+                font-weight: 900;
+                letter-spacing: -0.02em;
+            }
+            .driver-shift-pill {
+                display: inline-flex;
+                align-items: center;
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 999px;
+                color: #aaa;
+                background: rgba(255,255,255,0.04);
+                padding: 7px 11px;
+                font-size: 10px;
+                font-weight: 900;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+            .driver-shift-pill.active {
+                color: #3ecf6e;
+                border-color: rgba(62,207,110,0.28);
+                background: rgba(62,207,110,0.1);
+            }
+            .driver-shift-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            .driver-shift-metric {
+                background: rgba(8,10,9,0.72);
+                border: 1px solid rgba(255,255,255,0.08);
+                border-radius: 8px;
+                padding: 12px;
+                min-height: 92px;
+            }
+            .driver-shift-metric svg { color: #f97316; margin-bottom: 10px; }
+            .driver-shift-metric span {
+                display: block;
+                color: #777;
+                font-size: 9px;
+                font-weight: 900;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+            .driver-shift-metric strong {
+                display: block;
+                color: #fff;
+                font-size: 20px;
+                line-height: 1.05;
+                font-weight: 900;
+            }
+            .driver-shift-actions {
+                display: flex;
+                gap: 8px;
+                margin-top: 12px;
+                flex-wrap: wrap;
+            }
+            .driver-shift-actions form { margin: 0; }
+            .driver-shift-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 42px;
+                border-radius: 8px;
+                border: 1px solid rgba(255,255,255,0.1);
+                background: rgba(255,255,255,0.04);
+                color: #fff;
+                padding: 0 16px;
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 0.12em;
+                text-transform: uppercase;
+                text-decoration: none;
+            }
+            .driver-shift-btn.primary {
+                background: #f97316;
+                border-color: #f97316;
+                color: #050505;
+            }
+            .driver-shift-note {
+                margin: 12px 0 0;
+                color: #777;
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
             @media (max-width: 1024px) {
                 .dd-two-col, .dd-bottom-grid { grid-template-columns: 1fr; }
                 .dd-stat-grid { grid-template-columns: repeat(3, 1fr); }
+                .driver-shift-grid { grid-template-columns: repeat(2, 1fr); }
             }
             @media (max-width: 640px) {
                 .driver-app-card { align-items: stretch; flex-direction: column; padding: 14px; }
@@ -647,6 +797,10 @@ export default async function DriverDashboard() {
                 .dd-stripe-connected { text-align: center; }
                 .dd-weather-card { padding: 14px 16px; }
                 .dd-weather-temp { font-size: 22px; }
+                .driver-shift-card { padding: 14px; }
+                .driver-shift-top { flex-direction: column; gap: 10px; }
+                .driver-shift-grid { grid-template-columns: 1fr; }
+                .driver-shift-btn, .driver-shift-actions form { width: 100%; }
             }
         `}</style>
 
@@ -685,6 +839,15 @@ export default async function DriverDashboard() {
             locationLabel={driverLat && driverLng ? `${driverLat.toFixed(2)}°N` : undefined}
         />
 
+        <DriverShiftPayoutCard
+            activeShift={activeShift}
+            todayMinutes={todayShiftMinutes}
+            todayShiftPay={todayShiftPay}
+            stripeConnected={hasStripe}
+            stripeReady={stripeReady}
+            balance={Number(driver.balance || 0)}
+        />
+
         {/* STRIPE BANNER */}
         {!hasStripe ? (
             <div className="dd-stripe-banner">
@@ -704,11 +867,21 @@ export default async function DriverDashboard() {
                 <div className="dd-stripe-left">
                     <div className="dd-stripe-icon connected" />
                     <div>
-                        <span className="dd-stripe-title">Stripe account connected.</span>
-                        <span className="dd-stripe-sub">Your payouts are active and rolling to your bank.</span>
+                        <span className="dd-stripe-title">
+                            {stripeReady ? "Stripe payouts active." : "Stripe setup started."}
+                        </span>
+                        <span className="dd-stripe-sub">
+                            {stripeReady
+                                ? "Your payouts are active and rolling to your bank."
+                                : "Finish onboarding so payouts can move to your bank."}
+                        </span>
                     </div>
                 </div>
-                <span className="dd-stripe-connected">Payouts Active</span>
+                {stripeReady ? (
+                    <span className="dd-stripe-connected">Payouts Active</span>
+                ) : (
+                    <Link href="/driver/dashboard/account" className="dd-stripe-btn">Finish Setup</Link>
+                )}
             </div>
         )}
 

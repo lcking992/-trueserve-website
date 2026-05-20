@@ -1,8 +1,9 @@
 // Deployment Trigger: 2026-04-04 04:10
 import type { Metadata } from "next";
-import { Barlow_Condensed, DM_Sans, DM_Mono, Bebas_Neue } from "next/font/google";
+import { Barlow_Condensed, DM_Sans, DM_Mono, Bebas_Neue, Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import MobileTabBar from "@/components/MobileTabBar";
+import CustomerSupportLauncher from "@/components/CustomerSupportLauncher";
 
 const bebasNeue = Bebas_Neue({
   variable: "--font-bebas",
@@ -14,6 +15,20 @@ const bebasNeue = Bebas_Neue({
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+  subsets: ["latin"],
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
+  weight: ["400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
   display: 'swap',
 });
@@ -48,9 +63,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable} ${dmMono.variable} ${barlowCond.variable}`}>
+    <html lang="en" className={`${bebasNeue.variable} ${dmSans.variable} ${plusJakarta.variable} ${fraunces.variable} ${dmMono.variable} ${barlowCond.variable}`}>
       <body className="antialiased">
         {children}
+        <CustomerSupportLauncher />
         <MobileTabBar />
       </body>
     </html>

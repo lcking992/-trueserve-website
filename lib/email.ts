@@ -4,6 +4,40 @@ import nodemailer from 'nodemailer';
 import * as Sentry from '@sentry/nextjs';
 import { logger } from './logger';
 
+async function sendViaResend(to: string, subject: string, htmlBody: string, attachments?: any[]) {
+    if (!process.env.RESEND_API_KEY) {
+        return { error: true, message: "RESEND_API_KEY is not configured." };
+    }
+
+    const fromEmail = process.env.RESEND_FROM_EMAIL || process.env.SES_FROM_EMAIL || 'TrueServe <onboarding@trueserve.delivery>';
+    const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            from: fromEmail,
+            to,
+            subject,
+            html: htmlBody,
+            attachments: attachments?.map((att) => ({
+                filename: att.filename,
+                content: Buffer.isBuffer(att.content)
+                    ? att.content.toString("base64")
+                    : Buffer.from(att.content).toString("base64"),
+            })),
+        }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        return { error: true, message: data?.message || `Resend HTTP ${response.status}` };
+    }
+
+    return { success: true, data };
+}
+
 function createTransporter() {
     return nodemailer.createTransport({
         host: process.env.SES_SMTP_HOST || 'email-smtp.us-east-1.amazonaws.com',
@@ -19,9 +53,12 @@ function createTransporter() {
 export async function sendEmail(to: string, subject: string, htmlBody: string, attachments?: any[]) {
     // Fallback if no SMTP credentials are set
     if (!process.env.SES_SMTP_USER || !process.env.SES_SMTP_PASS) {
-        logger.warn("Warning [MOCK EMAIL] AWS SES SMTP Credentials missing in .env");
-        logger.info({ to, subject, attachments: attachments ? attachments.length : 0 }, '[MOCK EMAIL] details');
-        return { success: true };
+        const resendResult = await sendViaResend(to, subject, htmlBody, attachments);
+        if ((resendResult as any).success) return resendResult;
+
+        logger.warn("Warning [MOCK EMAIL] AWS SES SMTP and Resend credentials missing or failed.");
+        logger.info({ to, subject, attachments: attachments ? attachments.length : 0, resendResult }, '[MOCK EMAIL] details');
+        return { success: true, mocked: true, resendResult };
     }
 
     try {
@@ -88,6 +125,10 @@ export async function sendEmail(to: string, subject: string, htmlBody: string, a
             tags: { service: 'AWS SES SMTP' },
             extra: { to, subject }
         });
+
+        const resendResult = await sendViaResend(to, subject, htmlBody, attachments);
+        if ((resendResult as any).success) return resendResult;
+
         return { error: true, message: e.message };
     }
 }

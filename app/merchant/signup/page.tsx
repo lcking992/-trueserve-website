@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Logo from "@/components/Logo";
 import { submitMerchantInquiry } from "@/app/merchant/actions";
+import { Building2, ChefHat, LockKeyhole, Mail, MapPin, Phone, UserRound } from "lucide-react";
 
 export default function MerchantSignupPage() {
   const [step, setStep] = useState(1);
@@ -41,7 +42,7 @@ export default function MerchantSignupPage() {
           <section className="food-hero-card food-auth-hero">
             <div className="food-auth-image" style={{ backgroundImage: "url('/merchant_hero.png')" }} />
             <div className="food-auth-hero-inner">
-              <div className="food-eyebrow">🤝 Founding Partner Program</div>
+              <div className="food-eyebrow">Founding Partner Program</div>
               <div className="mt-5 space-y-4">
                 <h1 className="food-heading !text-[56px]">Lock In Your Rate. <span className="accent">Keep Every Dollar.</span></h1>
                 <p className="food-subtitle !max-w-[520px]">
@@ -76,7 +77,7 @@ export default function MerchantSignupPage() {
 
           <section className="food-panel food-auth-form">
             <Link href="/" className="su-back">← Back to Home</Link>
-            <p className="food-kicker mb-3">🤝 Founding Partner Application</p>
+            <p className="food-kicker mb-3">Founding Partner Application</p>
             <h1 className="food-heading !text-[36px]">Apply as a Founding Partner</h1>
             <p className="lead mt-2">First 30 days free · Rate locked forever · Zero commission.</p>
 
@@ -123,16 +124,16 @@ export default function MerchantSignupPage() {
                   <div className="sc">
                     <h3><span className="sn">1</span> Restaurant Info</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="fg"><label>Restaurant Name</label><input type="text" placeholder="Your restaurant name" value={restaurantName} onChange={(e) => setRestaurantName(e.target.value)} required /></div>
-                      <div className="fg"><label>Cuisine Type</label><input type="text" placeholder="Cuisine category"/></div>
+                      <div className="fg input-with-icon"><label>Restaurant Name</label><Building2 size={15} aria-hidden="true" /><input type="text" placeholder="Your restaurant name" value={restaurantName} onChange={(e) => setRestaurantName(e.target.value)} required /></div>
+                      <div className="fg input-with-icon"><label>Cuisine Type</label><ChefHat size={15} aria-hidden="true" /><input type="text" placeholder="Cuisine category"/></div>
                     </div>
-                    <div className="fg"><label>Street Address</label><input type="text" placeholder="123 Main St" value={address} onChange={(e) => setAddress(e.target.value)} required /></div>
+                    <div className="fg input-with-icon"><label>Street Address</label><MapPin size={15} aria-hidden="true" /><input type="text" placeholder="123 Main St" value={address} onChange={(e) => setAddress(e.target.value)} required /></div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="fg"><label>Phone</label><input type="text" placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => setPhone(e.target.value)} required /></div>
-                      <div className="fg"><label>Owner Name</label><input type="text" placeholder="Jane Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} required /></div>
+                      <div className="fg input-with-icon"><label>Phone</label><Phone size={15} aria-hidden="true" /><input type="text" placeholder="+1 (555) 000-0000" value={phone} onChange={(e) => setPhone(e.target.value)} required /></div>
+                      <div className="fg input-with-icon"><label>Owner Name</label><UserRound size={15} aria-hidden="true" /><input type="text" placeholder="Jane Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} required /></div>
                     </div>
-                    <div className="fg"><label>Email Address</label><input type="email" placeholder="jane@restaurant.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
-                    <div className="fg"><label>Password</label><input type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
+                    <div className="fg input-with-icon"><label>Email Address</label><Mail size={15} aria-hidden="true" /><input type="email" placeholder="jane@restaurant.com" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+                    <div className="fg input-with-icon"><label>Password</label><LockKeyhole size={15} aria-hidden="true" /><input type="password" placeholder="At least 8 characters" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
                   </div>
                   <button
                     type="button"
@@ -199,7 +200,7 @@ export default function MerchantSignupPage() {
             {step === 3 && (
               <div id="ms-3" className="step active">
                 <div className="done-card">
-                  <div className="done-ico">🎉</div>
+                  <div className="done-ico">✓</div>
                   <h3>You're in! Application Submitted.</h3>
                   <p>We'll review your application within 24 hours and send setup instructions straight to your inbox.</p>
                   <button className="place-btn" onClick={() => router.push('/merchant/dashboard?tour=1')}>Go to Portal</button>

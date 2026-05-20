@@ -84,9 +84,17 @@ export default function CheckoutForm({ onSuccess, totalAmount, disabled }: Check
     };
 
     return (
-        <form id="payment-form" onSubmit={handleSubmit} className="space-y-6">
+        <form
+            id="payment-form"
+            onSubmit={handleSubmit}
+            className="space-y-6"
+            aria-describedby={message ? "payment-message" : "payment-help"}
+        >
             <div className="mb-6">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Express Checkout</p>
+                <p id="payment-help" className="sr-only">
+                    Complete payment to place your order. Required address and schedule fields must be completed first.
+                </p>
                 <div className={`transition-all duration-300 ${disabled ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
                     <ExpressCheckoutElement 
                         onConfirm={handleExpressConfirm}
@@ -113,13 +121,24 @@ export default function CheckoutForm({ onSuccess, totalAmount, disabled }: Check
 
             <button
                 disabled={isLoading || !stripe || !elements || disabled}
+                aria-disabled={isLoading || !stripe || !elements || disabled}
+                aria-busy={isLoading}
                 id="submit"
                 className="w-full btn btn-primary py-4 text-xs font-black uppercase tracking-widest shadow-lg hover:shadow-primary/20 transition-all disabled:opacity-50"
             >
                 {isLoading ? "Processing..." : `Pay $${totalAmount.toFixed(2)} & Place Order`}
             </button>
 
-            {message && <div id="payment-message" className="text-red-400 text-sm font-bold text-center bg-red-500/10 py-3 rounded-lg border border-red-500/20">{message}</div>}
+            {message && (
+                <div
+                    id="payment-message"
+                    role="alert"
+                    aria-live="assertive"
+                    className="text-red-400 text-sm font-bold text-center bg-red-500/10 py-3 rounded-lg border border-red-500/20"
+                >
+                    {message}
+                </div>
+            )}
         </form>
     );
 }

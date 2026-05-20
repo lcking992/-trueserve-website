@@ -20,6 +20,8 @@ interface MapWithDirectionsProps {
     onDurationUpdate?: (duration: string) => void;
     onDistanceUpdate?: (distance: string) => void;
     onStepsUpdate?: (steps: any[]) => void;
+    onDestinationChange?: (destination: google.maps.LatLngLiteral) => void;
+    destinationDraggable?: boolean;
 }
 
 export default function MapWithDirections({
@@ -31,7 +33,9 @@ export default function MapWithDirections({
     height = 400,
     onDurationUpdate,
     onDistanceUpdate,
-    onStepsUpdate
+    onStepsUpdate,
+    onDestinationChange,
+    destinationDraggable = false
 }: MapWithDirectionsProps) {
     const { isLoaded } = useJsApiLoader({
         id: GOOGLE_MAPS_SCRIPT_ID,
@@ -307,6 +311,14 @@ export default function MapWithDirections({
                 <Marker
                     position={destination}
                     title="Delivery Location"
+                    draggable={destinationDraggable}
+                    onDragEnd={(event) => {
+                        const lat = event.latLng?.lat();
+                        const lng = event.latLng?.lng();
+                        if (typeof lat === "number" && typeof lng === "number") {
+                            onDestinationChange?.({ lat, lng });
+                        }
+                    }}
                     animation={typeof google !== 'undefined' ? google.maps.Animation.DROP : undefined}
                 />
             )}

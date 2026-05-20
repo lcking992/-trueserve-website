@@ -13,6 +13,9 @@ interface FormState {
     label: LabelOption;
     customLabel: string;
     address: string;
+    unit: string;
+    accessCode: string;
+    dropoffPreference: SavedAddress['dropoffPreference'];
     notes: string;
     isDefault: boolean;
 }
@@ -22,6 +25,9 @@ const emptyForm = (): FormState => ({
     label: 'Home',
     customLabel: '',
     address: '',
+    unit: '',
+    accessCode: '',
+    dropoffPreference: 'Leave at door',
     notes: '',
     isDefault: false,
 });
@@ -54,6 +60,9 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
             label: isCustom ? 'Custom' : (addr.label as LabelOption),
             customLabel: isCustom ? addr.label : '',
             address: addr.address,
+            unit: addr.unit || '',
+            accessCode: addr.accessCode || '',
+            dropoffPreference: addr.dropoffPreference || 'Leave at door',
             notes: addr.notes || '',
             isDefault: addr.isDefault,
         });
@@ -82,6 +91,9 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
             id: form.id,
             label: resolvedLabel,
             address: form.address.trim(),
+            unit: form.unit.trim() || undefined,
+            accessCode: form.accessCode.trim() || undefined,
+            dropoffPreference: form.dropoffPreference,
             notes: form.notes.trim() || undefined,
             isDefault: form.isDefault,
         };
@@ -207,6 +219,23 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
                                         Notes: {addr.notes}
                                     </p>
                                 )}
+                                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
+                                    {addr.dropoffPreference && (
+                                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 999, padding: '4px 8px' }}>
+                                            {addr.dropoffPreference}
+                                        </span>
+                                    )}
+                                    {addr.unit && (
+                                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 999, padding: '4px 8px' }}>
+                                            Unit {addr.unit}
+                                        </span>
+                                    )}
+                                    {addr.accessCode && (
+                                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.58)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 999, padding: '4px 8px' }}>
+                                            Access code saved
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             <div
                                 style={{
@@ -335,6 +364,59 @@ export default function AddressBookClient({ userId, initialAddresses }: Props) {
                                     setForm((f) => ({ ...f, address: e.target.value }))
                                 }
                             />
+                        </div>
+
+                        <div className="fg">
+                            <label>Apartment / Suite (Optional)</label>
+                            <input
+                                type="text"
+                                placeholder="Apt 4B, Suite 210"
+                                value={form.unit}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, unit: e.target.value }))
+                                }
+                                maxLength={60}
+                            />
+                        </div>
+
+                        <div className="fg">
+                            <label>Gate / Access Code (Optional)</label>
+                            <input
+                                type="text"
+                                placeholder="Gate code, call box, lobby code"
+                                value={form.accessCode}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, accessCode: e.target.value }))
+                                }
+                                maxLength={80}
+                            />
+                        </div>
+
+                        <div className="fg md:col-span-2">
+                            <label>Drop-Off Preference</label>
+                            <select
+                                value={form.dropoffPreference}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, dropoffPreference: e.target.value as SavedAddress['dropoffPreference'] }))
+                                }
+                                style={{
+                                    background: 'rgba(255,255,255,0.06)',
+                                    border: '1px solid rgba(255,255,255,0.12)',
+                                    borderRadius: '10px',
+                                    color: 'white',
+                                    padding: '12px 14px',
+                                    fontSize: '15px',
+                                    width: '100%',
+                                    appearance: 'none',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                {['Leave at door', 'Hand to me', 'Meet outside'].map((opt) => (
+                                    <option key={opt} value={opt} style={{ background: '#1a1a2e', color: 'white' }}>
+                                        {opt}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="fg md:col-span-2">

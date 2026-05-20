@@ -53,3 +53,19 @@ export const isStaffEmail = (email?: string) => {
            lowerEmail.endsWith("@thetieredconsulting.com") ||
            lowerEmail.endsWith("@true-serve.com");
 };
+
+export const getAdminNotificationEmails = () => {
+    const envEmails = [
+        process.env.ADMIN_EMAIL,
+        process.env.SUPPORT_EMAIL,
+        process.env.NEXT_PUBLIC_SUPPORT_EMAIL,
+        process.env.ADMIN_NOTIFICATION_EMAIL,
+        process.env.ADMIN_NOTIFICATION_EMAILS,
+    ]
+        .filter(Boolean)
+        .flatMap((value) => String(value).split(/[,\s;]+/))
+        .map((email) => email.trim().toLowerCase())
+        .filter(Boolean);
+
+    return Array.from(new Set([...ADMIN_EMAILS, ...envEmails]));
+};

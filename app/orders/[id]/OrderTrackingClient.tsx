@@ -11,6 +11,7 @@ import { driverLocChannel } from "@/lib/ramen/types";
 import type { DriverLocationPayload } from "@/lib/ramen/types";
 import PostDeliveryTip from "@/components/PostDeliveryTip";
 import OrderTransparencyLog from "@/components/OrderTransparencyLog";
+import CustomerOrderValuePanel from "@/components/CustomerOrderValuePanel";
 
 interface OrderTrackingClientProps {
     order: any;
@@ -220,6 +221,10 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
 
     return (
         <main id="view-tracking" className="active">
+        <a href="#order-status-heading" className="skip-link">Skip to order status</a>
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+            Order status: {statusMeta.title}. {statusMeta.detail}
+        </div>
         {showDelivered && (
             <div
                 onClick={() => setShowDelivered(false)}
@@ -323,8 +328,17 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
             <div className="track-grid">
                     {/* LEFT PANEL */}
                     <div className="track-left">
+                        <CustomerOrderValuePanel
+                            order={currentOrder}
+                            eta={eta}
+                            onSupport={openSupport}
+                        />
                         <div id="track-map" style={{ height: '300px', backgroundColor: '#0a0a0a', position: 'relative', overflow: 'hidden' }}>
                             {routeOrigin && mapOrigin && mapDestination ? (
+                                <>
+                                <div className="sr-only">
+                                    Live map available. Text status: {statusMeta.title}. {currentOrder.status === "PICKED_UP" ? `Estimated arrival is ${eta}.` : statusMeta.next}
+                                </div>
                                 <MapWithDirections
                                     routeOrigin={routeOrigin}
                                     origin={mapOrigin}
@@ -333,6 +347,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                                     showDriver={true}
                                     onDurationUpdate={setEta}
                                 />
+                                </>
                             ) : (
                                 <div className="h-full w-full flex items-center justify-center text-xs uppercase tracking-[0.16em] text-white/45">
                                     Waiting for live location coordinates...
@@ -348,7 +363,7 @@ export default function OrderTrackingClient({ order }: OrderTrackingClientProps)
                     {/* RIGHT PANEL */}
                     <div className="track-right">
                         <div className="status-box">
-                            <h3>Order Status</h3>
+                            <h3 id="order-status-heading">Order Status</h3>
                             <div style={{
                                 display: "grid",
                                 gap: 10,

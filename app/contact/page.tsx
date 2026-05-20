@@ -2,352 +2,158 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import {
+  ArrowRight,
+  ChevronDown,
+  Mail,
+  MessageCircle,
+  Phone,
+  Search,
+  Sparkles,
+} from "lucide-react";
 import Logo from "@/components/Logo";
-import FadeInSection from "@/components/FadeInSection";
-import { motion } from "motion/react";
-import { submitContactForm } from "./actions";
-import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Package, Store, Car, CreditCard } from "lucide-react";
 
-const ROLES = [
-    { value: "customer", label: "Customer" },
-    { value: "merchant", label: "Restaurant / Merchant" },
-    { value: "driver", label: "Driver" },
-    { value: "press", label: "Press / Media" },
-    { value: "investor", label: "Investor" },
-    { value: "other", label: "Other" },
+const NAV_ITEMS = [
+  { label: "Order", href: "/restaurants" },
+  { label: "Rewards", href: "/rewards" },
+  { label: "For Merchants", href: "/merchant" },
+  { label: "Drive & Earn", href: "/drive" },
+  { label: "Help", href: "/contact" },
 ];
 
-const FAQ_QUICK = [
-    { q: "How do I track my order?", a: "Log in and visit Orders — you'll see live status and a map.", href: "/orders", icon: Package },
-    { q: "Want to list your restaurant?", a: "Apply as a merchant — setup takes under 10 minutes.", href: "/merchant/signup", icon: Store },
-    { q: "How do I sign up to drive?", a: "Complete the driver application and we'll review your docs.", href: "/driver/signup", icon: Car },
-    { q: "Billing or payment issue?", a: "Email us directly and include your order number.", href: "mailto:support@trueserve.delivery", icon: CreditCard },
+const FAQS = [
+  {
+    q: "Where is my order?",
+    a: "Sign in and open Orders to see live status, ETA, and handoff updates. If anything looks stuck, Ask Serv can route it to support.",
+  },
+  {
+    q: "How do I cancel a TrueServe Plus or Premium subscription?",
+    a: "Open Rewards, choose your current plan, and select manage plan. You can also email help@trueserve.delivery and we will help with the account change.",
+  },
+  {
+    q: "My item is missing or wrong. What now?",
+    a: "Start with Ask Serv or email help@trueserve.delivery with the order number, missing item, and a photo if you have one. We will review it with the restaurant.",
+  },
+  {
+    q: "Can I tip after delivery?",
+    a: "Yes. Open your completed order and choose the tip option when available. Drivers keep 100% of their tips.",
+  },
+  {
+    q: "How do points work?",
+    a: "Rewards points are added after delivered orders. Plus and Premium members earn faster multipliers and can unlock credit, perks, and priority support.",
+  },
+  {
+    q: "How do I become a driver or partner restaurant?",
+    a: "Drivers can apply from Drive & Earn. Restaurants can start from For Merchants. Both applications route to the admin team for review.",
+  },
 ];
+
+function openServ(prefill?: string) {
+  window.dispatchEvent(new CustomEvent("ts:support:open", { detail: { prefill } }));
+}
 
 export default function ContactPage() {
-    const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
-    const [errorMsg, setErrorMsg] = useState("");
+  const [openIndex, setOpenIndex] = useState(0);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setStatus("sending");
-        const fd = new FormData(e.currentTarget);
-        const res = await submitContactForm(fd);
-        if (res.success) {
-            setStatus("done");
-        } else {
-            setStatus("error");
-            setErrorMsg(res.error || "Something went wrong.");
-        }
-    };
+  return (
+    <div className="ts-app-shell ts-help-page">
+      <header className="ts-app-header">
+        <Link href="/" aria-label="TrueServe home">
+          <Logo size="sm" />
+        </Link>
+        <nav className="ts-app-desktop-nav" aria-label="Primary navigation">
+          {NAV_ITEMS.map((item) => (
+            <Link key={item.href} href={item.href} className={item.href === "/contact" ? "active" : ""}>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <Link href="/login" className="ts-app-signin">Sign in</Link>
+        <Link href="/restaurants" className="ts-app-order-now">Order now</Link>
+      </header>
 
-    return (
-        <div className="food-app-shell">
-            <nav className="food-app-nav">
-                <Logo size="sm" />
-                <div className="nav-links hidden md:flex">
-                    <Link href="/restaurants">Order Food</Link>
-                    <Link href="/pricing">Pricing</Link>
-                    <Link href="/merchant/signup">For Merchants</Link>
-                </div>
-                <div className="flex gap-2">
-                    <Link href="/login" className="btn btn-ghost">Sign In</Link>
-                    <Link href="/merchant/signup" className="btn btn-gold">Get Started</Link>
-                </div>
-            </nav>
+      <main>
+        <section className="ts-help-hero">
+          <span className="ts-help-chip">
+            <Sparkles size={16} aria-hidden="true" />
+            Help Center
+          </span>
+          <h1>How can we <em>help?</em></h1>
+          <p>Most answers in under a minute. Real humans are always one tap away.</p>
+          <form
+            className="ts-help-search"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const value = new FormData(event.currentTarget).get("q");
+              openServ(typeof value === "string" ? value : undefined);
+            }}
+          >
+            <Search size={24} aria-hidden="true" />
+            <input name="q" placeholder="Search 'cancel subscription', 'missing item'..." aria-label="Search help" />
+            <button type="submit">Search</button>
+          </form>
+        </section>
 
-            <main className="food-app-main">
+        <section className="ts-help-action-grid" aria-label="Support options">
+          <button
+            type="button"
+            className="ts-help-action-card primary"
+            onClick={() => openServ("I need help with my TrueServe account.")}
+          >
+            <Sparkles size={30} aria-hidden="true" />
+            <strong>Ask Serv</strong>
+            <span>AI helper · instant</span>
+            <em>Open chat <ArrowRight size={19} aria-hidden="true" /></em>
+          </button>
+          <button
+            type="button"
+            className="ts-help-action-card"
+            onClick={() => openServ("I need live chat support.")}
+          >
+            <MessageCircle size={30} aria-hidden="true" />
+            <strong>Live chat</strong>
+            <span>Avg. under 2 min</span>
+            <em>Start chat <ArrowRight size={19} aria-hidden="true" /></em>
+          </button>
+          <a className="ts-help-action-card" href="tel:8008787378">
+            <Phone size={30} aria-hidden="true" />
+            <strong>Call support</strong>
+            <span>(800) TRU-SERV</span>
+            <em>Call now <ArrowRight size={19} aria-hidden="true" /></em>
+          </a>
+        </section>
 
-                {/* HERO */}
-                <motion.section
-                    className="food-panel relative overflow-hidden min-h-[220px] flex items-center justify-center"
-                    initial={{ opacity: 0, y: 18 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    {/* Background image */}
-                    <div className="pointer-events-none absolute inset-0">
-                        <div
-                            className="absolute inset-0 bg-cover bg-center opacity-[0.13]"
-                            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80')" }}
-                        />
-                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(249,115,22,0.18),transparent_60%)]" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#0d0f0e]/80" />
-                    </div>
-                    <div className="relative z-10 text-center w-full max-w-2xl mx-auto px-4 py-8">
-                        <motion.p
-                            className="food-kicker mb-4"
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1, duration: 0.5 }}
-                        >
-                            Get in Touch
-                        </motion.p>
-                        <motion.h1
-                            className="food-heading"
-                            style={{ fontSize: "clamp(40px, 7vw, 72px)", lineHeight: 0.95 }}
-                            initial={{ opacity: 0, y: 14 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.16, duration: 0.62, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            We&rsquo;re here<br /><span className="accent">to help.</span>
-                        </motion.h1>
-                        <motion.p
-                            className="food-subtitle mt-4 mx-auto"
-                            style={{ maxWidth: 460 }}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.24, duration: 0.5 }}
-                        >
-                            Questions about ordering, partnering as a restaurant, or joining as a driver — reach out and we&rsquo;ll get back to you within one business day.
-                        </motion.p>
+        <section className="ts-help-faq">
+          <h2>Top questions</h2>
+          <div className="ts-help-faq-list">
+            {FAQS.map((item, index) => {
+              const isOpen = openIndex === index;
+              return (
+                <article key={item.q} className={isOpen ? "open" : ""}>
+                  <button type="button" onClick={() => setOpenIndex(isOpen ? -1 : index)}>
+                    <span>{item.q}</span>
+                    <ChevronDown size={24} aria-hidden="true" />
+                  </button>
+                  <div>
+                    <p>{item.a}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
 
-                        {/* Contact badges */}
-                        <motion.div
-                            className="flex flex-wrap items-center justify-center gap-3 mt-6"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3, duration: 0.5 }}
-                        >
-                            {[
-                                { icon: Clock, label: "Replies within 1 business day" },
-                                { icon: MessageCircle, label: "Friendly support team" },
-                                { icon: Mail, label: "support@trueserve.delivery" },
-                            ].map(({ icon: Icon, label }) => (
-                                <div key={label} className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-[11px] font-bold text-white/50">
-                                    <Icon size={11} className="text-[#f97316]" />
-                                    {label}
-                                </div>
-                            ))}
-                        </motion.div>
-                    </div>
-                </motion.section>
-
-                {/* QUICK LINKS */}
-                <FadeInSection className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    {FAQ_QUICK.map((item, i) => {
-                        const Icon = item.icon;
-                        return (
-                            <motion.div
-                                key={item.q}
-                                initial={{ opacity: 0, y: 18 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 + i * 0.06, duration: 0.5 }}
-                            >
-                                <Link
-                                    href={item.href}
-                                    className="food-card group flex flex-col gap-3 h-full hover:border-[rgba(249,115,22,0.3)] transition-all hover:-translate-y-1"
-                                >
-                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
-                                        <Icon size={16} className="text-[#f97316]" />
-                                    </div>
-                                    <p className="font-black text-white text-sm group-hover:text-[#f97316] transition-colors leading-snug">{item.q}</p>
-                                    <p className="text-xs text-white/40 leading-relaxed mt-auto">{item.a}</p>
-                                    <div className="flex items-center gap-1 text-[11px] font-bold text-[#f97316]/60 group-hover:text-[#f97316] transition-colors mt-1">
-                                        Go <ArrowRight size={11} />
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        );
-                    })}
-                </FadeInSection>
-
-                {/* CONTACT FORM + INFO */}
-                <FadeInSection className="mt-6 grid gap-6 md:grid-cols-[1fr_300px]">
-
-                    {/* FORM */}
-                    <div className="food-panel">
-                        {status === "done" ? (
-                            <div className="text-center py-16">
-                                <motion.div
-                                    initial={{ scale: 0.5, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                                    className="text-6xl mb-5"
-                                >
-                                    ✅
-                                </motion.div>
-                                <h2 className="food-heading !text-[32px] mb-2">Message sent!</h2>
-                                <p className="text-sm text-white/50 mb-6">We&rsquo;ll reply to your email within 1 business day.</p>
-                                <button className="btn btn-gold" onClick={() => setStatus("idle")}>
-                                    Send another message
-                                </button>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-6">
-                                    <p className="food-kicker mb-1">Message Us</p>
-                                    <h2 className="food-heading !text-[28px]">Send us a message</h2>
-                                </div>
-
-                                <div className="grid gap-4 sm:grid-cols-2 mb-4">
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/40 mb-2">Your Name *</label>
-                                        <input
-                                            required
-                                            name="name"
-                                            type="text"
-                                            placeholder="Jordan Smith"
-                                            className="w-full bg-[#0f1210] border border-[#1e2420] focus:border-[#f97316] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/20"
-                                            disabled={status === "sending"}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/40 mb-2">Email Address *</label>
-                                        <input
-                                            required
-                                            name="email"
-                                            type="email"
-                                            placeholder="you@example.com"
-                                            className="w-full bg-[#0f1210] border border-[#1e2420] focus:border-[#f97316] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/20"
-                                            disabled={status === "sending"}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="grid gap-4 sm:grid-cols-2 mb-4">
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/40 mb-2">I am a…</label>
-                                        <select
-                                            name="role"
-                                            defaultValue="customer"
-                                            className="w-full bg-[#0f1210] border border-[#1e2420] focus:border-[#f97316] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors cursor-pointer"
-                                            disabled={status === "sending"}
-                                        >
-                                            {ROLES.map(r => (
-                                                <option key={r.value} value={r.value}>{r.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/40 mb-2">Subject</label>
-                                        <input
-                                            name="subject"
-                                            type="text"
-                                            placeholder="Order issue, partnership, etc."
-                                            className="w-full bg-[#0f1210] border border-[#1e2420] focus:border-[#f97316] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/20"
-                                            disabled={status === "sending"}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="mb-6">
-                                    <label className="block text-[10px] font-black uppercase tracking-[0.14em] text-white/40 mb-2">Message *</label>
-                                    <textarea
-                                        required
-                                        name="message"
-                                        rows={5}
-                                        placeholder="Tell us what's on your mind..."
-                                        className="w-full bg-[#0f1210] border border-[#1e2420] focus:border-[#f97316] rounded-xl px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/20 resize-none"
-                                        disabled={status === "sending"}
-                                    />
-                                </div>
-
-                                {status === "error" && (
-                                    <div className="mb-4 px-4 py-3 rounded-xl bg-[rgba(248,113,113,0.1)] border border-[rgba(248,113,113,0.2)] text-[#f87171] text-sm">
-                                        {errorMsg}
-                                    </div>
-                                )}
-
-                                <button
-                                    type="submit"
-                                    disabled={status === "sending"}
-                                    className="portal-btn-gold w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {status === "sending" ? "Sending…" : "Send Message →"}
-                                </button>
-                            </form>
-                        )}
-                    </div>
-
-                    {/* INFO SIDEBAR */}
-                    <div className="flex flex-col gap-4">
-
-                        {/* Direct contact */}
-                        <div className="food-panel">
-                            <p className="food-kicker mb-3">Direct Contact</p>
-                            <div className="space-y-4">
-                                <a href="mailto:support@trueserve.delivery" className="flex items-start gap-3 group">
-                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
-                                        <Mail size={14} className="text-[#f97316]" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Support</p>
-                                        <p className="text-sm text-white group-hover:text-[#f97316] transition-colors font-semibold">support@trueserve.delivery</p>
-                                    </div>
-                                </a>
-                                <a href="mailto:merchants@trueserve.delivery" className="flex items-start gap-3 group">
-                                    <div className="w-9 h-9 rounded-xl bg-[rgba(249,115,22,0.1)] border border-[rgba(249,115,22,0.2)] flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-[rgba(249,115,22,0.2)] transition-colors">
-                                        <MessageCircle size={14} className="text-[#f97316]" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Merchant Partnerships</p>
-                                        <p className="text-sm text-white group-hover:text-[#f97316] transition-colors font-semibold">merchants@trueserve.delivery</p>
-                                    </div>
-                                </a>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center shrink-0 mt-0.5">
-                                        <Clock size={14} className="text-white/40" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35 mb-0.5">Response Time</p>
-                                        <p className="text-sm text-white/60">Within 1 business day</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Service area */}
-                        <div className="food-panel">
-                            <p className="food-kicker mb-3">Service Area</p>
-                            <div className="space-y-2">
-                                {["Pineville, NC", "Rock Hill, SC"].map(city => (
-                                    <div key={city} className="flex items-center gap-3">
-                                        <MapPin size={13} className="text-[#4dca80] shrink-0" />
-                                        <p className="text-sm text-white/70">{city}</p>
-                                    </div>
-                                ))}
-                                <p className="text-xs text-white/30 mt-3 leading-relaxed">Pilot launch. More markets coming soon.</p>
-                            </div>
-                        </div>
-
-                        {/* Quick links */}
-                        <div className="food-panel">
-                            <p className="food-kicker mb-3">Quick Links</p>
-                            <div className="space-y-1">
-                                {[
-                                    { label: "Order Food", href: "/restaurants" },
-                                    { label: "Merchant Signup", href: "/merchant/signup" },
-                                    { label: "Drive for TrueServe", href: "/driver/signup" },
-                                    { label: "Pricing", href: "/pricing" },
-                                    { label: "Privacy Policy", href: "/privacy" },
-                                    { label: "Terms of Service", href: "/terms" },
-                                ].map(l => (
-                                    <Link key={l.href} href={l.href} className="flex items-center justify-between text-sm text-white/50 hover:text-[#f97316] transition-colors py-1 group">
-                                        {l.label}
-                                        <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </FadeInSection>
-
-            </main>
-
-            <footer className="mt-8 border-t border-white/5 px-2 pt-10 pb-12 text-center">
-                <div className="mx-auto flex max-w-7xl flex-col items-center gap-5">
-                    <Logo size="md" />
-                    <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
-                        <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-                        <Link href="/contact" className="hover:text-[#f97316] transition-colors">Contact</Link>
-                    </div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
-                        © {new Date().getFullYear()} TrueServe · Built for local restaurants.
-                    </p>
-                </div>
-            </footer>
-        </div>
-    );
+        <section className="ts-help-human">
+          <div>
+            <h2>Still need a human?</h2>
+            <p>Drop us a line. We answer every email within 4 hours.</p>
+          </div>
+          <a href="mailto:help@trueserve.delivery">
+            <Mail size={22} aria-hidden="true" />
+            help@trueserve.delivery
+          </a>
+        </section>
+      </main>
+    </div>
+  );
 }

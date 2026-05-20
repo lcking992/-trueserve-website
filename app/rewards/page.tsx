@@ -6,8 +6,9 @@ import Logo from "@/components/Logo";
 import FadeInSection from "@/components/FadeInSection";
 import { getAuthSession } from "@/app/auth/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { grantAnniversaryRewardIfEligible, type AnniversaryRewardStatus } from "@/lib/rewards";
 import { joinRewardsTier } from "./actions";
-import { Crown, Gift, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react";
+import { CalendarHeart, Crown, Gift, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react";
 
 type RewardsSnapshot = {
     plan: string;
@@ -16,6 +17,7 @@ type RewardsSnapshot = {
     ordersCount: number;
     lifetimeSpend: number;
     multiplierText: string;
+    anniversaryReward?: AnniversaryRewardStatus;
 };
 
 const TIER_POINT_TARGET = {
@@ -29,12 +31,22 @@ function getMultiplier(plan: string): number {
     return 1;
 }
 
-async function getSnapshot(userId?: string): Promise<RewardsSnapshot | null> {
+function formatRewardDate(value?: string) {
+    if (!value) return "your next anniversary";
+    return new Intl.DateTimeFormat("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "UTC"
+    }).format(new Date(value));
+}
+
+async function getSnapshot(userId?: string, anniversaryReward?: AnniversaryRewardStatus): Promise<RewardsSnapshot | null> {
     if (!userId) return null;
 
     const { data: user } = await supabaseAdmin
         .from("User")
-        .select("plan, stripeCustomerId")
+        .select("plan, stripeCustomerId, truePointsBalance")
         .eq("id", userId)
         .maybeSingle();
 
@@ -48,7 +60,7 @@ async function getSnapshot(userId?: string): Promise<RewardsSnapshot | null> {
     const completed = (orders || []).filter((o) => o.status !== "CANCELLED");
     const lifetimeSpend = completed.reduce((sum, order) => sum + Number(order.total || 0), 0);
     const multiplier = getMultiplier(user.plan || "Basic");
-    const points = Math.floor(lifetimeSpend * multiplier);
+    const points = Number(user.truePointsBalance || 0);
 
     return {
         plan: user.plan || "Basic",
@@ -56,8 +68,66 @@ async function getSnapshot(userId?: string): Promise<RewardsSnapshot | null> {
         points,
         ordersCount: completed.length,
         lifetimeSpend,
-        multiplierText: `${multiplier}x`
+        multiplierText: `${multiplier}x`,
+        anniversaryReward
     };
+}
+
+function AnniversaryRewardCard({
+    isSignedIn,
+    reward
+}: {
+    isSignedIn: boolean;
+    reward?: AnniversaryRewardStatus;
+}) {
+    const title = reward?.granted
+        ? "Anniversary Points Added"
+        : reward?.alreadyClaimed
+            ? "Anniversary Reward Banked"
+            : "Account Anniversary Reward";
+    const detail = !isSignedIn
+        ? "Create an account to start your anniversary clock. Eligible customers receive a yearly TruePoints bonus."
+        : reward?.granted
+            ? `${reward.points.toLocaleString()} TruePoints were added for your ${reward.anniversaryYear} TrueServe anniversary.`
+            : reward?.alreadyClaimed
+                ? `Your ${reward.anniversaryYear} anniversary reward is already in your balance. Next reward unlocks ${formatRewardDate(reward.nextAnniversary)}.`
+                : `Your next yearly bonus unlocks ${formatRewardDate(reward?.nextAnniversary)}.`;
+
+    return (
+        <FadeInSection className="mt-8" delay={0.05}>
+            <section className="food-panel relative overflow-hidden">
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_42%)]" />
+                <div className="relative z-10 grid gap-5 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+                    <div className="rounded-3xl border border-[#f97316]/30 bg-[#f97316]/10 p-5">
+                        <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#f97316]/35 bg-black/20 text-[#f97316]">
+                            <CalendarHeart size={22} />
+                        </div>
+                        <p className="food-kicker mb-2">Yearly Perk</p>
+                        <h2 className="food-heading !text-[30px]">{title}</h2>
+                    </div>
+                    <div>
+                        <p className="text-white/74 leading-relaxed">{detail}</p>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Bonus</p>
+                                <strong className="mt-1 block text-2xl text-[#f97316]">{(reward?.points || 250).toLocaleString()}</strong>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Frequency</p>
+                                <strong className="mt-1 block text-lg text-white">Yearly</strong>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Status</p>
+                                <strong className="mt-1 block text-lg text-white">
+                                    {reward?.granted ? "Added" : reward?.alreadyClaimed ? "Claimed" : "Tracking"}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </FadeInSection>
+    );
 }
 
 function getJourney(points: number, plan: string) {
@@ -146,7 +216,7 @@ function TierCard({
 }) {
     const isCurrent = currentPlan === tier;
     return (
-        <article className={`food-card relative overflow-hidden ${isCurrent ? "border border-[#f97316]/50" : ""}`}>
+        <article className={`food-card rewards-tier-card rewards-tier-${tier.toLowerCase()} relative overflow-hidden ${isCurrent ? "is-current" : ""}`}>
             {/* Tier photo banner */}
             <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden rounded-t-[inherit] pointer-events-none">
                 <div
@@ -162,7 +232,7 @@ function TierCard({
                         {icon}
                     </div>
                     {badge && (
-                        <span className="rounded-full border border-[#f97316]/40 bg-[#f97316]/16 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#f6d8a1]">
+                        <span className="rewards-tier-badge">
                             {badge}
                         </span>
                     )}
@@ -217,7 +287,8 @@ export default async function RewardsPage({
 }) {
     const resolvedSearchParams = searchParams ? await searchParams : undefined;
     const { isAuth, userId } = await getAuthSession();
-    const snapshot = await getSnapshot(userId);
+    const anniversaryReward = userId ? await grantAnniversaryRewardIfEligible(userId) : undefined;
+    const snapshot = await getSnapshot(userId, anniversaryReward);
     const currentPlan = snapshot?.plan || "Basic";
     const isSignedIn = Boolean(isAuth && userId);
     const canChoosePaid = Boolean(snapshot?.hasPaymentMethod);
@@ -270,7 +341,7 @@ export default async function RewardsPage({
                             <p className="food-subtitle mt-3 !max-w-none">
                                 Turn every order into perks. Earn points automatically, climb tiers, and unlock faster service plus stronger rewards over time.
                             </p>
-                            <div className="mt-5 flex flex-wrap gap-2">
+                            <div className="mt-5 rewards-chip-row">
                                 <div className="food-chip"><span className="food-chip-dot" /> Points tracked in real-time</div>
                                 <div className="food-chip"><span className="food-chip-dot" /> Tier upgrades in one tap</div>
                                 <div className="food-chip"><span className="food-chip-dot" /> Tied to real orders</div>
@@ -286,15 +357,15 @@ export default async function RewardsPage({
                             <p className="food-kicker mb-2">Progress</p>
                             <h3 className="food-heading !text-[30px]">{journey.title}</h3>
                             <p className="mt-2 text-sm text-white/75 break-words">{journey.detail}</p>
-                            <div className="mt-4 rounded-full bg-white/10 h-2 overflow-hidden">
-                                <div
-                                    className="h-full rounded-full bg-gradient-to-r from-[#f97316] to-[#ffb64a]"
-                                    style={{ width: `${journey.progress}%` }}
-                                />
-                            </div>
-                            <div className="mt-3 flex flex-col gap-1 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="rewards-progress-meta">
                                 <span>{journey.progress}% complete</span>
                                 <span>{journey.remaining.toLocaleString()} points to go</span>
+                            </div>
+                            <div className="rewards-progress-track">
+                                <div
+                                    className="rewards-progress-fill"
+                                    style={{ width: `${Math.max(5, journey.progress)}%` }}
+                                />
                             </div>
                             <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/65 break-words">
                                 Tip: Place larger group orders to accelerate your next tier faster.
@@ -303,20 +374,31 @@ export default async function RewardsPage({
                     </div>
                 </section>
 
-                <FadeInSection className="rewards-stat-grid">
-                    <div className="rewards-stat-card">
-                        <p><Crown size={12} />Tier</p>
-                        <strong>{currentPlan}</strong>
-                    </div>
-                    <div className="rewards-stat-card">
-                        <p><Sparkles size={12} />Points</p>
+                <FadeInSection className="rewards-wallet-summary">
+                    <div className="rewards-wallet-balance">
+                        <p><Sparkles size={13} />Active Wallet Summary</p>
                         <strong>{snapshot ? snapshot.points.toLocaleString() : "0"}</strong>
+                        <span>TruePoints available</span>
                     </div>
-                    <div className="rewards-stat-card">
-                        <p><TrendingUp size={12} />Orders</p>
-                        <strong>{snapshot ? snapshot.ordersCount : 0}</strong>
+                    <div className="rewards-wallet-progress">
+                        <div className="rewards-wallet-topline">
+                            <span><Crown size={13} />{currentPlan} tier</span>
+                            <span><TrendingUp size={13} />{snapshot ? snapshot.ordersCount : 0} orders</span>
+                        </div>
+                        <div className="rewards-progress-meta">
+                            <span>{journey.title}</span>
+                            <span>{journey.remaining.toLocaleString()} points to go</span>
+                        </div>
+                        <div className="rewards-progress-track">
+                            <div
+                                className="rewards-progress-fill"
+                                style={{ width: `${Math.max(5, journey.progress)}%` }}
+                            />
+                        </div>
                     </div>
                 </FadeInSection>
+
+                <AnniversaryRewardCard isSignedIn={isSignedIn} reward={snapshot?.anniversaryReward} />
 
                 <FadeInSection className="mt-8" delay={0.05}>
                     <div className="food-section-head rewards-section-head">
@@ -327,7 +409,22 @@ export default async function RewardsPage({
                         <Link href="/user/settings#wallet" className="btn btn-ghost">Manage Wallet</Link>
                     </div>
 
-                    <div className="grid gap-6 md:grid-cols-3">
+                    <div className="rewards-tier-matrix grid gap-6 md:grid-cols-3">
+                        <TierCard
+                            tier="Basic"
+                            subtitle="Starter"
+                            price="Free"
+                            currentPlan={currentPlan}
+                            canSubmit={isSignedIn}
+                            ctaHref={!isSignedIn ? "/login" : undefined}
+                            ctaLabel={!isSignedIn ? "Sign In To Join" : undefined}
+                            icon={<Gift size={17} />}
+                            features={[
+                                "Standard points earning",
+                                "Access to all restaurants",
+                                "Core order tracking"
+                            ]}
+                        />
                         <TierCard
                             tier="Plus"
                             subtitle="Priority Tier"
@@ -342,21 +439,6 @@ export default async function RewardsPage({
                                 "Priority dispatch during peak times",
                                 "Faster support response windows",
                                 "1.5x points multiplier on all orders"
-                            ]}
-                        />
-                        <TierCard
-                            tier="Basic"
-                            subtitle="Starter"
-                            price="Free"
-                            currentPlan={currentPlan}
-                            canSubmit={isSignedIn}
-                            ctaHref={!isSignedIn ? "/login" : undefined}
-                            ctaLabel={!isSignedIn ? "Sign In To Join" : undefined}
-                            icon={<Gift size={17} />}
-                            features={[
-                                "Standard points earning",
-                                "Access to all restaurants",
-                                "Core order tracking"
                             ]}
                         />
                         <TierCard
@@ -422,16 +504,20 @@ export default async function RewardsPage({
                     <div className="divide-y divide-white/6">
                         {[
                             { q: "When do I see my points?", a: "Points are credited automatically within minutes of your order being marked delivered." },
+                            { q: "Do I get anything on my account anniversary?", a: "Yes. Eligible accounts receive 250 TruePoints once per year on or after the anniversary of the day the account was created." },
                             { q: "Do points expire?", a: "No. Your points never expire as long as your account is active and in good standing." },
                             { q: "Can I downgrade my tier?", a: "Yes. You can switch tiers anytime from account settings. Changes take effect on your next billing cycle." },
                             { q: "What does priority dispatch mean?", a: "During peak times, Plus and Premium orders are assigned to available drivers first — resulting in faster pickup and delivery." },
                             { q: "Is there a free tier?", a: "Yes — Basic is completely free. You earn 1× points on every order with no monthly fee." },
                             { q: "How does the 2× multiplier work?", a: "Premium members earn double points on every dollar spent. A $30 order earns 60 points instead of 30." },
                         ].map((faq) => (
-                            <div key={faq.q} className="py-4 first:pt-0 last:pb-0">
-                                <p className="font-black text-white text-sm mb-1">{faq.q}</p>
-                                <p className="text-sm text-white/50 leading-relaxed">{faq.a}</p>
-                            </div>
+                            <details key={faq.q} className="rewards-faq-item">
+                                <summary>
+                                    <span>{faq.q}</span>
+                                    <span aria-hidden="true">+</span>
+                                </summary>
+                                <p>{faq.a}</p>
+                            </details>
                         ))}
                     </div>
                 </section>

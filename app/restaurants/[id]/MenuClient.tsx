@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Clock3, MapPin, ReceiptText, Route, ShieldCheck, Sparkles, X, ZoomIn, ZoomOut } from "lucide-react";
+import { CalendarClock, Clock3, Gift, MapPin, PackageCheck, ReceiptText, Route, ShieldCheck, Sparkles, Star, X, Zap, ZoomIn, ZoomOut } from "lucide-react";
 import { placeOrder, createPaymentIntent } from "../actions";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
@@ -18,10 +18,16 @@ const DELIVERY_STORAGE_KEYS = {
     address: "ts.delivery.address",
     lat: "ts.delivery.lat",
     lng: "ts.delivery.lng",
+    preference: "ts.delivery.preference",
+    unit: "ts.delivery.unit",
+    accessCode: "ts.delivery.accessCode",
+    instructions: "ts.delivery.instructions",
 } as const;
 
 const MENU_ZOOM_LEVELS = ["compact", "comfortable", "large"] as const;
 type MenuZoomLevel = typeof MENU_ZOOM_LEVELS[number];
+type DeliverySpeed = "EXPRESS" | "STANDARD" | "SCHEDULED";
+type DropoffPreference = "Leave at door" | "Hand to me" | "Meet outside";
 
 interface MenuItem {
     id: string;
@@ -73,7 +79,19 @@ export default function MenuClient({
     const [deliveryLng, setDeliveryLng] = useState<number | null>(
         typeof initialLng === "number" && Number.isFinite(initialLng) ? initialLng : null
     );
+    const [baseDeliveryLat, setBaseDeliveryLat] = useState<number | null>(
+        typeof initialLat === "number" && Number.isFinite(initialLat) ? initialLat : null
+    );
+    const [baseDeliveryLng, setBaseDeliveryLng] = useState<number | null>(
+        typeof initialLng === "number" && Number.isFinite(initialLng) ? initialLng : null
+    );
     const [deliveryInstructions, setDeliveryInstructions] = useState("");
+    const [dropoffPreference, setDropoffPreference] = useState<DropoffPreference>("Leave at door");
+    const [unit, setUnit] = useState("");
+    const [accessCode, setAccessCode] = useState("");
+    const [deliverySpeed, setDeliverySpeed] = useState<DeliverySpeed>("STANDARD");
+    const [scheduledFor, setScheduledFor] = useState("");
+    const [deliveryPinAdjusted, setDeliveryPinAdjusted] = useState(false);
     const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
 
     // Gift a Meal
@@ -81,6 +99,7 @@ export default function MenuClient({
     const [giftName, setGiftName] = useState("");
     const [giftPhone, setGiftPhone] = useState("");
     const [giftNote, setGiftNote] = useState("");
+    const [giftHideReceipt, setGiftHideReceipt] = useState(true);
     const [redeemPoints, setRedeemPoints] = useState(false);
     const [checkoutEta, setCheckoutEta] = useState<string>("Calculating...");
     const [checkoutDistance, setCheckoutDistance] = useState<string>("");
@@ -116,6 +135,23 @@ export default function MenuClient({
     const pointsValue = Math.min(Math.floor(truePointsBalance / 100) * 100, Math.max(0, Math.floor((subtotal + tip - 0.50) * 100)));
     const pointsDiscount = redeemPoints ? pointsValue * 0.01 : 0;
     const total = subtotal + 2.99 + tax + tip - pointsDiscount;
+    const basePoints = Math.max(0, Math.floor(subtotal));
+    const rewardsPlan = userId ? "Basic" : "Guest";
+    const rewardsMultiplier = rewardsPlan === "Premium" ? 2 : rewardsPlan === "Plus" ? 1.5 : 1;
+    const estimatedPoints = Math.floor(basePoints * rewardsMultiplier);
+    const nextTierText = userId
+        ? "Plus unlocks 1.5x points and priority dispatch. Premium unlocks 2x points and concierge support."
+        : "Sign in to bank points, unlock priority dispatch, and redeem rewards later.";
+    const deliveryOptions: Array<{
+        id: DeliverySpeed;
+        label: string;
+        detail: string;
+        icon: typeof Zap;
+    }> = [
+        { id: "EXPRESS", label: "Express", detail: "Fastest dispatch when drivers are nearby.", icon: Zap },
+        { id: "STANDARD", label: "Standard", detail: "Best balance for fresh local delivery.", icon: PackageCheck },
+        { id: "SCHEDULED", label: "Schedule", detail: "Choose a later delivery window.", icon: CalendarClock },
+    ];
     const locationLabel = deliveryAddress
         ? deliveryAddress.split(",").slice(0, 2).join(", ").trim()
         : "Select delivery address";
@@ -137,19 +173,65 @@ export default function MenuClient({
             const savedAddress = localStorage.getItem(DELIVERY_STORAGE_KEYS.address);
             const savedLat = localStorage.getItem(DELIVERY_STORAGE_KEYS.lat);
             const savedLng = localStorage.getItem(DELIVERY_STORAGE_KEYS.lng);
+            const savedPreference = localStorage.getItem(DELIVERY_STORAGE_KEYS.preference);
+            const savedUnit = localStorage.getItem(DELIVERY_STORAGE_KEYS.unit);
+            const savedAccessCode = localStorage.getItem(DELIVERY_STORAGE_KEYS.accessCode);
+            const savedInstructions = localStorage.getItem(DELIVERY_STORAGE_KEYS.instructions);
 
             if (!deliveryAddress && savedAddress && savedAddress.trim()) {
                 setDeliveryAddress(savedAddress.trim());
             }
             if (deliveryLat === null && savedLat && Number.isFinite(Number(savedLat))) {
                 setDeliveryLat(Number(savedLat));
+                setBaseDeliveryLat(Number(savedLat));
             }
             if (deliveryLng === null && savedLng && Number.isFinite(Number(savedLng))) {
                 setDeliveryLng(Number(savedLng));
+                setBaseDeliveryLng(Number(savedLng));
             }
+            if (savedPreference === "Leave at door" || savedPreference === "Hand to me" || savedPreference === "Meet outside") {
+                setDropoffPreference(savedPreference);
+            }
+            if (savedUnit) setUnit(savedUnit);
+            if (savedAccessCode) setAccessCode(savedAccessCode);
+            if (savedInstructions) setDeliveryInstructions(savedInstructions);
         } catch { }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(DELIVERY_STORAGE_KEYS.preference, dropoffPreference);
+            if (unit.trim()) localStorage.setItem(DELIVERY_STORAGE_KEYS.unit, unit.trim());
+            else localStorage.removeItem(DELIVERY_STORAGE_KEYS.unit);
+            if (accessCode.trim()) localStorage.setItem(DELIVERY_STORAGE_KEYS.accessCode, accessCode.trim());
+            else localStorage.removeItem(DELIVERY_STORAGE_KEYS.accessCode);
+            if (deliveryInstructions.trim()) localStorage.setItem(DELIVERY_STORAGE_KEYS.instructions, deliveryInstructions.trim());
+            else localStorage.removeItem(DELIVERY_STORAGE_KEYS.instructions);
+        } catch { }
+    }, [accessCode, deliveryInstructions, dropoffPreference, unit]);
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem(`ts.reorder.${restaurant.id}`);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            if (!parsed || parsed.restaurantId !== restaurant.id || !Array.isArray(parsed.items)) return;
+
+            const nextCart: { [key: string]: number } = {};
+            for (const item of parsed.items) {
+                const id = String(item.id || "");
+                const quantity = Number(item.quantity || 0);
+                if (id && quantity > 0 && items.some((menuItem) => menuItem.id === id)) {
+                    nextCart[id] = Math.min(20, Math.floor(quantity));
+                }
+            }
+            if (Object.keys(nextCart).length > 0) {
+                setCart(nextCart);
+                localStorage.removeItem(`ts.reorder.${restaurant.id}`);
+            }
+        } catch { }
+    }, [items, restaurant.id]);
 
     const handleCartChange = (newCart: { [key: string]: number }) => {
         setCart(newCart);
@@ -450,7 +532,19 @@ export default function MenuClient({
         if (deliveryLat === null || deliveryLng === null) {
             return alert("Please select a suggested address so we can route your order accurately.");
         }
+        if (deliverySpeed === "SCHEDULED" && !scheduledFor) {
+            return alert("Please choose a scheduled delivery time.");
+        }
+        if (isGift && !giftName.trim()) {
+            return alert("Please add the gift recipient's name.");
+        }
         setIsSubmitting(true);
+        const deliveryPreferenceNote = [
+            `Drop-off: ${dropoffPreference}`,
+            unit.trim() ? `Unit/Suite: ${unit.trim()}` : "",
+            accessCode.trim() ? `Access: ${accessCode.trim()}` : "",
+            deliveryInstructions.trim() ? `Notes: ${deliveryInstructions.trim()}` : "",
+        ].filter(Boolean).join(" | ");
         const giftPrefix = isGift && giftName
             ? `[GIFT:${JSON.stringify({ recipientName: giftName, recipientPhone: giftPhone, note: giftNote })}] `
             : "";
@@ -465,8 +559,23 @@ export default function MenuClient({
             deliveryLng || 0,
             deliveryAddress,
             tip,
-            giftPrefix + deliveryInstructions,
-            redeemPoints ? pointsValue : 0
+            giftPrefix + deliveryPreferenceNote,
+            redeemPoints ? pointsValue : 0,
+            {
+                deliverySpeed,
+                scheduledFor: deliverySpeed === "SCHEDULED" ? scheduledFor : null,
+                deliveryPinAdjusted,
+                giftRecipientName: isGift ? giftName.trim() : "",
+                giftRecipientPhone: isGift ? giftPhone.trim() : "",
+                giftMessage: isGift ? giftNote.trim() : "",
+                giftHideReceipt: isGift ? giftHideReceipt : false,
+                rewardsPerksSnapshot: {
+                    plan: rewardsPlan,
+                    estimatedPoints,
+                    multiplier: rewardsMultiplier,
+                    redeemedPoints: redeemPoints ? pointsValue : 0,
+                },
+            }
         );
         if (res.success && res.orderId) setPendingOrderId(res.orderId);
         else alert(res.message || "Failed to place order");
@@ -774,6 +883,95 @@ export default function MenuClient({
                         {redeemPoints && <div className="tr" style={{ color: 'var(--gold)' }}><span>TruePoints</span><span>-${pointsDiscount.toFixed(2)}</span></div>}
                         <div className="tr big"><span>Total</span><span>${total.toFixed(2)}</span></div>
 
+                        {/* Delivery Timing */}
+                        <div style={{ marginTop: 16 }}>
+                            <div style={{ fontSize: 11, color: 'var(--t2)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 800 }}>Delivery Time</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 6 }}>
+                                {deliveryOptions.map((option) => {
+                                    const Icon = option.icon;
+                                    const active = deliverySpeed === option.id;
+                                    return (
+                                        <button
+                                            key={option.id}
+                                            type="button"
+                                            onClick={() => setDeliverySpeed(option.id)}
+                                            className="checkout-choice-card"
+                                            style={{
+                                                minHeight: 88,
+                                                padding: '10px 8px',
+                                                borderRadius: 12,
+                                                border: `1px solid ${active ? 'rgba(249,115,22,0.45)' : 'rgba(255,255,255,0.08)'}`,
+                                                background: active ? 'rgba(249,115,22,0.1)' : 'rgba(255,255,255,0.025)',
+                                                color: '#fff',
+                                                textAlign: 'left',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <Icon size={15} color={active ? '#f97316' : 'rgba(255,255,255,0.58)'} aria-hidden="true" />
+                                            <div style={{ marginTop: 8, fontSize: 11, fontWeight: 900 }}>{option.label}</div>
+                                            <div style={{ marginTop: 3, fontSize: 9, color: 'rgba(255,255,255,0.48)', lineHeight: 1.35 }}>{option.detail}</div>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {deliverySpeed === "SCHEDULED" && (
+                                <div style={{ marginTop: 8 }}>
+                                    <label style={{ fontSize: 10, fontWeight: 800, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 4 }}>
+                                        Delivery Window
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        value={scheduledFor}
+                                        min={new Date(Date.now() + 45 * 60 * 1000).toISOString().slice(0, 16)}
+                                        onChange={e => setScheduledFor(e.target.value)}
+                                        style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 10, padding: '9px 10px', fontSize: 12, color: '#fff', outline: 'none' }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Rewards Preview */}
+                        <div style={{
+                            marginTop: 16,
+                            padding: '12px',
+                            borderRadius: 14,
+                            background: 'linear-gradient(135deg, rgba(249,115,22,0.09), rgba(255,255,255,0.025))',
+                            border: '1px solid rgba(249,115,22,0.18)',
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 }}>
+                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                                    <div style={{ width: 30, height: 30, borderRadius: 10, background: 'rgba(249,115,22,0.13)', display: 'grid', placeItems: 'center', color: '#f97316', flexShrink: 0 }}>
+                                        <Star size={15} aria-hidden="true" />
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: 12, fontWeight: 900, color: '#fff' }}>TrueServe Rewards</div>
+                                        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)', marginTop: 2, lineHeight: 1.45 }}>{nextTierText}</div>
+                                    </div>
+                                </div>
+                                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                    <div style={{ fontSize: 18, fontWeight: 950, color: '#f97316', lineHeight: 1 }}>{estimatedPoints}</div>
+                                    <div style={{ fontSize: 8, fontWeight: 900, letterSpacing: '0.12em', color: '#777', textTransform: 'uppercase' }}>pts est.</div>
+                                </div>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginTop: 10 }}>
+                                {[
+                                    { label: 'Basic', value: '1x points' },
+                                    { label: 'Plus', value: '1.5x + priority' },
+                                    { label: 'Premium', value: '2x + concierge' },
+                                ].map((perk) => (
+                                    <div key={perk.label} style={{ padding: '8px 7px', borderRadius: 10, background: 'rgba(0,0,0,0.24)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                                        <div style={{ fontSize: 9, fontWeight: 900, color: '#fff' }}>{perk.label}</div>
+                                        <div style={{ fontSize: 8, color: '#777', marginTop: 2, lineHeight: 1.25 }}>{perk.value}</div>
+                                    </div>
+                                ))}
+                            </div>
+                            {!userId && (
+                                <Link href={`/login?redirect=/restaurants/${restaurant.id}`} style={{ display: 'inline-flex', marginTop: 10, fontSize: 10, fontWeight: 900, color: '#f97316', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                    Sign in to save rewards
+                                </Link>
+                            )}
+                        </div>
+
                         {/* Tip Selection */}
                         <div style={{ marginTop: '16px' }}>
                             <div style={{ fontSize: '11px', color: 'var(--t2)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 800 }}>Tip your driver</div>
@@ -806,7 +1004,7 @@ export default function MenuClient({
                                 }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <span style={{ fontSize: 16 }}>Gift</span>
+                                    <Gift size={16} color={isGift ? '#f97316' : 'rgba(255,255,255,0.65)'} aria-hidden="true" />
                                     <div style={{ textAlign: 'left' }}>
                                         <div style={{ fontSize: 12, fontWeight: 800, color: isGift ? '#f97316' : '#fff' }}>Send as a Gift</div>
                                         <div style={{ fontSize: 10, color: '#555' }}>Deliver to someone else with a personal note</div>
@@ -850,7 +1048,7 @@ export default function MenuClient({
                                     <div>
                                         <label style={{ fontSize: 10, fontWeight: 700, color: '#555', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: 4 }}>Personal Note</label>
                                         <textarea
-                                            placeholder="Thinking of you! Enjoy your meal "
+                                            placeholder="Thinking of you. Enjoy your meal."
                                             value={giftNote}
                                             onChange={e => setGiftNote(e.target.value)}
                                             rows={2}
@@ -860,6 +1058,14 @@ export default function MenuClient({
                                     <div style={{ fontSize: 10, color: 'rgba(249,115,22,0.7)', fontWeight: 600 }}>
                                         The delivery address below will be where this gift is sent.
                                     </div>
+                                    <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: 'rgba(255,255,255,0.65)', fontWeight: 700 }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={giftHideReceipt}
+                                            onChange={(e) => setGiftHideReceipt(e.target.checked)}
+                                        />
+                                        Hide prices from recipient
+                                    </label>
                                 </div>
                             )}
                         </div>
@@ -884,6 +1090,9 @@ export default function MenuClient({
                                             setDeliveryAddress(addr);
                                             setDeliveryLat(typeof lat === "number" && Number.isFinite(lat) ? lat : null);
                                             setDeliveryLng(typeof lng === "number" && Number.isFinite(lng) ? lng : null);
+                                            setBaseDeliveryLat(typeof lat === "number" && Number.isFinite(lat) ? lat : null);
+                                            setBaseDeliveryLng(typeof lng === "number" && Number.isFinite(lng) ? lng : null);
+                                            setDeliveryPinAdjusted(false);
                                             setCheckoutEta("Calculating...");
                                             setCheckoutDistance("");
                                             try {
@@ -906,13 +1115,87 @@ export default function MenuClient({
                                             } catch { }
                                         }}
                                     />
-                                    <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 overflow-hidden">
-                                        <div className="px-4 py-3 border-b border-white/10 flex flex-wrap items-start justify-between gap-3">
-                                            <div className="min-w-0 flex-1">
-                                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Live Delivery Route</div>
-                                                <div className="text-[11px] font-semibold text-white/70 mt-1 break-words leading-snug">{locationLabel}</div>
+                                    <div style={{
+                                        marginTop: 10,
+                                        display: 'grid',
+                                        gap: 8,
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        background: 'rgba(255,255,255,0.025)',
+                                        borderRadius: 14,
+                                        padding: 12,
+                                    }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
+                                            <div>
+                                                <div style={{ fontSize: 11, color: 'var(--t2)', textTransform: 'uppercase', letterSpacing: '.14em', fontWeight: 900 }}>Saved Delivery Preferences</div>
+                                                <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>These stay on this device for faster checkout.</div>
                                             </div>
-                                            <div className="shrink-0 text-[10px] font-black uppercase tracking-widest text-[#f97316] text-right">
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 6 }}>
+                                            {(["Leave at door", "Hand to me", "Meet outside"] as DropoffPreference[]).map((option) => {
+                                                const active = dropoffPreference === option;
+                                                return (
+                                                    <button
+                                                        key={option}
+                                                        type="button"
+                                                        onClick={() => setDropoffPreference(option)}
+                                                        className="checkout-choice-card"
+                                                        style={{
+                                                            minHeight: 48,
+                                                            padding: '9px 7px',
+                                                            borderRadius: 10,
+                                                            border: `1px solid ${active ? 'rgba(249,115,22,0.45)' : 'rgba(255,255,255,0.08)'}`,
+                                                            background: active ? 'rgba(249,115,22,0.1)' : 'rgba(0,0,0,0.18)',
+                                                            color: active ? '#f97316' : '#fff',
+                                                            fontSize: 10,
+                                                            fontWeight: 900,
+                                                            cursor: 'pointer',
+                                                            textAlign: 'center',
+                                                        }}
+                                                    >
+                                                        {option}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                                            <input
+                                                type="text"
+                                                value={unit}
+                                                onChange={(e) => setUnit(e.target.value)}
+                                                placeholder="Apt, suite, floor"
+                                                maxLength={60}
+                                                style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 10, padding: '9px 10px', fontSize: 12, color: '#fff', outline: 'none' }}
+                                            />
+                                            <input
+                                                type="text"
+                                                value={accessCode}
+                                                onChange={(e) => setAccessCode(e.target.value)}
+                                                placeholder="Gate / call box"
+                                                maxLength={80}
+                                                style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 10, padding: '9px 10px', fontSize: 12, color: '#fff', outline: 'none' }}
+                                            />
+                                        </div>
+                                        <textarea
+                                            value={deliveryInstructions}
+                                            onChange={(e) => setDeliveryInstructions(e.target.value)}
+                                            placeholder="Extra driver notes, side door, business name, allergies handoff note..."
+                                            rows={2}
+                                            maxLength={240}
+                                            style={{ width: '100%', background: '#111', border: '1px solid #222', borderRadius: 10, padding: '9px 10px', fontSize: 12, color: '#fff', outline: 'none', resize: 'none' }}
+                                        />
+                                    </div>
+                                    <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 overflow-hidden">
+                                        <div className="px-4 py-3 border-b border-white/10 grid gap-3" style={{ gridTemplateColumns: 'minmax(0, 1fr) minmax(86px, 112px)' }}>
+                                            <div className="min-w-0 flex-1">
+                                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-400">Confirm Drop-Off Pin</div>
+                                                <div className="text-[11px] font-semibold text-white/70 mt-1 break-words leading-snug">{locationLabel}</div>
+                                                {deliveryPinAdjusted ? (
+                                                    <div className="mt-1 text-[9px] font-black uppercase tracking-widest text-[#3ecf6e]">Customer-adjusted pin saved</div>
+                                                ) : (
+                                                    <div className="mt-1 text-[9px] text-slate-500">Drag the delivery pin or nudge it below before checkout.</div>
+                                                )}
+                                            </div>
+                                            <div className="text-[9px] font-black uppercase tracking-widest text-[#f97316] text-right" style={{ overflowWrap: 'anywhere', lineHeight: 1.35 }}>
                                                 {hasCheckoutRoute ? (
                                                     <>
                                                         <div>{`ETA ${checkoutEta}`}</div>
@@ -932,6 +1215,18 @@ export default function MenuClient({
                                                 origin={{ lat: restaurantLat, lng: restaurantLng }}
                                                 destination={{ lat: deliveryLat, lng: deliveryLng }}
                                                 showDriver={false}
+                                                destinationDraggable
+                                                onDestinationChange={(next) => {
+                                                    setDeliveryLat(next.lat);
+                                                    setDeliveryLng(next.lng);
+                                                    setDeliveryPinAdjusted(true);
+                                                    setCheckoutEta("Calculating...");
+                                                    setCheckoutDistance("");
+                                                    try {
+                                                        localStorage.setItem(DELIVERY_STORAGE_KEYS.lat, String(next.lat));
+                                                        localStorage.setItem(DELIVERY_STORAGE_KEYS.lng, String(next.lng));
+                                                    } catch { }
+                                                }}
                                                 onDurationUpdate={setCheckoutEta}
                                                 onDistanceUpdate={setCheckoutDistance}
                                             />
@@ -943,6 +1238,76 @@ export default function MenuClient({
                                                     <div className="mt-2 text-xs text-slate-500">
                                                         Choose an address from Google suggestions to preview the route and distance.
                                                     </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {hasCheckoutRoute && (
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, alignItems: 'center', padding: '10px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                                                <div>
+                                                    <div style={{ fontSize: 10, fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: '0.12em' }}>Fine tune pin</div>
+                                                    <div style={{ fontSize: 10, color: '#777', marginTop: 2 }}>Small moves help with apartments, offices, and side doors.</div>
+                                                </div>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 28px)', gridTemplateRows: 'repeat(3, 28px)', gap: 4 }}>
+                                                    {[
+                                                        { label: '', row: 1, col: 1 },
+                                                        { label: 'N', row: 1, col: 2, dLat: 0.00018, dLng: 0 },
+                                                        { label: '', row: 1, col: 3 },
+                                                        { label: 'W', row: 2, col: 1, dLat: 0, dLng: -0.00018 },
+                                                        { label: 'Reset', row: 2, col: 2, reset: true },
+                                                        { label: 'E', row: 2, col: 3, dLat: 0, dLng: 0.00018 },
+                                                        { label: '', row: 3, col: 1 },
+                                                        { label: 'S', row: 3, col: 2, dLat: -0.00018, dLng: 0 },
+                                                        { label: '', row: 3, col: 3 },
+                                                    ].map((control, index) => control.label ? (
+                                                        <button
+                                                            key={index}
+                                                            type="button"
+                                                            aria-label={control.reset ? "Reset delivery pin to selected address" : `Move delivery pin ${control.label}`}
+                                                            onClick={() => {
+                                                                if (control.reset) {
+                                                                    if (baseDeliveryLat !== null && baseDeliveryLng !== null) {
+                                                                        setDeliveryLat(baseDeliveryLat);
+                                                                        setDeliveryLng(baseDeliveryLng);
+                                                                        try {
+                                                                            localStorage.setItem(DELIVERY_STORAGE_KEYS.lat, String(baseDeliveryLat));
+                                                                            localStorage.setItem(DELIVERY_STORAGE_KEYS.lng, String(baseDeliveryLng));
+                                                                        } catch { }
+                                                                    }
+                                                                    setDeliveryPinAdjusted(false);
+                                                                    setCheckoutEta("Calculating...");
+                                                                    setCheckoutDistance("");
+                                                                    return;
+                                                                }
+                                                                if (deliveryLat === null || deliveryLng === null) return;
+                                                                const nextLat = deliveryLat + (control.dLat || 0);
+                                                                const nextLng = deliveryLng + (control.dLng || 0);
+                                                                setDeliveryLat(nextLat);
+                                                                setDeliveryLng(nextLng);
+                                                                setDeliveryPinAdjusted(true);
+                                                                setCheckoutEta("Calculating...");
+                                                                setCheckoutDistance("");
+                                                                try {
+                                                                    localStorage.setItem(DELIVERY_STORAGE_KEYS.lat, String(nextLat));
+                                                                    localStorage.setItem(DELIVERY_STORAGE_KEYS.lng, String(nextLng));
+                                                                } catch { }
+                                                            }}
+                                                            style={{
+                                                                gridRow: control.row,
+                                                                gridColumn: control.col,
+                                                                width: control.reset ? 34 : 28,
+                                                                height: 28,
+                                                                borderRadius: 8,
+                                                                border: '1px solid rgba(255,255,255,0.1)',
+                                                                background: control.reset ? 'rgba(249,115,22,0.11)' : 'rgba(255,255,255,0.055)',
+                                                                color: control.reset ? '#f97316' : '#fff',
+                                                                fontSize: control.reset ? 7 : 10,
+                                                                fontWeight: 900,
+                                                                cursor: 'pointer',
+                                                            }}
+                                                        >
+                                                            {control.label}
+                                                        </button>
+                                                    ) : <span key={index} />)}
                                                 </div>
                                             </div>
                                         )}

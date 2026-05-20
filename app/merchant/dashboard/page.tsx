@@ -95,6 +95,7 @@ export default async function MerchantDashboard({
     const hasStripeAccount = Boolean(restaurant.stripeAccountId);
     const hasStripe = Boolean(restaurant.stripeOnboardingComplete);
     const hasHours = Boolean(restaurant.openTime && restaurant.closeTime);
+    const hasGhl = Boolean(String(restaurant.ghlUrl || "").trim());
     const hasPos = Boolean(
         (restaurant.posSystem && restaurant.posSystem !== "None") ||
         (restaurant.posType && restaurant.posType !== "None") ||
@@ -111,6 +112,7 @@ export default async function MerchantDashboard({
         { label: "Stripe", done: hasStripe },
         { label: "Hours", done: hasHours },
         { label: "POS", done: hasPos || restaurant.posSystem === "None" || restaurant.posType === "None" },
+        { label: "GHL", done: hasGhl },
         { label: "Photo", done: Boolean(restaurant.imageUrl) },
         { label: "Live", done: restaurant.visibility === "VISIBLE" },
     ];
@@ -318,6 +320,7 @@ export default async function MerchantDashboard({
                 isVisible={restaurant.visibility === "VISIBLE"}
                 hasHours={hasHours}
                 hasPos={hasPos || restaurant.posSystem === "None" || restaurant.posType === "None"}
+                hasGhl={hasGhl}
                 hasTestOrder={hasTestOrder}
                 restaurantId={restaurant.id}
             />

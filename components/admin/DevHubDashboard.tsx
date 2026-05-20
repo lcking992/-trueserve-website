@@ -396,7 +396,7 @@ function ReleaseChecklist() {
         { id: 'env_vars', label: 'Any new env vars added to Vercel project settings' },
         { id: 'live_keys', label: 'Production env uses pk_live + sk_live keys (no pk_test in .env.production)' },
         { id: 'webhook_secret', label: 'STRIPE_WEBHOOK_SECRET is set in production Vercel env' },
-        { id: 'release_note', label: 'Brief release note added to Asana describing what changed and what was tested' },
+        { id: 'release_note', label: 'Brief release note added to ClickUp describing what changed and what was tested' },
       ]
     },
   ];

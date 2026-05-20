@@ -107,6 +107,15 @@ export default function LoginPage() {
       </nav>
 
       <main className="food-auth-wrap">
+        <div className="auth-route-ambient" aria-hidden="true">
+          <svg viewBox="0 0 1200 760" role="presentation" focusable="false">
+            <path className="auth-route-line auth-route-line-base" d="M80 575 C 235 390, 365 640, 515 430 S 760 185, 940 350 S 1085 585, 1160 305" />
+            <path className="auth-route-line auth-route-line-hot" d="M80 575 C 235 390, 365 640, 515 430 S 760 185, 940 350 S 1085 585, 1160 305" />
+            <circle className="auth-route-stop auth-route-stop-one" cx="515" cy="430" r="8" />
+            <circle className="auth-route-stop auth-route-stop-two" cx="940" cy="350" r="8" />
+            <circle className="auth-route-courier" cx="0" cy="0" r="10" />
+          </svg>
+        </div>
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
             <div
@@ -141,7 +150,10 @@ export default function LoginPage() {
 
           <section className="food-panel food-auth-form">
             <Link href="/" className="portal-btn-outline portal-btn-outline-block !w-auto !px-4 !py-2">← Home</Link>
-            <p className="food-kicker mb-3">Account access</p>
+            <div className="auth-form-topline">
+              <p className="food-kicker mb-0">Account access</p>
+              <span className="auth-status-chip"><span /> Secure live access</span>
+            </div>
             <h2 className="food-heading !text-[32px] md:!text-[36px]">Sign In</h2>
             <p className="lead mt-2 max-w-[360px]">Access your TrueServe account and continue your order flow.</p>
 
@@ -151,7 +163,7 @@ export default function LoginPage() {
               </div>
             )}
 
-            <div className="role-tabs mt-6 overflow-x-auto">
+            <div className="role-tabs mt-6" data-role={role}>
               <button
                 className={`role-tab ${role === 'customer' ? 'on' : ''}`}
                 onClick={() => { setRole('customer'); setErrorText(''); }}
@@ -172,7 +184,7 @@ export default function LoginPage() {
               </button>
             </div>
 
-            <form className="mt-5" onSubmit={doLogin}>
+            <form className="mt-6 auth-login-form" onSubmit={doLogin}>
               <div className="fg">
                 <label>Email address</label>
                 <input
@@ -183,7 +195,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                 />
               </div>
-              <div className="fg" style={{ marginTop: '10px' }}>
+              <div className="fg">
                 <label>Password</label>
                 <input
                   type="password"
@@ -193,16 +205,15 @@ export default function LoginPage() {
                   disabled={isLoading}
                 />
               </div>
-              <div style={{ textAlign: 'right', margin: '8px 0 16px' }}>
-                <Link href="/forgot-password" style={{ fontSize: '12px', color: 'var(--gold)', textDecoration: 'none' }}>
+              <div className="auth-forgot-row">
+                <Link href="/forgot-password">
                   Forgot password?
                 </Link>
               </div>
 
               <button
                 type="submit"
-                className="ts-pill-btn ts-pill-btn-block mt-4"
-                style={{ marginTop: 0 }}
+                className="ts-pill-btn ts-pill-btn-block auth-submit-btn"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign In"}
@@ -212,8 +223,14 @@ export default function LoginPage() {
             <div className="login-or">or continue with</div>
 
             <div className="grid grid-cols-1 gap-3">
-              <button type="button" className="portal-btn-outline portal-btn-outline-block" onClick={() => signInWithProvider('google')} disabled={isLoading}>
-                <span style={{ fontSize: '16px', marginRight: '8px' }}>G</span> Continue with Google
+              <button type="button" className="google-auth-btn" onClick={() => signInWithProvider('google')} disabled={isLoading}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.3 9.14 5.38 12 5.38z" />
+                </svg>
+                Continue with Google
               </button>
             </div>
 

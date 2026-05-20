@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Logo from "@/components/Logo";
-import { BadgeCheck, CarFront, Clock3, IdCard, Route, ShieldCheck, Smartphone, Zap } from "lucide-react";
+import { BadgeCheck, CarFront, CheckCircle2, CircleDollarSign, Clock3, FileCheck2, IdCard, Route, ShieldCheck, Smartphone, TimerReset, Zap } from "lucide-react";
 
 export default function DriverLanding() {
   return (
@@ -58,11 +58,30 @@ export default function DriverLanding() {
           <div style={{ textAlign: "center" }}>
             <p className="food-kicker" style={{ marginBottom: 16, color: "#f97316" }}>For Drivers</p>
             <h1 className="food-title" style={{ marginBottom: 20, maxWidth: 700, margin: "0 auto 20px" }}>
-              Earn on<br /><span className="accent">your terms</span>
+              Earn $20/hr<br /><span className="accent">paid daily</span>
             </h1>
             <p className="food-subtitle" style={{ maxWidth: 520, margin: "0 auto 36px", textAlign: "center" }}>
-              Deliver when you want, keep what you earn, and get paid fast — no shift requirements, no boss, no waiting.
+              Deliver local orders, keep 100% of your tips, and track daily payout progress from the driver portal.
             </p>
+            <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "wrap", margin: "-18px auto 28px" }}>
+              {[
+                { value: "$20/hr", label: "Driver pay" },
+                { value: "Daily", label: "Payout rhythm" },
+                { value: "100%", label: "Tips kept" },
+              ].map((item) => (
+                <div key={item.label} style={{
+                  minWidth: 136,
+                  padding: "11px 14px",
+                  borderRadius: 16,
+                  border: "1px solid rgba(249,115,22,0.24)",
+                  background: "linear-gradient(180deg, rgba(249,115,22,0.12), rgba(255,255,255,0.025))",
+                  textAlign: "left",
+                }}>
+                  <strong style={{ display: "block", color: "#fff", fontSize: 17, fontWeight: 950 }}>{item.value}</strong>
+                  <span style={{ display: "block", marginTop: 2, color: "rgba(255,255,255,0.52)", fontSize: 10, fontWeight: 900, letterSpacing: "0.13em", textTransform: "uppercase" }}>{item.label}</span>
+                </div>
+              ))}
+            </div>
             <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
               <Link href="/driver/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
                 Apply to Drive →
@@ -87,7 +106,7 @@ export default function DriverLanding() {
               icon: Zap,
               kicker: "Fast Payouts",
               title: "Get paid quickly",
-              desc: "Earnings are tracked in real time and paid out via Stripe. No waiting until Friday — your money moves when you do.",
+              desc: "Earnings are tracked in real time with daily payout visibility through the driver portal.",
             },
             {
               icon: Route,
@@ -107,6 +126,47 @@ export default function DriverLanding() {
               <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.65)" }}>{card.desc}</p>
             </div>
           )})}
+        </section>
+
+        <section className="driver-proof-grid" style={{ marginBottom: 56 }}>
+          <div className="food-panel driver-earnings-panel">
+            <p className="food-kicker" style={{ marginBottom: 10 }}>Earnings expectations</p>
+            <h2 className="food-heading" style={{ fontSize: 34, marginBottom: 12 }}>Know the work before you apply.</h2>
+            <p style={{ fontSize: 14, lineHeight: 1.75, color: "rgba(255,255,255,0.62)", marginBottom: 20 }}>
+              TrueServe is built for local restaurant delivery: dinner rushes, clear pickups, and better handoff visibility.
+            </p>
+            <div className="driver-metric-row">
+              {[
+                { value: "$20/hr", label: "driver pay" },
+                { value: "100%", label: "tips kept" },
+                { value: "Daily", label: "payout rhythm" },
+              ].map((metric) => (
+                <div key={metric.label}>
+                  <strong>{metric.value}</strong>
+                  <span>{metric.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="food-panel driver-next-panel">
+            <p className="food-kicker" style={{ marginBottom: 10 }}>What happens next</p>
+            {[
+              { icon: FileCheck2, title: "Apply and choose text updates", desc: "The SMS checkbox is optional and clearly explains message terms." },
+              { icon: ShieldCheck, title: "Upload documents", desc: "License, insurance, and registration go through private review." },
+              { icon: CheckCircle2, title: "Get cleared to drive", desc: "Once approved, your driver dashboard unlocks for live delivery work." },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="driver-next-step">
+                  <Icon size={18} aria-hidden="true" />
+                  <div>
+                    <strong>{item.title}</strong>
+                    <span>{item.desc}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {/* Requirements */}
@@ -133,6 +193,24 @@ export default function DriverLanding() {
               </div>
             )})}
           </div>
+        </section>
+
+        <section className="driver-trust-strip" style={{ marginBottom: 56 }}>
+          {[
+            { icon: BadgeCheck, label: "No application fee", detail: "Start free" },
+            { icon: CircleDollarSign, label: "Tips stay yours", detail: "100% tips" },
+            { icon: TimerReset, label: "Fast review", detail: "Same-day target" },
+            { icon: ShieldCheck, label: "Private docs", detail: "Secure uploads" },
+          ].map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.label}>
+                <Icon size={18} aria-hidden="true" />
+                <strong>{item.label}</strong>
+                <span>{item.detail}</span>
+              </div>
+            );
+          })}
         </section>
 
         {/* Earnings calc teaser */}

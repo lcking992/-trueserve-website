@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
 import Logo from "@/components/Logo";
 import { submitDriverApplication } from "@/app/driver/actions";
-import DriverEarningsCalc from "@/components/DriverEarningsCalc";
 
 export default function DriverSignupPage() {
   const [step, setStep] = useState(1);
@@ -62,17 +61,17 @@ export default function DriverSignupPage() {
             <div className="food-auth-hero-inner">
               <div className="food-eyebrow">Driver onboarding</div>
               <div className="mt-5 space-y-4">
-                <h1 className="food-heading !text-[56px]">Drive With TrueServe. <span className="accent">Earn More Per Hour.</span></h1>
+                <h1 className="food-heading !text-[56px]">Finish Your <span className="accent">Driver Setup.</span></h1>
                 <p className="food-subtitle !max-w-[520px]">
-                  The driver application is fully wired for production with document upload, phone verification readiness, and onboarding instructions by email and SMS.
+                  Upload your documents, confirm your vehicle details, and get your account ready for route review.
                 </p>
               </div>
               <ul className="food-auth-list">
                 <li>
                   <div className="food-auth-icon">1</div>
                   <div>
-                    <div className="font-extrabold">Higher earning potential</div>
-                    <div className="text-sm text-white/65">Competitive payouts with fair routing logic.</div>
+                    <div className="font-extrabold">Document upload</div>
+                    <div className="text-sm text-white/65">License, insurance, and vehicle registration in one place.</div>
                   </div>
                 </li>
                 <li>
@@ -90,7 +89,6 @@ export default function DriverSignupPage() {
                   </div>
                 </li>
               </ul>
-              <DriverEarningsCalc />
             </div>
           </section>
 
@@ -196,6 +194,14 @@ export default function DriverSignupPage() {
                       <input name="hasSignedAgreement" type="checkbox" value="true" required className="mt-1" />
                       I confirm all provided information is accurate and I agree to the TrueServe driver terms.
                     </label>
+                    <label className="driver-sms-consent mt-3">
+                      <input name="smsConsent" type="checkbox" value="true" />
+                      <span>
+                        I agree to receive driver recruiting and onboarding text messages from TrueServe at the phone number provided.
+                        Message frequency varies. Message and data rates may apply. Reply STOP to opt out or HELP for help.
+                        Consent is not required to apply.
+                      </span>
+                    </label>
                   </div>
                   <div className="flex flex-col gap-2">
                     <button className="place-btn" type="submit" disabled={isPending}>{isPending ? "Submitting..." : "Submit Application"}</button>
@@ -207,9 +213,9 @@ export default function DriverSignupPage() {
               {step === 3 && (
                 <div id="ds-3" className="step active">
                   <div className="done-card">
-                    <div className="done-ico">🚚</div>
+                    <div className="done-ico">TS</div>
                     <h3>Application Received</h3>
-                    <p>We sent your next-step instructions by email and SMS. Once approved, you can log in with phone OTP at the driver portal.</p>
+                    <p>We sent your next-step instructions by email and, if you opted in, SMS. Once approved, you can log in with phone OTP at the driver portal.</p>
                     <Link href="/driver/login?tour=1" className="place-btn inline-flex items-center justify-center">Go to Driver Login</Link>
                   </div>
                 </div>

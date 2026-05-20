@@ -144,7 +144,7 @@ export default function DriverLoginForm() {
                     <div>
                         <label className="fl">Mobile Identifier (US Only)</label>
                         <div className="flex gap-[1px] bg-[#1c1f28] border border-[#2a2f3a] rounded-[12px] overflow-hidden">
-                            <div className="px-4 flex items-center text-[#555] text-[13px] font-bold bg-[#131720] border-r border-[#1c1f28]">🇺🇸 +1</div>
+                            <div className="px-4 flex items-center text-[#9ca3af] text-[13px] font-bold bg-[#131720] border-r border-[#1c1f28]">US +1</div>
                             <input 
                                 type="tel"
                                 required

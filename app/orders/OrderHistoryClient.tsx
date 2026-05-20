@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type FilterTab = 'ALL' | 'DELIVERED' | 'CANCELLED';
 
@@ -21,6 +22,7 @@ interface Order {
     items?: { name: string }[];
     _count?: { items?: number };
     itemCount?: number;
+    reorderItems?: { id: string; quantity: number }[];
 }
 
 interface Props {
@@ -35,12 +37,32 @@ const TAB_LABELS: { key: FilterTab; label: string }[] = [
 ];
 
 export default function OrderHistoryClient({ activeOrders, pastOrders }: Props) {
+    const router = useRouter();
     const [filter, setFilter] = useState<FilterTab>('ALL');
 
     const filteredPast = pastOrders.filter(o => {
         if (filter === 'ALL') return true;
         return o.status === filter;
     });
+
+    function handleReorder(order: Order) {
+        const restaurantId = order.restaurantId;
+        if (!restaurantId) return;
+
+        try {
+            localStorage.setItem(
+                `ts.reorder.${restaurantId}`,
+                JSON.stringify({
+                    orderId: order.id,
+                    restaurantId,
+                    items: order.reorderItems || [],
+                    createdAt: new Date().toISOString(),
+                })
+            );
+        } catch { }
+
+        router.push(`/restaurants/${restaurantId}?reorder=1`);
+    }
 
     return (
         <>
@@ -150,13 +172,14 @@ export default function OrderHistoryClient({ activeOrders, pastOrders }: Props) 
                                             {order.status}
                                         </p>
                                         {order.status === 'DELIVERED' && (
-                                            <Link
-                                                href={`/restaurants/${restaurantId}`}
+                                            <button
+                                                type="button"
                                                 className="text-[10px] font-black uppercase tracking-widest text-[#f97316] hover:text-[#f97316]/80 transition-colors mt-0.5"
-                                                onClick={e => e.stopPropagation()}
+                                                style={{ background: 'transparent', border: 0, padding: 0, cursor: 'pointer' }}
+                                                onClick={() => handleReorder(order)}
                                             >
                                                 Reorder →
-                                            </Link>
+                                            </button>
                                         )}
                                     </div>
                                 </div>

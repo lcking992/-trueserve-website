@@ -27,7 +27,17 @@ export async function placeOrder(
     customerAddress?: string,
     tip: number = 0,
     deliveryInstructions?: string,
-    pointsToRedeem: number = 0
+    pointsToRedeem: number = 0,
+    checkoutOptions?: {
+        deliverySpeed?: "EXPRESS" | "STANDARD" | "SCHEDULED";
+        scheduledFor?: string | null;
+        deliveryPinAdjusted?: boolean;
+        giftRecipientName?: string;
+        giftRecipientPhone?: string;
+        giftMessage?: string;
+        giftHideReceipt?: boolean;
+        rewardsPerksSnapshot?: Record<string, unknown>;
+    }
 ): Promise<OrderState> {
 
     // ... (inside the insert call) ...
@@ -226,8 +236,7 @@ export async function placeOrder(
         const posRef = `ORD-${uuidv4().substring(0, 8).toUpperCase()}`;
         const newOrderId = uuidv4();
 
-        // 4. Insert Order
-        const { error: insertError } = await supabase.from('Order').insert({
+        const orderPayload = {
             id: newOrderId,
             userId: finalUserId,
             restaurantId: restaurantId,
@@ -240,9 +249,45 @@ export async function placeOrder(
             deliveryLng: customerLng,
             deliveryAddress: customerAddress,
             deliveryInstructions: deliveryInstructions,
+            deliverySpeed: checkoutOptions?.deliverySpeed || "STANDARD",
+            scheduledFor: checkoutOptions?.scheduledFor || null,
+            deliveryPinAdjusted: Boolean(checkoutOptions?.deliveryPinAdjusted),
+            giftRecipientName: checkoutOptions?.giftRecipientName || null,
+            giftRecipientPhone: checkoutOptions?.giftRecipientPhone || null,
+            giftMessage: checkoutOptions?.giftMessage || null,
+            giftHideReceipt: Boolean(checkoutOptions?.giftHideReceipt),
+            rewardsPerksSnapshot: checkoutOptions?.rewardsPerksSnapshot || null,
             updatedAt: new Date().toISOString(),
             createdAt: new Date().toISOString()
-        });
+        };
+
+        // 4. Insert Order
+        let { error: insertError } = await supabase.from('Order').insert(orderPayload);
+
+        if (insertError && /deliverySpeed|scheduledFor|deliveryPinAdjusted|giftRecipient|giftMessage|giftHideReceipt|rewardsPerksSnapshot|column/i.test(insertError.message || "")) {
+            const legacyInstructions = [
+                checkoutOptions ? `[CHECKOUT:${JSON.stringify(checkoutOptions)}]` : "",
+                deliveryInstructions || "",
+            ].filter(Boolean).join(" ");
+
+            const {
+                deliverySpeed,
+                scheduledFor,
+                deliveryPinAdjusted,
+                giftRecipientName,
+                giftRecipientPhone,
+                giftMessage,
+                giftHideReceipt,
+                rewardsPerksSnapshot,
+                ...legacyPayload
+            } = orderPayload;
+
+            const fallback = await supabase.from('Order').insert({
+                ...legacyPayload,
+                deliveryInstructions: legacyInstructions,
+            });
+            insertError = fallback.error;
+        }
 
         if (insertError) {
             // logToFile(`Order Insert Error: ${insertError.message} / ${insertError.details}`);

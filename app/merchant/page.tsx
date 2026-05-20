@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import { BadgeDollarSign, BriefcaseBusiness, Building2, ChartNoAxesCombined, Handshake, Network, ReceiptText, Store, Truck, UsersRound } from "lucide-react";
 
 export default function MerchantLanding() {
   return (
@@ -26,7 +27,7 @@ export default function MerchantLanding() {
           background: "rgba(249,115,22,0.07)", border: "1px solid rgba(249,115,22,0.25)",
         }}>
           <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
-            🤝 <strong style={{ color: "#f97316" }}>Founding Partner Program —</strong>{" "}
+            <strong style={{ color: "#f97316" }}>Founding Partner Program —</strong>{" "}
             Join now for <strong style={{ color: "#fff" }}>30 days free</strong> and get your rate{" "}
             <strong style={{ color: "#fff" }}>locked forever.</strong>
           </p>
@@ -41,7 +42,7 @@ export default function MerchantLanding() {
           <p className="food-subtitle" style={{ maxWidth: 560, margin: "0 auto 36px", textAlign: "center" }}>
             Reach more local customers, manage orders in real time, and keep 100% of every dollar you earn — flat monthly rate, zero commission.
           </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          <div className="merchant-cta-row">
             <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
               Apply as Founding Partner →
             </Link>
@@ -51,49 +52,112 @@ export default function MerchantLanding() {
           </div>
         </section>
 
+        <section id="enterprise" className="merchant-route-gateway" aria-label="Merchant onboarding routes">
+          <div className="merchant-route-card merchant-route-local">
+            <div className="merchant-route-icon"><Store size={22} aria-hidden="true" /></div>
+            <p className="food-kicker">Local Merchant Route</p>
+            <h2 className="food-heading">Apply in 60 seconds.</h2>
+            <p>
+              Built for single-location restaurants that want fast onboarding, menu import help, and direct local order flow without marketplace commission.
+            </p>
+            <div className="merchant-route-fields" aria-hidden="true">
+              <span>Restaurant Name</span>
+              <span>Street Address</span>
+              <span>Contact Email</span>
+            </div>
+            <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block">Start Local Application</Link>
+          </div>
+
+          <div className="merchant-route-card merchant-route-enterprise">
+            <div className="merchant-route-icon"><Building2 size={22} aria-hidden="true" /></div>
+            <p className="food-kicker">Enterprise / Multi-Unit Route</p>
+            <h2 className="food-heading">Strategic account intake.</h2>
+            <p>
+              For franchise groups, regional operators, and multi-unit brands that need POS alignment, rollout planning, and centralized reporting.
+            </p>
+            <div className="merchant-enterprise-preview">
+              <label><BriefcaseBusiness size={14} aria-hidden="true" /> Corporate Name</label>
+              <label><UsersRound size={14} aria-hidden="true" /> Number of Units</label>
+              <label><Network size={14} aria-hidden="true" /> Current POS Provider</label>
+            </div>
+            <Link href="/contact?role=restaurant" className="portal-btn-outline portal-btn-outline-block">Speak with Strategic Accounts</Link>
+          </div>
+        </section>
+
         {/* ── FEATURE CARDS ── */}
         <section className="grid gap-6 md:grid-cols-3" style={{ marginBottom: 56 }}>
           {[
             {
-              icon: "💳",
+              icon: BadgeDollarSign,
               kicker: "Zero Commission",
               title: "Keep everything you earn",
               desc: "TrueServe charges a flat monthly fee — not a cut of every order. The more you sell, the more you keep.",
             },
             {
-              icon: "📊",
+              icon: ChartNoAxesCombined,
               kicker: "Real-Time Control",
               title: "Live order dashboard",
               desc: "See every order the moment it comes in, track prep timing, monitor your driver, and view daily revenue — all in one place.",
             },
             {
-              icon: "🔒",
+              icon: Handshake,
               kicker: "Rate Lock Guarantee",
               title: "Your price, locked forever",
               desc: "Founding partners lock in today's rate permanently. Even as TrueServe grows and pricing increases, your rate never changes.",
             },
-          ].map((card) => (
+          ].map((card) => {
+            const Icon = card.icon;
+            return (
             <div key={card.title} className="food-card" style={{ padding: 28 }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>{card.icon}</div>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 14, marginBottom: 14, color: "#f97316", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.22)" }}>
+                <Icon size={21} strokeWidth={2.1} />
+              </div>
               <p className="food-kicker" style={{ marginBottom: 8 }}>{card.kicker}</p>
               <h3 className="food-heading" style={{ fontSize: 26, marginBottom: 10 }}>{card.title}</h3>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.65)" }}>{card.desc}</p>
             </div>
-          ))}
+          )})}
+        </section>
+
+        <section className="food-panel merchant-switch-panel" style={{ marginBottom: 56 }}>
+          <div>
+            <p className="food-kicker" style={{ marginBottom: 12 }}>Why restaurants switch</p>
+            <h2 className="food-heading" style={{ marginBottom: 12 }}>Less marketplace drag. <span className="accent">More direct control.</span></h2>
+            <p style={{ maxWidth: 560, color: "rgba(255,255,255,.62)", fontSize: 14, lineHeight: 1.75 }}>
+              TrueServe is built for operators who want delivery demand without losing the customer relationship or watching commission eat the margin.
+            </p>
+          </div>
+          <div className="merchant-switch-grid">
+            {[
+              { icon: ReceiptText, label: "Lower fees", detail: "Flat plans replace percentage-heavy marketplace math." },
+              { icon: UsersRound, label: "Direct customers", detail: "Keep your brand and repeat buyers front and center." },
+              { icon: Store, label: "Live visibility", detail: "Kitchen status and order updates live in one place." },
+              { icon: Truck, label: "Cleaner handoff", detail: "Drivers see prep timing and pickup notes before arrival." },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label}>
+                  <Icon size={20} aria-hidden="true" />
+                  <strong>{item.label}</strong>
+                  <span>{item.detail}</span>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {/* ── HOW IT WORKS ── */}
-        <section className="food-panel" style={{ marginBottom: 56, padding: 40 }}>
+        <section className="food-panel merchant-timeline-panel" style={{ marginBottom: 56 }}>
           <p className="food-kicker" style={{ marginBottom: 12 }}>How It Works</p>
           <h2 className="food-heading" style={{ marginBottom: 32 }}>Up and running <span className="accent">in minutes</span></h2>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="merchant-timeline">
             {[
               { step: "01", title: "Apply online",    desc: "Fill out a quick form with your restaurant info. We review and approve within 24 hours." },
               { step: "02", title: "Build your menu", desc: "Sync with Toast, Square, or Clover — or use our AI menu scanner to import your menu in seconds." },
               { step: "03", title: "Start earning",   desc: "Orders flow directly to your dashboard. Drivers are dispatched automatically. You get paid next day." },
             ].map((item) => (
-              <div key={item.step} style={{ display: "flex", gap: 16 }}>
-                <div style={{ fontFamily: "var(--font-bebas), sans-serif", fontSize: 40, lineHeight: 1, color: "rgba(249,115,22,0.25)", flexShrink: 0, minWidth: 48 }}>{item.step}</div>
+              <div key={item.step} className="merchant-timeline-step">
+                <div className="merchant-timeline-node">{item.step}</div>
                 <div>
                   <h4 style={{ fontFamily: "var(--font-bebas), sans-serif", fontSize: 20, letterSpacing: "0.04em", textTransform: "uppercase", color: "#fff", marginBottom: 6 }}>{item.title}</h4>
                   <p style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,0.6)" }}>{item.desc}</p>
@@ -104,7 +168,7 @@ export default function MerchantLanding() {
         </section>
 
         {/* ── FOUNDING PARTNER CTA ── */}
-        <section style={{ textAlign: "center", padding: "40px 0 64px" }}>
+        <section className="merchant-final-cta">
           <p className="food-kicker" style={{ marginBottom: 10, color: "#f97316" }}>Founding Partner Program</p>
           <h2 className="food-heading" style={{ marginBottom: 12 }}>Limited spots available.</h2>
           <p className="food-subtitle" style={{ maxWidth: 460, margin: "0 auto 10px" }}>

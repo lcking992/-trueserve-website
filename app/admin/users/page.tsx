@@ -9,6 +9,7 @@ import { resolveDriverDocumentUrl } from "@/lib/driver-documents";
 import { filterAdminUsers, isMockAdminRecord, shouldHideMockAdminData } from "@/lib/admin-data";
 import DriverApplicationActions from "@/components/admin/DriverApplicationActions";
 import MerchantApplicationActions from "@/components/admin/MerchantApplicationActions";
+import DriverPipeline from "@/components/admin/DriverPipeline";
 
 export const dynamic = "force-dynamic";
 
@@ -37,6 +38,10 @@ export default async function UsersPage({
             id,
             userId,
             status,
+            complianceStatus,
+            vehicleType,
+            createdAt,
+            updatedAt,
             vehicleVerified,
             backgroundCheckStatus,
             aiMetadata,
@@ -45,7 +50,7 @@ export default async function UsersPage({
             user:User(id, name, email, phone)
         `)
         .order('updatedAt', { ascending: false })
-        .limit(24);
+        .limit(250);
 
     const { data: driverAlerts } = await supabaseAdmin
         .from('Notification')
@@ -116,9 +121,21 @@ export default async function UsersPage({
         MERCHANT: '#fbbf24', DRIVER: '#34d399', CUSTOMER: '#818cf8',
     };
 
-    const driverDocsWithLinks = visibleDriverDocs.filter((driver: any) => driver.licenseUrl || driver.insuranceUrl || driver.registrationUrl);
+    const driverDocsWithLinks = visibleDriverDocs
+        .filter((driver: any) => driver.licenseUrl || driver.insuranceUrl || driver.registrationUrl)
+        .sort((a: any, b: any) => {
+            const bTime = new Date(b.updatedAt || b.createdAt || 0).getTime();
+            const aTime = new Date(a.updatedAt || a.createdAt || 0).getTime();
+            return bTime - aTime;
+        });
     const recentDriverApplications = visibleDriverDocs
         .filter((driver: any) => driver.status !== 'REJECTED' && !driver.vehicleVerified)
+        .sort((a: any, b: any) => {
+            const aDocs = [a.licenseUrl, a.insuranceUrl, a.registrationUrl].filter(Boolean).length;
+            const bDocs = [b.licenseUrl, b.insuranceUrl, b.registrationUrl].filter(Boolean).length;
+            if (aDocs !== bDocs) return bDocs - aDocs;
+            return new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime();
+        })
         .slice(0, 10);
     const recentDriverSignupHistory = visibleDriverUsers.slice(0, 10).map((user: any) => {
         const linkedDriver = visibleDriverDocs.find((driver: any) => driver.userId === user.id);
@@ -396,6 +413,16 @@ export default async function UsersPage({
                         )}
                     </div>
                 </div>
+                <DriverPipeline drivers={visibleDriverDocs.map((d: any) => ({
+                    id: d.id,
+                    userId: d.userId,
+                    complianceStatus: d.complianceStatus || d.status || "NEW_APPLICATION",
+                    backgroundCheckStatus: d.backgroundCheckStatus || "PENDING",
+                    vehicleType: d.vehicleType,
+                    createdAt: d.createdAt || new Date().toISOString(),
+                    user: d.user,
+                }))} />
+
                 <div className="um-apps">
                     <h2>Pending Driver Applications</h2>
                     <p>Fresh driver sign-ups appear here with their uploaded documents and approval actions so you can review them right away.</p>

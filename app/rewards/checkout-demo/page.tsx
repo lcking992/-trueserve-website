@@ -62,13 +62,17 @@ export default async function RewardsCheckoutDemoPage({
         <section className="food-panel relative overflow-hidden">
           <div className="pointer-events-none absolute inset-0">
             <video
-              className="absolute inset-0 h-full w-full object-cover opacity-30"
+              className="decorative-video absolute inset-0 h-full w-full object-cover opacity-30"
               autoPlay
               loop
               muted
               playsInline
+              controls={false}
+              disablePictureInPicture
+              controlsList="nodownload noplaybackrate noremoteplayback"
               preload="metadata"
               aria-hidden="true"
+              tabIndex={-1}
             >
               <source src="/videos/trueserve-rewards-checkout-3d-bg.mp4" type="video/mp4" />
             </video>

@@ -21,6 +21,7 @@ import { normalizePhoneNumber } from "@/lib/phoneUtils";
 import { getAppBaseUrl } from "@/lib/app-url";
 import { uploadPrivateDriverDocument } from "@/lib/driver-documents";
 import { syncSignupLeadToGHL } from "@/lib/ghl-sync";
+import { getAdminNotificationEmails } from "@/lib/admin-config";
 
 export type DriverApplicationState = {
     message: string;
@@ -48,6 +49,7 @@ export async function submitDriverApplication(prevState: any, formData: FormData
     const lat = formData.get("lat") as string;
     const lng = formData.get("lng") as string;
     const hasSignedAgreement = formData.get("hasSignedAgreement") === "true";
+    const smsConsent = formData.get("smsConsent") === "true";
 
     if (!name || !email || !vehicleType || !vehicleMake || !vehicleModel || !vehicleColor || !licensePlate || !phone || !idDocument || !insuranceDocument || !registrationDocument || !dob || !address || !hasSignedAgreement) {
         return { message: "Please fill in all fields and sign the agreement.", error: true };
@@ -123,11 +125,16 @@ export async function submitDriverApplication(prevState: any, formData: FormData
 
         const { data: existingDriver } = await supabaseAdmin
             .from('Driver')
-            .select('id')
+            .select('id, complianceStatus, aiMetadata')
             .eq('userId', targetUserId)
             .maybeSingle();
 
-        if (existingDriver) {
+        const existingComplianceStatus = String(existingDriver?.complianceStatus || "").toUpperCase();
+        const isMicroApplicationOnly =
+            existingComplianceStatus === "NEW_APPLICATION" ||
+            Boolean((existingDriver?.aiMetadata as any)?.microApplication);
+
+        if (existingDriver && !isMicroApplicationOnly) {
             return { message: "You have already applied!", error: true };
         }
 
@@ -176,6 +183,7 @@ export async function submitDriverApplication(prevState: any, formData: FormData
         }
 
         const aiMetadata = {
+            ...((existingDriver?.aiMetadata as Record<string, any> | null) || {}),
             idScan,
             insuranceScan,
             registrationScan,
@@ -184,7 +192,9 @@ export async function submitDriverApplication(prevState: any, formData: FormData
                 idDocumentPath: idDocumentUpload.path,
                 insuranceDocumentPath: insuranceUpload.path,
                 registrationDocumentPath: registrationUpload.path,
-            }
+            },
+            smsConsent,
+            fullApplicationSubmittedAt: new Date().toISOString(),
         };
 
         // Get or create Driver ID
@@ -211,6 +221,7 @@ export async function submitDriverApplication(prevState: any, formData: FormData
                 status: driveStatus,
                 backgroundCheckId: backgroundCheckId,
                 backgroundCheckStatus: bckStatus,
+                complianceStatus: isAutoApproved ? "ACTIVE" : "READY_FOR_REVIEW",
                 vehicleVerified: false, // Always false on signup, admin must approve
                 hasSignedAgreement: true,
                 agreementSignedAt: new Date().toISOString(),
@@ -268,11 +279,12 @@ export async function submitDriverApplication(prevState: any, formData: FormData
             .in('role', ['ADMIN', 'OPS', 'SUPPORT', 'FINANCE', 'PM']);
 
         const staffRecords = (staffMembers || []).filter((member: any) => member?.email);
-        const staffEmails = Array.from(new Set(
-            staffRecords
+        const staffEmails = Array.from(new Set([
+            ...getAdminNotificationEmails(),
+            ...staffRecords
                 .map((member: any) => member.email.trim().toLowerCase())
-                .filter(Boolean)
-        )) as string[];
+                .filter(Boolean),
+        ])) as string[];
         const staffPhones = Array.from(new Set(
             staffRecords
                 .map((member: any) => normalizePhoneNumber(member.phone || ""))
@@ -294,12 +306,14 @@ export async function submitDriverApplication(prevState: any, formData: FormData
                     attachments
                 )
             );
-            notificationPromises.push(
-                sendSMS(
-                    phone,
-                    `TrueServe: Hi ${name.split(' ')[0]}, great news! Your documents were auto-verified and you are approved to drive immediately. Check your email to login.`
-                )
-            );
+            if (smsConsent) {
+                notificationPromises.push(
+                    sendSMS(
+                        phone,
+                        `TrueServe: Hi ${name.split(' ')[0]}, your documents were verified and you are approved to drive. Check your email to log in. Reply STOP to opt out.`
+                    )
+                );
+            }
         } else {
             notificationPromises.push(
                 sendEmail(
@@ -314,12 +328,14 @@ export async function submitDriverApplication(prevState: any, formData: FormData
                     attachments
                 )
             );
-            notificationPromises.push(
-                sendSMS(
-                    phone,
-                    `TrueServe: Hi ${name.split(' ')[0]}, thanks for applying! We've received your documents and will text you once our team reviews them.`
-                )
-            );
+            if (smsConsent) {
+                notificationPromises.push(
+                    sendSMS(
+                        phone,
+                        `TrueServe: Hi ${name.split(' ')[0]}, thanks for applying. We received your documents and will text you after review. Reply STOP to opt out.`
+                    )
+                );
+            }
         }
 
         // Notify entire Admin/Ops Team
@@ -364,8 +380,12 @@ export async function submitDriverApplication(prevState: any, formData: FormData
         }
 
         await Promise.allSettled(notificationPromises);
-        revalidatePath("/admin/users");
-        revalidatePath("/admin/dashboard");
+        try {
+            revalidatePath("/admin/users");
+            revalidatePath("/admin/dashboard");
+        } catch (revalidateErr) {
+            console.warn("[DriverApp] Revalidation skipped:", revalidateErr);
+        }
 
         return { message: isAutoApproved ? "Application auto-approved! Check your email to start driving." : "Application submitted! We'll email you when approved.", success: true };
 
@@ -923,15 +943,28 @@ export async function completePhotoDelivery(formData: FormData) {
 
                 // --- NEW: Stripe Connect Instant Payout ---
                 try {
-                    const { data: driverAcc } = await supabaseAdmin.from('Driver').select('stripeAccountId').eq('id', order.driverId).single();
+                    const { data: driverAcc } = await supabaseAdmin
+                        .from('Driver')
+                        .select('stripeAccountId, balance')
+                        .eq('id', order.driverId)
+                        .single();
                     if (driverAcc && driverAcc.stripeAccountId) {
                         const stripe = getStripe();
-                        await stripe.transfers.create({
+                        const transfer = await stripe.transfers.create({
                             amount: Math.round(earnings * 100), // convert to cents
                             currency: 'usd',
                             destination: driverAcc.stripeAccountId,
                             description: `Instant Payout for Order ${orderId}`
                         });
+                        await supabaseAdmin
+                            .from('Driver')
+                            .update({
+                                balance: Math.max(0, Number(driverAcc.balance || 0) - earnings),
+                                lastPayoutTransferId: transfer.id,
+                                lastPayoutAt: new Date().toISOString(),
+                                updatedAt: new Date().toISOString(),
+                            })
+                            .eq('id', order.driverId);
                         console.log(`🤑 Successfully transferred $${earnings} to Driver ${order.driverId}`);
                     }
                 } catch (stripeErr: any) {
@@ -1011,6 +1044,122 @@ export async function saveDriverPreferences(prefs: {
         return { success: true };
     } catch (e: any) {
         return { error: e.message };
+    }
+}
+
+export async function clockInDriverShift() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/driver/login");
+
+    try {
+        const { data: driver } = await supabaseAdmin
+            .from('Driver')
+            .select('id, hourlyRate')
+            .eq('userId', user.id)
+            .single();
+
+        if (!driver) throw new Error("Driver profile not found.");
+
+        const { data: activeShift, error: activeError } = await supabaseAdmin
+            .from('DriverShift')
+            .select('id')
+            .eq('driverId', driver.id)
+            .eq('status', 'ACTIVE')
+            .maybeSingle();
+
+        if (activeError && activeError.code !== 'PGRST116') throw activeError;
+        if (activeShift) {
+            revalidatePath('/driver/dashboard');
+            return { success: true, message: "You are already clocked in." };
+        }
+
+        const { error } = await supabaseAdmin
+            .from('DriverShift')
+            .insert({
+                driverId: driver.id,
+                hourlyRate: Number((driver as any).hourlyRate || 20),
+                status: 'ACTIVE',
+            });
+
+        if (error) throw error;
+
+        await supabaseAdmin
+            .from('Driver')
+            .update({
+                status: 'ONLINE',
+                lastShiftStartedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            })
+            .eq('id', driver.id);
+
+        revalidatePath('/driver/dashboard');
+        revalidatePath('/driver/dashboard/earnings');
+        return { success: true, message: "Shift started." };
+    } catch (e: any) {
+        console.error("Clock In Error:", e);
+        return {
+            error: e.message?.includes('DriverShift')
+                ? "Shift tracking is waiting on the database migration."
+                : e.message || "Could not start shift.",
+        };
+    }
+}
+
+export async function clockOutDriverShift() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) redirect("/driver/login");
+
+    try {
+        const { data: driver } = await supabaseAdmin
+            .from('Driver')
+            .select('id')
+            .eq('userId', user.id)
+            .single();
+
+        if (!driver) throw new Error("Driver profile not found.");
+
+        const { data: activeShift, error: shiftError } = await supabaseAdmin
+            .from('DriverShift')
+            .select('id')
+            .eq('driverId', driver.id)
+            .eq('status', 'ACTIVE')
+            .order('startedAt', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
+        if (shiftError && shiftError.code !== 'PGRST116') throw shiftError;
+        if (!activeShift) {
+            revalidatePath('/driver/dashboard');
+            return { success: true, message: "No active shift to close." };
+        }
+
+        const { error: rpcError } = await supabaseAdmin.rpc('complete_driver_shift', {
+            shift_id: activeShift.id,
+        });
+
+        if (rpcError) throw rpcError;
+
+        await supabaseAdmin
+            .from('Driver')
+            .update({
+                status: 'OFFLINE',
+                lastShiftEndedAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            })
+            .eq('id', driver.id);
+
+        revalidatePath('/driver/dashboard');
+        revalidatePath('/driver/dashboard/earnings');
+        return { success: true, message: "Shift ended." };
+    } catch (e: any) {
+        console.error("Clock Out Error:", e);
+        return {
+            error: e.message?.includes('complete_driver_shift') || e.message?.includes('DriverShift')
+                ? "Shift tracking is waiting on the database migration."
+                : e.message || "Could not end shift.",
+        };
     }
 }
 

@@ -21,6 +21,7 @@ export default function OnboardingChecklist({
   isVisible,
   hasHours,
   hasPos,
+  hasGhl,
   hasTestOrder,
   restaurantId,
 }: {
@@ -30,6 +31,7 @@ export default function OnboardingChecklist({
   isVisible: boolean;
   hasHours?: boolean;
   hasPos?: boolean;
+  hasGhl?: boolean;
   hasTestOrder?: boolean;
   restaurantId: string;
 }) {
@@ -65,6 +67,14 @@ export default function OnboardingChecklist({
       href: "/merchant/dashboard/integrations",
       cta: "Review POS",
       done: Boolean(hasPos),
+    },
+    {
+      id: "ghl",
+      label: "Add the merchant support link",
+      description: "Save the restaurant's GHL booking or support URL so help stays one tap away.",
+      href: "/merchant/dashboard",
+      cta: "Add Link",
+      done: Boolean(hasGhl),
     },
     {
       id: "image",

@@ -16,9 +16,13 @@ const FALLBACK_RESTAURANT_IMAGES = {
 };
 
 export function getRestaurantDisplayImage(restaurant: RestaurantImageInput) {
+  const text = `${restaurant.name || ""} ${restaurant.cuisineType || ""}`.toLowerCase();
+
   if (restaurant.imageUrl && restaurant.imageUrl.trim()) return restaurant.imageUrl;
 
-  const text = `${restaurant.name || ""} ${restaurant.cuisineType || ""}`.toLowerCase();
+  if (text.includes("dhan")) {
+    return "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=1200&q=80&auto=format&fit=crop";
+  }
 
   if (text.includes("steak 'n shake") || text.includes("steak n shake")) {
     return FALLBACK_RESTAURANT_IMAGES.burger;

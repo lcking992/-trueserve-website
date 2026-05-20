@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import { loginWithPassword, type AuthState } from "@/app/auth/actions";
+import { Building2, Network, ShieldCheck } from "lucide-react";
 
 export default function MerchantLoginPage() {
   const router = useRouter();
@@ -82,6 +83,13 @@ export default function MerchantLoginPage() {
 
           <section className="food-panel food-auth-form">
             <Link href="/" className="portal-btn-outline portal-btn-outline-block !w-auto !px-4 !py-2">← Back to Home</Link>
+            <div className="merchant-auth-business-card">
+              <div>
+                <ShieldCheck size={18} aria-hidden="true" />
+                <span>Secure business authentication</span>
+              </div>
+              <strong>Restaurant Operations Portal</strong>
+            </div>
             <p className="food-kicker mb-3">Restaurant account</p>
             <h1 className="food-heading !text-[32px] md:!text-[36px]">Sign In</h1>
             <p className="lead mt-2 max-w-[360px]">Secure merchant access for your partnership portal.</p>
@@ -135,6 +143,15 @@ export default function MerchantLoginPage() {
                 {isPending ? "Authorizing..." : "Establish Session"}
               </button>
             </form>
+
+            <div className="merchant-multiunit-note">
+              <Building2 size={16} aria-hidden="true" />
+              <div>
+                <strong>Multi-Unit Franchise Managers</strong>
+                <span>Use one secure account to move between approved regional locations after setup.</span>
+              </div>
+              <Network size={16} aria-hidden="true" />
+            </div>
 
             <Link
               href="/merchant/tutorial-preview"

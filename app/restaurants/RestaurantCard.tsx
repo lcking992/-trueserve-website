@@ -102,8 +102,8 @@ export default function RestaurantCard({
   })();
 
   const hasHealthGrade = r.healthGrade && r.healthGrade !== "—";
-  const colors = hasHealthGrade ? gradeToColor(r.healthGrade) : null;
   const displayImage = getRestaurantDisplayImage(r);
+  const etaLabel = estimateEta(r.distanceMiles);
   const partnerStatusLabel = isOpen === false ? "Browse menu" : "Taking orders";
   const verificationLabel = hasHealthGrade ? `Health grade ${r.healthGrade}` : "Verified partner";
 
@@ -154,31 +154,10 @@ export default function RestaurantCard({
           <span className="rc-status-chip trust">{verificationLabel}</span>
         </div>
 
-        {/* OPEN / CLOSED badge */}
-        {isOpen !== null && (
-          <div style={{
-            position: "absolute",
-            top: 12,
-            left: 12,
-            display: "flex", alignItems: "center", gap: 5,
-            background: isOpen ? "rgba(10,22,14,0.88)" : "rgba(22,10,10,0.88)",
-            border: `1px solid ${isOpen ? "rgba(77,202,128,0.35)" : "rgba(248,113,113,0.35)"}`,
-            color: isOpen ? "#4dca80" : "#f87171",
-            borderRadius: 999,
-            padding: "4px 9px",
-            fontSize: 9,
-            fontWeight: 800,
-            letterSpacing: "0.1em",
-            zIndex: 2,
-          }}>
-            <span style={{
-              width: 5, height: 5, borderRadius: "50%",
-              background: isOpen ? "#4dca80" : "#f87171",
-              display: "inline-block",
-            }} />
-            {isOpen ? "OPEN" : "CLOSED"}
-          </div>
-        )}
+        <div className="rc-quick-info-row" aria-label="Restaurant quick info">
+          <span><Clock3 size={12} aria-hidden="true" /> {etaLabel}</span>
+          <span><Star size={12} fill="currentColor" aria-hidden="true" /> {r.rating || "4.9"} {r.reviewCount ? `(${r.reviewCount}+)` : "(100+)"}</span>
+        </div>
 
         {/* Favorite heart button */}
         <button
@@ -187,8 +166,8 @@ export default function RestaurantCard({
           aria-label={isFav ? "Remove from favorites" : "Add to favorites"}
           style={{
             position: "absolute",
-            top: 10,
-            right: hasHealthGrade ? 70 : 10,
+            top: 48,
+            right: 12,
             width: 32, height: 32,
             borderRadius: "50%",
             background: "rgba(0,0,0,0.55)",
@@ -203,32 +182,6 @@ export default function RestaurantCard({
           <Heart size={15} fill={isFav ? "#f97316" : "none"} color={isFav ? "#f97316" : "#fff"} aria-hidden="true" />
         </button>
 
-        {/* Health Grade Badge */}
-        {hasHealthGrade && colors && (
-          <div
-            className="health-grade-badge"
-            style={{
-              position: "absolute",
-              top: 12,
-              right: 12,
-              background: colors.bg,
-              border: `2px solid ${colors.border}`,
-              color: colors.text,
-              width: 48,
-              height: 48,
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 20,
-              fontWeight: "bold",
-              zIndex: 2,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-            }}
-          >
-            {r.healthGrade}
-          </div>
-        )}
       </motion.div>
 
       <div className="rc-info">
@@ -238,7 +191,7 @@ export default function RestaurantCard({
             <Star size={13} fill="currentColor" aria-hidden="true" /> {r.rating || "4.9"}
           </div>
           <div>•</div>
-          <div>{estimateEta(r.distanceMiles)}</div>
+          <div>{etaLabel}</div>
           {typeof r.distanceMiles === "number" && (
             <>
               <div>•</div>
@@ -259,6 +212,11 @@ export default function RestaurantCard({
             <MapPin size={13} aria-hidden="true" />
             {typeof r.distanceMiles === "number" ? `${r.distanceMiles.toFixed(1)} miles away` : "Local partner"}
           </span>
+        </div>
+
+        <div className="rc-partner-value">
+          <BadgeCheck size={13} aria-hidden="true" />
+          Partner Restaurant: 0% platform commission cut
         </div>
 
         {/* Compliance / trust badges */}

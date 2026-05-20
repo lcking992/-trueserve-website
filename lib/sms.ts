@@ -7,7 +7,7 @@ dotenv.config({ path: '.env.local' });
 
 const vonageApiKey = process.env.VONAGE_API_KEY || process.env.NEXMO_API_KEY;
 const vonageApiSecret = process.env.VONAGE_API_SECRET || process.env.NEXMO_API_SECRET;
-const vonageFrom = process.env.VONAGE_FROM;
+const vonageFrom = process.env.VONAGE_FROM || process.env.VONAGE_FROM_NUMBER;
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioFrom = process.env.TWILIO_PHONE_NUMBER;
@@ -77,31 +77,33 @@ export async function sendSMS(to: string, body: string) {
     }
 
     try {
-        logger.info({ to: normalizedVonageTo }, '[SMS] Sending via Vonage');
+        logger.info({ to: normalizedVonageTo }, '[SMS] Sending via Vonage Messages API');
 
-        const params = new URLSearchParams({
-            api_key: vonageApiKey!,
-            api_secret: vonageApiSecret!,
-            from: vonageFrom!,
-            to: normalizedVonageTo,
-            text: body
-        });
-
-        const res = await fetch('https://rest.nexmo.com/sms/json', {
+        const auth = Buffer.from(`${vonageApiKey}:${vonageApiSecret}`).toString('base64');
+        const res = await fetch('https://api.nexmo.com/v1/messages', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: params.toString()
+            headers: {
+                Authorization: `Basic ${auth}`,
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify({
+                to: normalizedVonageTo,
+                from: vonageFrom!.replace(/^\+/, ''),
+                channel: 'sms',
+                message_type: 'text',
+                text: body,
+            }),
         });
 
         const data = await res.json();
-        const firstMessage = data?.messages?.[0];
 
-        if (!res.ok || !firstMessage || firstMessage.status !== '0') {
-            const errText = firstMessage?.['error-text'] || `Vonage HTTP ${res.status}`;
+        if (!res.ok) {
+            const errText = data?.detail || data?.title || data?.message || `Vonage HTTP ${res.status}`;
             throw new Error(errText);
         }
 
-        return { success: true, sid: firstMessage['message-id'] };
+        return { success: true, sid: data?.message_uuid || data?.messageId };
     } catch (error: any) {
         logger.error({ err: error, to: normalizedVonageTo }, '[SMS] Error sending via Vonage');
         Sentry.captureException(error, {

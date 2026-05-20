@@ -18,7 +18,7 @@ export default async function OrdersPage() {
         .select(`
             *,
             restaurant:Restaurant(id, name, imageUrl, rating),
-            items:OrderItem(id)
+            items:OrderItem(id, menuItemId, quantity)
         `)
         .eq('userId', userId)
         .order('createdAt', { ascending: false });
@@ -27,6 +27,11 @@ export default async function OrdersPage() {
         ...o,
         restaurantId: o.restaurant?.id ?? o.restaurantId ?? null,
         itemCount: Array.isArray(o.items) ? o.items.length : 0,
+        reorderItems: Array.isArray(o.items)
+            ? o.items
+                .filter((item: any) => item.menuItemId && item.quantity)
+                .map((item: any) => ({ id: item.menuItemId, quantity: item.quantity }))
+            : [],
     }));
 
     const activeOrders = orders.filter((o: any) =>

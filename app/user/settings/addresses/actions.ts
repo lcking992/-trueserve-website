@@ -7,6 +7,9 @@ export interface SavedAddress {
     label: string;
     address: string;
     notes?: string;
+    unit?: string;
+    accessCode?: string;
+    dropoffPreference?: 'Leave at door' | 'Hand to me' | 'Meet outside';
     isDefault: boolean;
 }
 
