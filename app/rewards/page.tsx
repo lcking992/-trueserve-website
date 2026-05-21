@@ -2,13 +2,14 @@ export const dynamic = "force-dynamic";
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import Logo from "@/components/Logo";
-import FadeInSection from "@/components/FadeInSection";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+import AnniversaryTab from "./AnniversaryTab";
 import { getAuthSession } from "@/app/auth/actions";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { grantAnniversaryRewardIfEligible, type AnniversaryRewardStatus } from "@/lib/rewards";
 import { joinRewardsTier } from "./actions";
-import { CalendarHeart, Crown, Gift, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react";
+import { Crown, Gift, ShieldCheck, Sparkles, Star, TrendingUp } from "lucide-react";
 
 type RewardsSnapshot = {
     plan: string;
@@ -17,6 +18,7 @@ type RewardsSnapshot = {
     ordersCount: number;
     lifetimeSpend: number;
     multiplierText: string;
+    createdAt: string | null;
     anniversaryReward?: AnniversaryRewardStatus;
 };
 
@@ -46,7 +48,7 @@ async function getSnapshot(userId?: string, anniversaryReward?: AnniversaryRewar
 
     const { data: user } = await supabaseAdmin
         .from("User")
-        .select("plan, stripeCustomerId, truePointsBalance")
+        .select("plan, stripeCustomerId, truePointsBalance, createdAt")
         .eq("id", userId)
         .maybeSingle();
 
@@ -57,77 +59,23 @@ async function getSnapshot(userId?: string, anniversaryReward?: AnniversaryRewar
         .select("total, status")
         .eq("userId", userId);
 
-    const completed = (orders || []).filter((o) => o.status !== "CANCELLED");
-    const lifetimeSpend = completed.reduce((sum, order) => sum + Number(order.total || 0), 0);
-    const multiplier = getMultiplier(user.plan || "Basic");
-    const points = Number(user.truePointsBalance || 0);
+    const completed = (orders || []).filter((o: { status: string }) => o.status === "DELIVERED");
+    const lifetimeSpend = completed.reduce((sum: number, o: { total: number | string | null }) => sum + Number(o.total ?? 0), 0);
+
+    const plan = user.plan || "Basic";
+    const multiplier = getMultiplier(plan);
+    const multiplierText = multiplier === 1 ? "1x" : `${multiplier}x`;
 
     return {
-        plan: user.plan || "Basic",
+        plan,
         hasPaymentMethod: Boolean(user.stripeCustomerId),
-        points,
+        points: Number(user.truePointsBalance || 0),
         ordersCount: completed.length,
         lifetimeSpend,
-        multiplierText: `${multiplier}x`,
+        multiplierText,
+        createdAt: user.createdAt ? String(user.createdAt) : null,
         anniversaryReward
     };
-}
-
-function AnniversaryRewardCard({
-    isSignedIn,
-    reward
-}: {
-    isSignedIn: boolean;
-    reward?: AnniversaryRewardStatus;
-}) {
-    const title = reward?.granted
-        ? "Anniversary Points Added"
-        : reward?.alreadyClaimed
-            ? "Anniversary Reward Banked"
-            : "Account Anniversary Reward";
-    const detail = !isSignedIn
-        ? "Create an account to start your anniversary clock. Eligible customers receive a yearly TruePoints bonus."
-        : reward?.granted
-            ? `${reward.points.toLocaleString()} TruePoints were added for your ${reward.anniversaryYear} TrueServe anniversary.`
-            : reward?.alreadyClaimed
-                ? `Your ${reward.anniversaryYear} anniversary reward is already in your balance. Next reward unlocks ${formatRewardDate(reward.nextAnniversary)}.`
-                : `Your next yearly bonus unlocks ${formatRewardDate(reward?.nextAnniversary)}.`;
-
-    return (
-        <FadeInSection className="mt-8" delay={0.05}>
-            <section className="food-panel rewards-anniversary-panel relative overflow-hidden">
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.18),transparent_42%)]" />
-                <div className="relative z-10 grid gap-5 md:grid-cols-[0.8fr_1.2fr] md:items-center">
-                    <div className="rounded-3xl border border-[#f97316]/30 bg-[#f97316]/10 p-5">
-                        <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#f97316]/35 bg-black/20 text-[#f97316]">
-                            <CalendarHeart size={22} />
-                        </div>
-                        <p className="food-kicker mb-2">Yearly Perk</p>
-                        <h2 className="food-heading !text-[30px]">{title}</h2>
-                    </div>
-                    <div>
-                        <p className="text-white/74 leading-relaxed">{detail}</p>
-                        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Bonus</p>
-                                <strong className="mt-1 block text-2xl text-[#f97316]">{(reward?.points || 250).toLocaleString()}</strong>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Frequency</p>
-                                <strong className="mt-1 block text-lg text-white">Yearly</strong>
-                            </div>
-                            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                                <p className="text-xs font-black uppercase tracking-[0.14em] text-white/45">Status</p>
-                                <strong className="mt-1 block text-lg text-white">
-                                    {reward?.granted ? "Added" : reward?.alreadyClaimed ? "Claimed" : "Tracking"}
-                                </strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </FadeInSection>
-    );
 }
 
 function getJourney(points: number, plan: string) {
@@ -166,30 +114,25 @@ function MessageBanner({ update, tier }: { update?: string; tier?: string }) {
 
     if (update === "success") {
         return (
-            <div className="food-panel mb-6 border border-emerald-400/30 bg-emerald-500/10 text-emerald-200">
+            <div className="ts-fig-rewards-banner is-success">
                 Rewards plan updated successfully to <strong>{tier || "your selected tier"}</strong>.
             </div>
         );
     }
     if (update === "needs_wallet") {
         return (
-            <div className="food-panel mb-6 border border-[#f97316]/35 bg-[#f97316]/10 text-[#f4d7a3]">
+            <div className="ts-fig-rewards-banner is-warn">
                 Add a saved card in <Link href="/user/settings#wallet" className="underline font-bold">Account Settings</Link> before joining a paid rewards tier.
             </div>
         );
     }
     return (
-        <div className="food-panel mb-6 border border-red-500/30 bg-red-500/10 text-red-200">
-            We couldn’t update your rewards tier. Please try again.
+        <div className="ts-fig-rewards-banner is-error">
+            We couldn&rsquo;t update your rewards tier. Please try again.
         </div>
     );
 }
 
-const TIER_IMAGES: Record<string, string> = {
-    Basic: "/hero-pizza.png",
-    Plus: "/littlerichards_bbq_plate.png",
-    Premium: "/old_north_state_charcuterie.png",
-};
 
 function TierCard({
     tier,
@@ -201,7 +144,8 @@ function TierCard({
     ctaLabel,
     features,
     badge,
-    icon
+    icon,
+    variant
 }: {
     tier: "Basic" | "Plus" | "Premium";
     subtitle: string;
@@ -213,64 +157,40 @@ function TierCard({
     features: string[];
     badge?: string;
     icon: ReactNode;
+    variant?: "plain" | "teal" | "dark";
 }) {
-    const isCurrent = currentPlan === tier;
+    const isCurrent = Boolean(currentPlan) && currentPlan === tier;
+    const variantClass = variant === "teal" ? "teal" : variant === "dark" ? "dark" : "";
     return (
-        <article className={`food-card rewards-tier-card rewards-tier-${tier.toLowerCase()} relative overflow-hidden ${isCurrent ? "is-current" : ""}`}>
-            {/* Tier photo banner */}
-            <div className="absolute top-0 left-0 right-0 h-24 overflow-hidden rounded-t-[inherit] pointer-events-none">
-                <div
-                    className="absolute inset-0 bg-cover bg-center opacity-[0.18]"
-                    style={{ backgroundImage: `url('${TIER_IMAGES[tier]}')` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#111614]" />
+        <article className={`ts-fig-trust-card ts-fig-tier-card ${variantClass} ${isCurrent ? "is-current" : ""}`}>
+            <div className="ts-fig-tier-head">
+                <div className="ts-fig-trust-icon">{icon}</div>
+                {badge ? <span className="ts-fig-tier-badge">{badge}</span> : null}
             </div>
-            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.12),transparent_45%)]" />
-            <div className="relative z-10">
-                <div className="mb-3 flex items-start justify-between gap-3">
-                    <div className="rounded-xl border border-[#f97316]/35 bg-[#f97316]/10 p-2 text-[#f97316]">
-                        {icon}
-                    </div>
-                    {badge && (
-                        <span className="rewards-tier-badge">
-                            {badge}
-                        </span>
-                    )}
-                </div>
-                <p className="food-kicker mb-2">{subtitle}</p>
-                <h3 className="food-heading !text-[34px]">{tier}</h3>
-                <p className="text-xl font-bold text-[#f97316] mt-2">{price}</p>
-            </div>
-
-            <div className="mt-4 grid gap-2 relative z-10">
+            <span className="ts-fig-tier-subtitle">{subtitle}</span>
+            <h3>{tier}</h3>
+            <div className="ts-fig-tier-price">{price}</div>
+            <ul className="ts-fig-tier-features">
                 {features.map((feature) => (
-                    <div key={feature} className="text-sm text-white/78 flex items-start gap-2">
-                        <span className="mt-[8px] h-1.5 w-1.5 rounded-full bg-[#f97316]" />
+                    <li key={feature}>
+                        <span className="ts-fig-tier-dot" />
                         <span>{feature}</span>
-                    </div>
+                    </li>
                 ))}
-            </div>
-            <div className="mt-6 relative z-10">
+            </ul>
+            <div className="ts-fig-tier-cta">
                 {isCurrent ? (
-                    <button
-                        type="button"
-                        disabled
-                        className="w-full btn btn-ghost opacity-70 cursor-not-allowed"
-                    >
+                    <button type="button" disabled className="ts-fig-btn ts-fig-tier-current">
                         Current Plan
                     </button>
                 ) : ctaHref ? (
-                    <Link href={ctaHref} className="place-btn w-full text-center block">
+                    <Link href={ctaHref} className="ts-fig-btn">
                         {ctaLabel || `Join ${tier}`}
                     </Link>
                 ) : (
-                    <form action={joinRewardsTier}>
+                    <form action={joinRewardsTier} style={{ width: "100%" }}>
                         <input type="hidden" name="tier" value={tier} />
-                        <button
-                            type="submit"
-                            disabled={!canSubmit}
-                            className="w-full place-btn"
-                        >
+                        <button type="submit" disabled={!canSubmit} className="ts-fig-btn" style={{ width: "100%", justifyContent: "center" }}>
                             {ctaLabel || `Join ${tier}`}
                         </button>
                     </form>
@@ -289,240 +209,255 @@ export default async function RewardsPage({
     const { isAuth, userId } = await getAuthSession();
     const anniversaryReward = userId ? await grantAnniversaryRewardIfEligible(userId) : undefined;
     const snapshot = await getSnapshot(userId, anniversaryReward);
-    const currentPlan = snapshot?.plan || "Basic";
     const isSignedIn = Boolean(isAuth && userId);
+    const currentPlan = isSignedIn ? (snapshot?.plan || "Basic") : "";
+    const displayPlan = currentPlan || "Basic";
     const canChoosePaid = Boolean(snapshot?.hasPaymentMethod);
     const safePoints = snapshot?.points ?? 0;
-    const journey = getJourney(safePoints, currentPlan);
+    const journey = getJourney(safePoints, displayPlan);
 
     return (
-        <div className="food-app-shell">
-            <nav className="food-app-nav">
-                <div className="mx-auto flex items-center justify-between px-4 sm:px-0" style={{ width: "min(1180px, calc(100% - 32px))", padding: "14px 0" }}>
-                    <Logo size="sm" />
-                    <div className="flex gap-2">
-                        <Link href="/signup" className="btn btn-ghost">Sign Up</Link>
-                        <Link href="/restaurants" className="btn btn-gold">Order Food</Link>
-                    </div>
-                </div>
-            </nav>
+        <div className="ts-fig ts-fig-rewards-page">
+            <SiteHeader />
 
-            <main className="food-app-main">
-                <MessageBanner update={resolvedSearchParams?.update} tier={resolvedSearchParams?.tier} />
-
-                <section className="food-panel relative overflow-hidden">
-                    {/* Hero food imagery strip */}
-                    <div className="pointer-events-none absolute inset-0">
-                        <div
-                            className="rewards-hero-poster absolute inset-0 bg-cover bg-center opacity-[0.12]"
-                            style={{ backgroundImage: "url('/community_section.png')" }}
-                        />
-                        <video
-                            className="rewards-hero-video decorative-video absolute inset-0 h-full w-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            controls={false}
-                            disablePictureInPicture
-                            preload="metadata"
-                            aria-hidden="true"
-                            tabIndex={-1}
-                        >
-                            <source src="/videos/rewards-hero-warm-inviting.mp4" type="video/mp4" />
-                        </video>
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(249,115,22,0.22),transparent_48%),radial-gradient(circle_at_bottom_left,rgba(255,122,45,0.14),transparent_38%)]" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0d0f0e]/90" />
-                    </div>
-                    <div className="relative z-10 flex flex-col gap-6 lg:grid lg:grid-cols-[1.2fr_0.8fr]">
-                        <div className="min-w-0">
-                            <p className="food-kicker mb-3">Customer Loyalty</p>
-                            <h1 className="food-heading">TrueServe Rewards</h1>
-                            <p className="food-subtitle mt-3 !max-w-none">
+            <main>
+                {/* HERO */}
+                <section className="ts-fig-hero">
+                    <div className="ts-fig-container ts-fig-hero-inner">
+                        <div>
+                            <span className="ts-fig-chip">
+                                <span className="ts-fig-chip-dot" />
+                                Customer loyalty
+                            </span>
+                            <h1>
+                                TrueServe <span className="o">Rewards.</span><span className="t">Eat more, earn more.</span>
+                            </h1>
+                            <p className="ts-fig-hero-sub">
                                 Turn every order into perks. Earn points automatically, climb tiers, and unlock faster service plus stronger rewards over time.
                             </p>
-                            <div className="mt-5 rewards-chip-row">
-                                <div className="food-chip"><span className="food-chip-dot" /> Points tracked in real-time</div>
-                                <div className="food-chip"><span className="food-chip-dot" /> Tier upgrades in one tap</div>
-                                <div className="food-chip"><span className="food-chip-dot" /> Tied to real orders</div>
+                            <div className="ts-fig-rewards-hero-chips">
+                                <span className="ts-fig-rewards-hero-chip"><Sparkles size={13} /> Points tracked in real-time</span>
+                                <span className="ts-fig-rewards-hero-chip"><Crown size={13} /> Tier upgrades in one tap</span>
+                                <span className="ts-fig-rewards-hero-chip"><TrendingUp size={13} /> Tied to real orders</span>
                             </div>
-                            {!isSignedIn && (
-                                <div className="mt-5">
-                                    <Link href="/login" className="btn btn-gold rewards-hero-cta">Sign In To Join Rewards</Link>
+                            {!isSignedIn ? (
+                                <div style={{ marginTop: 28 }}>
+                                    <Link href="/login" className="ts-fig-btn">Sign in to join Rewards</Link>
                                 </div>
-                            )}
+                            ) : null}
                         </div>
 
-                        <div className="food-card min-w-0 border border-[#f97316]/30">
-                            <p className="food-kicker mb-2">Progress</p>
-                            <h3 className="food-heading !text-[30px]">{journey.title}</h3>
-                            <p className="mt-2 text-sm text-white/75 break-words">{journey.detail}</p>
-                            <div className="rewards-progress-meta">
-                                <span>{journey.progress}% complete</span>
-                                <span>{journey.remaining.toLocaleString()} points to go</span>
+                        <aside className="ts-fig-live-card ts-fig-rewards-progress-card" aria-label="Rewards progress">
+                            <div className="ts-fig-live-card-head">
+                                <span className="ts-fig-live-dot">{journey.title}</span>
+                                <span className="updated">{isSignedIn ? `${displayPlan} tier` : "Sign in to track"}</span>
                             </div>
-                            <div className="rewards-progress-track">
-                                <div
-                                    className="rewards-progress-fill"
-                                    style={{ width: `${Math.max(5, journey.progress)}%` }}
-                                />
+                            <div className="ts-fig-rewards-progress-body">
+                                <div className="ts-fig-rewards-progress-points">
+                                    <small>TruePoints</small>
+                                    <strong>{snapshot ? snapshot.points.toLocaleString() : "0"}</strong>
+                                </div>
+                                <p>{journey.detail}</p>
+                                <div className="ts-fig-rewards-progress-meta">
+                                    <span>{journey.progress}% complete</span>
+                                    <span>{journey.remaining.toLocaleString()} pts to go</span>
+                                </div>
+                                <div className="ts-fig-live-progress-bar" style={{ height: 8 }}>
+                                    <span style={{ width: `${Math.max(5, journey.progress)}%`, animation: "none" }} />
+                                </div>
+                                <div className="ts-fig-rewards-tip">
+                                    Tip: Place larger group orders to accelerate your next tier faster.
+                                </div>
                             </div>
-                            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs text-white/65 break-words">
-                                Tip: Place larger group orders to accelerate your next tier faster.
+                        </aside>
+                    </div>
+                </section>
+
+                {/* TAB NAV */}
+                <nav className="ts-fig-rewards-tabs" aria-label="Rewards sections">
+                    <div className="ts-fig-container">
+                        <a href="#wallet">Wallet</a>
+                        <a href="#anniversary">Anniversary</a>
+                        <a href="#tiers">Tiers</a>
+                        <a href="#how-it-works">How it works</a>
+                        <a href="#faq">FAQ</a>
+                    </div>
+                </nav>
+
+                {/* MESSAGE BANNER */}
+                {resolvedSearchParams?.update ? (
+                    <section className="ts-fig-section" style={{ paddingTop: 36, paddingBottom: 0 }}>
+                        <div className="ts-fig-container">
+                            <MessageBanner update={resolvedSearchParams?.update} tier={resolvedSearchParams?.tier} />
+                        </div>
+                    </section>
+                ) : null}
+
+                {/* WALLET SUMMARY */}
+                <section id="wallet" className="ts-fig-section ts-fig-section-haze">
+                    <div className="ts-fig-container">
+                        <div className="ts-fig-rewards-wallet">
+                            <div className="ts-fig-rewards-wallet-balance">
+                                <span className="ts-fig-kicker"><Sparkles size={13} /> Active wallet</span>
+                                <strong>{snapshot ? snapshot.points.toLocaleString() : "0"}</strong>
+                                <span className="muted">TruePoints available</span>
+                            </div>
+                            <div className="ts-fig-rewards-wallet-meta">
+                                <div className="ts-fig-rewards-wallet-row">
+                                    <span><Crown size={14} /> {isSignedIn ? `${displayPlan} tier` : "Sign in to track tier"}</span>
+                                    <span><TrendingUp size={14} /> {snapshot ? snapshot.ordersCount : 0} orders</span>
+                                </div>
+                                <div className="ts-fig-rewards-wallet-progress">
+                                    <div className="ts-fig-rewards-wallet-progress-head">
+                                        <span>{journey.title}</span>
+                                        <span>{journey.remaining.toLocaleString()} pts to go</span>
+                                    </div>
+                                    <div className="ts-fig-live-progress-bar" style={{ height: 6 }}>
+                                        <span style={{ width: `${Math.max(5, journey.progress)}%`, animation: "none" }} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <FadeInSection className="rewards-wallet-summary">
-                    <div className="rewards-wallet-balance">
-                        <p><Sparkles size={13} />Active Wallet Summary</p>
-                        <strong>{snapshot ? snapshot.points.toLocaleString() : "0"}</strong>
-                        <span>TruePoints available</span>
-                    </div>
-                    <div className="rewards-wallet-progress">
-                        <div className="rewards-wallet-topline">
-                            <span><Crown size={13} />{currentPlan} tier</span>
-                            <span><TrendingUp size={13} />{snapshot ? snapshot.ordersCount : 0} orders</span>
+                {/* ANNIVERSARY (client component — handles confetti + countdown) */}
+                <AnniversaryTab
+                    isSignedIn={isSignedIn}
+                    createdAt={snapshot?.createdAt ?? null}
+                    reward={snapshot?.anniversaryReward}
+                />
+
+                {/* TIER PICKER */}
+                <section id="tiers" className="ts-fig-section ts-fig-section-haze">
+                    <div className="ts-fig-container">
+                        <div className="ts-fig-rewards-tier-head">
+                            <div>
+                                <span className="ts-fig-kicker">Membership</span>
+                                <h2>Choose your tier.</h2>
+                            </div>
+                            <Link href="/user/settings#wallet" className="ts-fig-link" style={{ alignSelf: "center" }}>Manage wallet →</Link>
                         </div>
-                        <div className="rewards-progress-meta">
-                            <span>{journey.title}</span>
-                            <span>{journey.remaining.toLocaleString()} points to go</span>
-                        </div>
-                        <div className="rewards-progress-track">
-                            <div
-                                className="rewards-progress-fill"
-                                style={{ width: `${Math.max(5, journey.progress)}%` }}
+                        <div className="ts-fig-rewards-tier-grid">
+                            <TierCard
+                                tier="Basic"
+                                subtitle="Starter"
+                                price="Free"
+                                currentPlan={currentPlan}
+                                canSubmit={isSignedIn}
+                                ctaHref={!isSignedIn ? "/login" : undefined}
+                                ctaLabel={!isSignedIn ? "Sign in to join" : undefined}
+                                icon={<Gift size={20} />}
+                                features={[
+                                    "Standard points earning",
+                                    "Access to all restaurants",
+                                    "Core order tracking"
+                                ]}
+                                variant="plain"
+                            />
+                            <TierCard
+                                tier="Plus"
+                                subtitle="Priority Tier"
+                                price="$9.99 / month"
+                                currentPlan={currentPlan}
+                                canSubmit={isSignedIn && canChoosePaid}
+                                ctaHref={!isSignedIn ? "/login" : !canChoosePaid ? "/account#wallet" : undefined}
+                                ctaLabel={!isSignedIn ? "Sign in to join" : !canChoosePaid ? "Add wallet to join" : undefined}
+                                badge="Best Value"
+                                icon={<Star size={20} />}
+                                features={[
+                                    "Priority dispatch during peak times",
+                                    "Faster support response windows",
+                                    "1.5x points multiplier on all orders"
+                                ]}
+                                variant="teal"
+                            />
+                            <TierCard
+                                tier="Premium"
+                                subtitle="Power User"
+                                price="$19.99 / month"
+                                currentPlan={currentPlan}
+                                canSubmit={isSignedIn && canChoosePaid}
+                                ctaHref={!isSignedIn ? "/login" : !canChoosePaid ? "/account#wallet" : undefined}
+                                ctaLabel={!isSignedIn ? "Sign in to join" : !canChoosePaid ? "Add wallet to join" : undefined}
+                                badge="Top Perks"
+                                icon={<ShieldCheck size={20} />}
+                                features={[
+                                    "Highest dispatch priority",
+                                    "Concierge support",
+                                    "2x points multiplier"
+                                ]}
+                                variant="dark"
                             />
                         </div>
+                        {isSignedIn && !canChoosePaid ? (
+                            <p className="ts-fig-rewards-paid-hint">Add a payment method first to unlock Plus or Premium.</p>
+                        ) : null}
                     </div>
-                </FadeInSection>
-
-                <AnniversaryRewardCard isSignedIn={isSignedIn} reward={snapshot?.anniversaryReward} />
-
-                <FadeInSection className="mt-8" delay={0.05}>
-                    <div className="food-section-head rewards-section-head">
-                        <div>
-                            <p className="food-kicker mb-2">Membership</p>
-                            <h2 className="food-heading">Choose Your Tier</h2>
-                        </div>
-                        <Link href="/user/settings#wallet" className="btn btn-ghost">Manage Wallet</Link>
-                    </div>
-
-                    <div className="rewards-tier-matrix grid gap-6 md:grid-cols-3">
-                        <TierCard
-                            tier="Basic"
-                            subtitle="Starter"
-                            price="Free"
-                            currentPlan={currentPlan}
-                            canSubmit={isSignedIn}
-                            ctaHref={!isSignedIn ? "/login" : undefined}
-                            ctaLabel={!isSignedIn ? "Sign In To Join" : undefined}
-                            icon={<Gift size={17} />}
-                            features={[
-                                "Standard points earning",
-                                "Access to all restaurants",
-                                "Core order tracking"
-                            ]}
-                        />
-                        <TierCard
-                            tier="Plus"
-                            subtitle="Priority Tier"
-                            price="$9.99 / month"
-                            currentPlan={currentPlan}
-                            canSubmit={isSignedIn && canChoosePaid}
-                            ctaHref={!isSignedIn ? "/login" : !canChoosePaid ? "/account#wallet" : undefined}
-                            ctaLabel={!isSignedIn ? "Sign In To Join" : !canChoosePaid ? "Add Wallet To Join" : undefined}
-                            badge="Best Value"
-                            icon={<Star size={17} />}
-                            features={[
-                                "Priority dispatch during peak times",
-                                "Faster support response windows",
-                                "1.5x points multiplier on all orders"
-                            ]}
-                        />
-                        <TierCard
-                            tier="Premium"
-                            subtitle="Power User"
-                            price="$19.99 / month"
-                            currentPlan={currentPlan}
-                            canSubmit={isSignedIn && canChoosePaid}
-                            ctaHref={!isSignedIn ? "/login" : !canChoosePaid ? "/account#wallet" : undefined}
-                            ctaLabel={!isSignedIn ? "Sign In To Join" : !canChoosePaid ? "Add Wallet To Join" : undefined}
-                            badge="Top Perks"
-                            icon={<ShieldCheck size={17} />}
-                            features={[
-                                "Highest dispatch priority",
-                                "Concierge support",
-                                "2x points multiplier"
-                            ]}
-                        />
-                    </div>
-
-                    {isSignedIn && !canChoosePaid && (
-                        <p className="mt-4 text-sm text-[#f97316]">
-                            Add a payment method first to unlock Plus or Premium.
-                        </p>
-                    )}
-                </FadeInSection>
+                </section>
 
                 {/* HOW IT WORKS */}
-                <FadeInSection className="mt-8" delay={0.05}>
-                <section className="food-panel rewards-steps-panel">
-                    <p className="food-kicker mb-1">How It Works</p>
-                    <h2 className="food-heading !text-[26px] mb-6">Three steps to better perks</h2>
-                    <div className="rewards-steps-list">
-                        {[
-                            { n: "01", title: "Order Normally", desc: "Browse health-verified restaurants and check out. Rewards are automatic on every completed delivery — no extra steps." },
-                            { n: "02", title: "Earn Points", desc: "Points credit instantly after delivery. Your tier multiplier applies automatically.", extra: (
-                                <div className="flex gap-2 flex-wrap mt-2">
-                                    <span className="px-2.5 py-1 rounded-full bg-white/[0.05] border border-white/10 text-[11px] font-bold text-white/50">Basic 1×</span>
-                                    <span className="px-2.5 py-1 rounded-full bg-[rgba(249,115,22,0.08)] border border-[rgba(249,115,22,0.2)] text-[11px] font-bold text-[#f97316]/80">Plus 1.5×</span>
-                                    <span className="px-2.5 py-1 rounded-full bg-[rgba(249,115,22,0.14)] border border-[rgba(249,115,22,0.3)] text-[11px] font-bold text-[#f97316]">Premium 2×</span>
+                <section id="how-it-works" className="ts-fig-section">
+                    <div className="ts-fig-container">
+                        <span className="ts-fig-kicker">How it works</span>
+                        <h2>Three steps to better perks.</h2>
+                        <div className="ts-fig-steps">
+                            <div className="ts-fig-steps-connector" aria-hidden="true" />
+                            <article className="ts-fig-step">
+                                <div className="ts-fig-step-icon"><Gift size={28} /></div>
+                                <span className="ts-fig-step-num">01</span>
+                                <h3>Order normally</h3>
+                                <p>Browse health-verified restaurants and check out. Rewards are automatic on every completed delivery — no extra steps.</p>
+                            </article>
+                            <article className="ts-fig-step">
+                                <div className="ts-fig-step-icon"><Sparkles size={28} /></div>
+                                <span className="ts-fig-step-num">02</span>
+                                <h3>Earn points</h3>
+                                <p>Points credit instantly after delivery. Your tier multiplier applies automatically.</p>
+                                <div className="ts-fig-rewards-multiplier-row">
+                                    <span className="ts-fig-rewards-multiplier">Basic 1×</span>
+                                    <span className="ts-fig-rewards-multiplier teal">Plus 1.5×</span>
+                                    <span className="ts-fig-rewards-multiplier orange">Premium 2×</span>
                                 </div>
-                            )},
-                            { n: "03", title: "Unlock Tiers", desc: "Hit 1,200 pts to unlock Plus (1.5×, priority dispatch). Hit 3,000 pts to unlock Premium (2×, concierge support)." },
-                        ].map((step) => (
-                            <div key={step.n} className="rewards-step">
-                                <span>{step.n}</span>
-                                <div>
-                                    <p>{step.title}</p>
-                                    <small>{step.desc}</small>
-                                    {step.extra}
-                                </div>
-                            </div>
-                        ))}
+                            </article>
+                            <article className="ts-fig-step">
+                                <div className="ts-fig-step-icon"><Crown size={28} /></div>
+                                <span className="ts-fig-step-num">03</span>
+                                <h3>Unlock tiers</h3>
+                                <p>Hit 1,200 pts to unlock Plus (1.5×, priority dispatch). Hit 3,000 pts to unlock Premium (2×, concierge support).</p>
+                            </article>
+                        </div>
                     </div>
                 </section>
-                </FadeInSection>
 
                 {/* FAQ */}
-                <FadeInSection className="mt-8" delay={0.05}>
-                <section className="food-panel">
-                    <p className="food-kicker mb-1">Questions</p>
-                    <h2 className="food-heading !text-[26px] mb-6">Rewards FAQ</h2>
-                    <div className="divide-y divide-white/6">
-                        {[
-                            { q: "When do I see my points?", a: "Points are credited automatically within minutes of your order being marked delivered." },
-                            { q: "Do I get anything on my account anniversary?", a: "Yes. Eligible accounts receive 250 TruePoints once per year on or after the anniversary of the day the account was created." },
-                            { q: "Do points expire?", a: "No. Your points never expire as long as your account is active and in good standing." },
-                            { q: "Can I downgrade my tier?", a: "Yes. You can switch tiers anytime from account settings. Changes take effect on your next billing cycle." },
-                            { q: "What does priority dispatch mean?", a: "During peak times, Plus and Premium orders are assigned to available drivers first — resulting in faster pickup and delivery." },
-                            { q: "Is there a free tier?", a: "Yes — Basic is completely free. You earn 1× points on every order with no monthly fee." },
-                            { q: "How does the 2× multiplier work?", a: "Premium members earn double points on every dollar spent. A $30 order earns 60 points instead of 30." },
-                        ].map((faq) => (
-                            <details key={faq.q} className="rewards-faq-item">
-                                <summary>
-                                    <span>{faq.q}</span>
-                                    <span aria-hidden="true">+</span>
-                                </summary>
-                                <p>{faq.a}</p>
-                            </details>
-                        ))}
+                <section id="faq" className="ts-fig-section ts-fig-section-haze">
+                    <div className="ts-fig-container">
+                        <span className="ts-fig-kicker teal">Questions</span>
+                        <h2>Rewards FAQ.</h2>
+                        <div className="ts-fig-rewards-faq">
+                            {[
+                                { q: "When do I see my points?", a: "Points are credited automatically within minutes of your order being marked delivered." },
+                                { q: "Do I get anything on my account anniversary?", a: "Yes. Eligible accounts receive 250 TruePoints once per year on or after the anniversary of the day the account was created." },
+                                { q: "Do points expire?", a: "No. Your points never expire as long as your account is active and in good standing." },
+                                { q: "Can I downgrade my tier?", a: "Yes. You can switch tiers anytime from account settings. Changes take effect on your next billing cycle." },
+                                { q: "What does priority dispatch mean?", a: "During peak times, Plus and Premium orders are assigned to available drivers first — resulting in faster pickup and delivery." },
+                                { q: "Is there a free tier?", a: "Yes — Basic is completely free. You earn 1× points on every order with no monthly fee." },
+                                { q: "How does the 2× multiplier work?", a: "Premium members earn double points on every dollar spent. A $30 order earns 60 points instead of 30." },
+                            ].map((faq) => (
+                                <details key={faq.q} className="ts-fig-rewards-faq-item">
+                                    <summary>
+                                        <span>{faq.q}</span>
+                                        <span className="ts-fig-rewards-faq-plus" aria-hidden="true">+</span>
+                                    </summary>
+                                    <p>{faq.a}</p>
+                                </details>
+                            ))}
+                        </div>
                     </div>
                 </section>
-                </FadeInSection>
             </main>
+            <SiteFooter />
         </div>
     );
 }

@@ -1,201 +1,196 @@
 "use client";
 
 import Link from "next/link";
-import Logo from "@/components/Logo";
-import { BadgeDollarSign, BriefcaseBusiness, Building2, ChartNoAxesCombined, Handshake, Network, ReceiptText, Store, Truck, UsersRound } from "lucide-react";
+import {
+  BadgeDollarSign,
+  BarChart3,
+  BriefcaseBusiness,
+  Building2,
+  Handshake,
+  Network,
+  ReceiptText,
+  Store,
+  Truck,
+  UsersRound,
+} from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
+
+const SWITCH_CARDS = [
+  { icon: ReceiptText, label: "Lower fees", detail: "Flat plans replace percentage-heavy marketplace math." },
+  { icon: UsersRound, label: "Direct customers", detail: "Keep your brand and repeat buyers front and center." },
+  { icon: Store, label: "Live visibility", detail: "Kitchen status and order updates live in one place." },
+  { icon: Truck, label: "Cleaner handoff", detail: "Drivers see prep timing and pickup notes before arrival." },
+];
+
+const FEATURE_CARDS = [
+  {
+    icon: BadgeDollarSign,
+    title: "Keep more of every order",
+    desc: "TrueServe uses fair restaurant plans so operators do not lose margin to every ticket.",
+  },
+  {
+    icon: BarChart3,
+    title: "Live order control",
+    desc: "Track prep timing, order status, driver handoff, and daily revenue from one dashboard.",
+  },
+  {
+    icon: Handshake,
+    title: "Founding partner support",
+    desc: "Early restaurants get direct onboarding help, menu setup support, and a locked launch rate.",
+  },
+];
+
+const TIMELINE = [
+  { step: "01", title: "Apply online", desc: "Send your restaurant details and operating location. We review founding partners directly." },
+  { step: "02", title: "Build your menu", desc: "Import your menu or start with a simple dashboard menu before adding photos." },
+  { step: "03", title: "Start taking orders", desc: "Orders flow to your dashboard with driver status and customer updates connected." },
+];
 
 export default function MerchantLanding() {
   return (
-    <div className="food-app-shell" style={{ minHeight: "100vh", background: "#09090c" }}>
-      <nav className="food-app-nav">
-        <Logo size="sm" />
-        <div className="nav-links hidden md:flex">
-          <Link href="/restaurants">Order Food</Link>
-          <Link href="/driver">For Drivers</Link>
-          <Link href="/pricing">Pricing</Link>
-        </div>
-        <div className="nav-r">
-          <Link href="/merchant/login" className="btn btn-ghost">Sign In</Link>
-        </div>
-      </nav>
+    <div className="ts-fig ts-fig-merchant-page">
+      <SiteHeader />
 
-      <main className="food-app-main">
-
-        {/* ── FOUNDING PARTNER BADGE ── */}
-        <div style={{
-          marginBottom: 24, padding: "12px 20px", borderRadius: 10, textAlign: "center",
-          background: "rgba(249,115,22,0.07)", border: "1px solid rgba(249,115,22,0.25)",
-        }}>
-          <p style={{ margin: 0, fontSize: 12, color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
-            <strong style={{ color: "#f97316" }}>Founding Partner Program —</strong>{" "}
-            Join now for <strong style={{ color: "#fff" }}>30 days free</strong> and get your rate{" "}
-            <strong style={{ color: "#fff" }}>locked forever.</strong>
-          </p>
-        </div>
-
-        {/* ── HERO ── */}
-        <section style={{ padding: "48px 0 40px", textAlign: "center" }}>
-          <p className="food-kicker" style={{ marginBottom: 16, color: "#f97316" }}>For Restaurant Partners</p>
-          <h1 className="food-title" style={{ marginBottom: 20, maxWidth: 800, margin: "0 auto 20px" }}>
-            Grow your restaurant<br /><span className="accent">with TrueServe</span>
-          </h1>
-          <p className="food-subtitle" style={{ maxWidth: 560, margin: "0 auto 36px", textAlign: "center" }}>
-            Reach more local customers, manage orders in real time, and keep 100% of every dollar you earn — flat monthly rate, zero commission.
-          </p>
-          <div className="merchant-cta-row">
-            <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", padding: "14px 32px", fontSize: 14 }}>
-              Apply as Founding Partner →
-            </Link>
-            <Link href="/pricing" className="portal-btn-outline portal-btn-outline-block" style={{ width: "auto", padding: "14px 28px", fontSize: 14 }}>
-              See Pricing
-            </Link>
-          </div>
-        </section>
-
-        <section id="enterprise" className="merchant-route-gateway" aria-label="Merchant onboarding routes">
-          <div className="merchant-route-card merchant-route-local">
-            <div className="merchant-route-icon"><Store size={22} aria-hidden="true" /></div>
-            <p className="food-kicker">Local Merchant Route</p>
-            <h2 className="food-heading">Apply in 60 seconds.</h2>
-            <p>
-              Built for single-location restaurants that want fast onboarding, menu import help, and direct local order flow without marketplace commission.
-            </p>
-            <div className="merchant-route-fields" aria-hidden="true">
-              <span>Restaurant Name</span>
-              <span>Street Address</span>
-              <span>Contact Email</span>
-            </div>
-            <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block">Start Local Application</Link>
-          </div>
-
-          <div className="merchant-route-card merchant-route-enterprise">
-            <div className="merchant-route-icon"><Building2 size={22} aria-hidden="true" /></div>
-            <p className="food-kicker">Enterprise / Multi-Unit Route</p>
-            <h2 className="food-heading">Strategic account intake.</h2>
-            <p>
-              For franchise groups, regional operators, and multi-unit brands that need POS alignment, rollout planning, and centralized reporting.
-            </p>
-            <div className="merchant-enterprise-preview">
-              <label><BriefcaseBusiness size={14} aria-hidden="true" /> Corporate Name</label>
-              <label><UsersRound size={14} aria-hidden="true" /> Number of Units</label>
-              <label><Network size={14} aria-hidden="true" /> Current POS Provider</label>
-            </div>
-            <Link href="/contact?role=restaurant" className="portal-btn-outline portal-btn-outline-block">Speak with Strategic Accounts</Link>
-          </div>
-        </section>
-
-        {/* ── FEATURE CARDS ── */}
-        <section className="grid gap-6 md:grid-cols-3" style={{ marginBottom: 56 }}>
-          {[
-            {
-              icon: BadgeDollarSign,
-              kicker: "Zero Commission",
-              title: "Keep everything you earn",
-              desc: "TrueServe charges a flat monthly fee — not a cut of every order. The more you sell, the more you keep.",
-            },
-            {
-              icon: ChartNoAxesCombined,
-              kicker: "Real-Time Control",
-              title: "Live order dashboard",
-              desc: "See every order the moment it comes in, track prep timing, monitor your driver, and view daily revenue — all in one place.",
-            },
-            {
-              icon: Handshake,
-              kicker: "Rate Lock Guarantee",
-              title: "Your price, locked forever",
-              desc: "Founding partners lock in today's rate permanently. Even as TrueServe grows and pricing increases, your rate never changes.",
-            },
-          ].map((card) => {
-            const Icon = card.icon;
-            return (
-            <div key={card.title} className="food-card" style={{ padding: 28 }}>
-              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 44, height: 44, borderRadius: 14, marginBottom: 14, color: "#f97316", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.22)" }}>
-                <Icon size={21} strokeWidth={2.1} />
+      <main>
+        <section className="ts-fig-hero ts-fig-merchant-hero">
+          <div className="ts-fig-container ts-fig-merchant-hero-inner">
+            <div className="ts-fig-animate-up">
+              <span className="ts-fig-chip">
+                <span className="ts-fig-chip-dot" />
+                Founding Partner Program
+              </span>
+              <h1>
+                Grow your kitchen <span className="o">on fair terms,</span><span className="t">not marketplace drag.</span>
+              </h1>
+              <p className="ts-fig-hero-sub">
+                Reach nearby customers, manage orders in real time, and build a direct local relationship
+                without handing over the customer experience.
+              </p>
+              <div className="ts-fig-merchant-actions">
+                <Link href="/merchant/signup" className="ts-fig-btn">Apply as Founding Partner</Link>
+                <Link href="/pricing" className="ts-fig-link ts-fig-merchant-link">See Pricing</Link>
               </div>
-              <p className="food-kicker" style={{ marginBottom: 8 }}>{card.kicker}</p>
-              <h3 className="food-heading" style={{ fontSize: 26, marginBottom: 10 }}>{card.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.65)" }}>{card.desc}</p>
             </div>
-          )})}
-        </section>
 
-        <section className="food-panel merchant-switch-panel" style={{ marginBottom: 56 }}>
-          <div>
-            <p className="food-kicker" style={{ marginBottom: 12 }}>Why restaurants switch</p>
-            <h2 className="food-heading" style={{ marginBottom: 12 }}>Less marketplace drag. <span className="accent">More direct control.</span></h2>
-            <p style={{ maxWidth: 560, color: "rgba(255,255,255,.62)", fontSize: 14, lineHeight: 1.75 }}>
-              TrueServe is built for operators who want delivery demand without losing the customer relationship or watching commission eat the margin.
-            </p>
-          </div>
-          <div className="merchant-switch-grid">
-            {[
-              { icon: ReceiptText, label: "Lower fees", detail: "Flat plans replace percentage-heavy marketplace math." },
-              { icon: UsersRound, label: "Direct customers", detail: "Keep your brand and repeat buyers front and center." },
-              { icon: Store, label: "Live visibility", detail: "Kitchen status and order updates live in one place." },
-              { icon: Truck, label: "Cleaner handoff", detail: "Drivers see prep timing and pickup notes before arrival." },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.label}>
-                  <Icon size={20} aria-hidden="true" />
-                  <strong>{item.label}</strong>
-                  <span>{item.detail}</span>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ── HOW IT WORKS ── */}
-        <section className="food-panel merchant-timeline-panel" style={{ marginBottom: 56 }}>
-          <p className="food-kicker" style={{ marginBottom: 12 }}>How It Works</p>
-          <h2 className="food-heading" style={{ marginBottom: 32 }}>Up and running <span className="accent">in minutes</span></h2>
-          <div className="merchant-timeline">
-            {[
-              { step: "01", title: "Apply online",    desc: "Fill out a quick form with your restaurant info. We review and approve within 24 hours." },
-              { step: "02", title: "Build your menu", desc: "Sync with Toast, Square, or Clover — or use our AI menu scanner to import your menu in seconds." },
-              { step: "03", title: "Start earning",   desc: "Orders flow directly to your dashboard. Drivers are dispatched automatically. You get paid next day." },
-            ].map((item) => (
-              <div key={item.step} className="merchant-timeline-step">
-                <div className="merchant-timeline-node">{item.step}</div>
-                <div>
-                  <h4 style={{ fontFamily: 'var(--font-fraunces), Georgia, "Times New Roman", serif', fontSize: 20, letterSpacing: "-0.03em", textTransform: "none", color: "#fff", marginBottom: 6 }}>{item.title}</h4>
-                  <p style={{ fontSize: 14, lineHeight: 1.65, color: "rgba(255,255,255,0.6)" }}>{item.desc}</p>
-                </div>
+            <aside className="ts-fig-commission ts-fig-animate-up" aria-label="Commission comparison">
+              <div className="ts-fig-commission-title">Commission comparison</div>
+              <div className="ts-fig-commission-row bad">
+                <div className="row-head"><span>Other platforms</span><span>30%</span></div>
+                <div className="row-bar"><span style={{ width: "100%", animation: "figScaleIn 1.1s var(--fig-ease) both" }} /></div>
               </div>
-            ))}
+              <div className="ts-fig-commission-row good">
+                <div className="row-head"><span>TrueServe</span><span>15%</span></div>
+                <div className="row-bar"><span style={{ width: "50%", animation: "figScaleIn 1.1s .25s var(--fig-ease) both" }} /></div>
+              </div>
+              <div className="ts-fig-commission-savings">
+                <small>On $10,000/month in sales</small>
+                <strong>You keep <span className="accent">$1,500 more</span> every month.</strong>
+              </div>
+            </aside>
           </div>
         </section>
 
-        {/* ── FOUNDING PARTNER CTA ── */}
-        <section className="merchant-final-cta">
-          <p className="food-kicker" style={{ marginBottom: 10, color: "#f97316" }}>Founding Partner Program</p>
-          <h2 className="food-heading" style={{ marginBottom: 12 }}>Limited spots available.</h2>
-          <p className="food-subtitle" style={{ maxWidth: 460, margin: "0 auto 10px" }}>
-            First 30 days free. Rate locked for life. Direct line to our team during onboarding.
-          </p>
-          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 28 }}>Month-to-month · Cancel with 30 days notice</p>
-          <Link href="/merchant/signup" className="portal-btn-gold portal-btn-gold-block" style={{ width: "auto", display: "inline-flex", padding: "16px 40px", fontSize: 15 }}>
-            Apply as Founding Partner →
-          </Link>
-        </section>
+        <section className="ts-fig-section">
+          <div className="ts-fig-container">
+            <span className="ts-fig-kicker">Choose your route</span>
+            <h2>Local restaurants and multi-unit groups need different onboarding.</h2>
+            <div className="ts-fig-merchant-routes">
+              <article className="ts-fig-trust-card ts-fig-merchant-route">
+                <div className="ts-fig-trust-icon"><Store size={22} /></div>
+                <h3>Local Merchant Route</h3>
+                <p>For single-location restaurants that want quick onboarding, menu setup help, and direct local orders.</p>
+                <div className="ts-fig-merchant-field-preview" aria-hidden="true">
+                  <span>Restaurant Name</span>
+                  <span>Street Address</span>
+                  <span>Contact Email</span>
+                </div>
+                <Link href="/merchant/signup" className="ts-fig-btn">Start Local Application</Link>
+              </article>
 
-        <footer className="mt-4 border-t border-white/5 px-2 pt-8 pb-10 text-center">
-          <div className="mx-auto flex max-w-7xl flex-col items-center gap-4">
-            <Logo size="md" />
-            <div className="flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
-              <Link href="/" className="hover:text-white transition-colors">Home</Link>
-              <Link href="/pricing" className="hover:text-[#f97316] transition-colors">Pricing</Link>
-              <Link href="/driver" className="hover:text-[#f97316] transition-colors">For Drivers</Link>
-              <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+              <article className="ts-fig-trust-card ts-fig-merchant-route teal">
+                <div className="ts-fig-trust-icon"><Building2 size={22} /></div>
+                <h3>Enterprise / Multi-Unit Route</h3>
+                <p>For franchise groups, regional operators, and brands that need POS alignment and rollout planning.</p>
+                <div className="ts-fig-merchant-enterprise-preview" aria-hidden="true">
+                  <span><BriefcaseBusiness size={14} /> Corporate Name</span>
+                  <span><Network size={14} /> Current POS Provider</span>
+                  <span><UsersRound size={14} /> Number of Units</span>
+                </div>
+                <Link href="/contact?role=restaurant" className="ts-fig-btn ts-fig-btn-dark">Speak with Strategic Accounts</Link>
+              </article>
             </div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
-              © {new Date().getFullYear()} TrueServe · Bringing local flavor to your doorstep.
-            </p>
           </div>
-        </footer>
+        </section>
+
+        <section className="ts-fig-section ts-fig-section-haze">
+          <div className="ts-fig-container">
+            <span className="ts-fig-kicker teal">Why restaurants switch</span>
+            <h2>Less marketplace drag. More direct control.</h2>
+            <div className="ts-fig-merchant-switch-grid">
+              {SWITCH_CARDS.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <article key={item.label} className="ts-fig-trust-card ts-fig-merchant-switch-card" style={{ animationDelay: `${index * 90}ms` }}>
+                    <div className="ts-fig-trust-icon"><Icon size={20} /></div>
+                    <h3>{item.label}</h3>
+                    <p>{item.detail}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="ts-fig-section">
+          <div className="ts-fig-container">
+            <div className="ts-fig-trust ts-fig-merchant-feature-grid">
+              {FEATURE_CARDS.map((card, index) => {
+                const Icon = card.icon;
+                return (
+                  <article key={card.title} className="ts-fig-trust-card" style={{ animationDelay: `${index * 90}ms` }}>
+                    <div className="ts-fig-trust-icon"><Icon size={20} /></div>
+                    <h3>{card.title}</h3>
+                    <p>{card.desc}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="ts-fig-section ts-fig-section-haze">
+          <div className="ts-fig-container ts-fig-merchant-timeline-wrap">
+            <span className="ts-fig-kicker">How it works</span>
+            <h2>Up and running without a heavy rollout.</h2>
+            <div className="ts-fig-merchant-timeline">
+              {TIMELINE.map((item) => (
+                <article key={item.step} className="ts-fig-merchant-timeline-item">
+                  <span>{item.step}</span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.desc}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="ts-fig-section ts-fig-merchant-final">
+          <div className="ts-fig-container">
+            <span className="ts-fig-kicker">Founding Partner Program</span>
+            <h2>Limited launch spots available.</h2>
+            <p>
+              First 30 days free. Direct onboarding support. Menu setup guidance.
+              A cleaner way to bring delivery demand to the restaurants people already love.
+            </p>
+            <Link href="/merchant/signup" className="ts-fig-btn">Apply as Founding Partner</Link>
+          </div>
+        </section>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }

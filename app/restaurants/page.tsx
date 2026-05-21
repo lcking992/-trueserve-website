@@ -2,10 +2,10 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { ChevronDown, Filter, Percent, Search, X } from "lucide-react";
-import Logo from "@/components/Logo";
+import { ChevronDown, Filter, MapPin, Percent, Search, ShieldCheck, Store, Truck, X } from "lucide-react";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { supabase } from "@/lib/supabase";
 import LandingSearch from "@/components/LandingSearch";
 import RestaurantCard from "./RestaurantCard";
@@ -184,35 +184,100 @@ function RestaurantFinderContent() {
   const displayRestaurants = marketRestaurants;
   const placeLabel = selectedArea.split(",")[0]?.trim() || selectedArea;
 
-  return (
-    <div className="food-app-shell">
-      <nav className="food-app-nav">
-        <Logo size="sm" />
-      </nav>
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition((position) => {
+      const params = new URLSearchParams({
+        lat: String(position.coords.latitude),
+        lng: String(position.coords.longitude),
+        address: "Current location",
+      });
+      window.location.href = `/restaurants?${params.toString()}`;
+    });
+  };
 
-      <main className="food-app-main">
-        <div id="view-restaurants" className="active">
-          <section className="rest-hero-panel">
-            <div className="rest-hero-bg" />
-            <Link href="/" className="back" style={{ marginBottom: '16px' }}>← Back</Link>
-            <div className="food-eyebrow">Browse restaurants</div>
-            <h2>Restaurants Near You</h2>
-            <p className="lead">
-              Showing restaurants for <span className="text-[#f97316] font-bold">{selectedArea}</span>.
-              Ratings and reviews are linked to Google so customers see external feedback, not platform-only scores.
-            </p>
-            <div className="mt-5 rest-address-search">
-              <LandingSearch initialValue={address || search || ""} isCompact />
-            </div>
-            {!hasLocationInput && (
-              <p className="mt-3 text-xs uppercase tracking-[0.14em] text-white/55">
-                Enter your delivery address above to see restaurants near you.
+  const livePreview = hasLocationInput && displayRestaurants.length > 0
+    ? displayRestaurants.slice(0, 3).map((restaurant) => ({
+        id: restaurant.id,
+        name: restaurant.name || "Local restaurant",
+        rating: restaurant.rating || "4.9",
+        etaText: `${etaMinutes(restaurant)} min`,
+        distance: typeof restaurant.distanceMiles === "number" ? `${restaurant.distanceMiles.toFixed(1)} mi` : "nearby",
+        label: cuisineFor(restaurant),
+      }))
+    : [
+        { id: "address", name: "Enter your address", rating: "Real", etaText: "local matches", distance: "start", label: "Start here" },
+        { id: "location", name: "Use current location", rating: "Fast", etaText: "zone check", distance: "one tap", label: "One tap" },
+        { id: "secure", name: "See available kitchens", rating: "Verified", etaText: "partners only", distance: "no fake feed", label: "No fake feed" },
+      ];
+
+  return (
+    <div className="ts-fig ts-fig-rest-page">
+      <SiteHeader />
+
+      <main>
+        <section className="ts-fig-hero ts-fig-rest-hero">
+          <div className="ts-fig-container ts-fig-hero-inner ts-fig-rest-hero-inner">
+            <div>
+              <span className="ts-fig-chip">
+                <span className="ts-fig-chip-dot" />
+                Neighborhood kitchens, real food
+              </span>
+              <h1>
+                Find food <span className="o">near your block,</span><span className="t">not a fake feed.</span>
+              </h1>
+              <p className="ts-fig-hero-sub">
+                Enter your address to see active TrueServe restaurant partners that can actually deliver to you.
+                We only show kitchens after we know your delivery area.
               </p>
-            )}
+              <div className="ts-fig-hero-search">
+                <LandingSearch initialValue={address || search || ""} isCompact />
+              </div>
+              <button type="button" className="ts-fig-locate" onClick={handleUseCurrentLocation}>
+                <MapPin size={16} aria-hidden="true" />
+                Or <u>use my current location</u>
+              </button>
+            </div>
+
+            <aside className="ts-fig-live-card ts-fig-rest-live" aria-label="Restaurant availability preview">
+              <div className="ts-fig-live-card-head">
+                <span className="ts-fig-live-dot">{hasLocationInput ? "Live near you" : "Ready when you are"}</span>
+                <span className="updated">{hasLocationInput ? "Updated just now" : "Address required"}</span>
+              </div>
+              {livePreview.map((item, index) => (
+                <div key={item.id} className={`ts-fig-live-row${index === 0 ? " is-active" : ""}`}>
+                  <div className="ts-fig-emoji" aria-hidden="true">
+                    {index === 0 ? <Store size={20} /> : index === 1 ? <Truck size={20} /> : <ShieldCheck size={20} />}
+                  </div>
+                  <div>
+                    <div className="ts-fig-live-name">
+                      {item.name}
+                      {index === 0 && hasLocationInput ? <span className="ts-fig-live-pop">Open</span> : null}
+                    </div>
+                    <div className="ts-fig-live-meta">
+                      <span>{item.rating}</span>
+                      <span>·</span>
+                      <span>{item.etaText}</span>
+                      <span>·</span>
+                      <span>{item.distance}</span>
+                    </div>
+                  </div>
+                  <span className="ts-fig-live-chev"><ChevronDown size={16} /></span>
+                </div>
+              ))}
+              <div className="ts-fig-live-progress">
+                <strong>{hasLocationInput ? "Restaurants filtered for your area" : "Address unlocks nearby kitchens"}</strong>
+                <span className="eta">{hasLocationInput ? `${displayRestaurants.length} found` : "Start"}</span>
+                <div className="ts-fig-live-progress-bar">
+                  <span style={{ width: hasLocationInput ? "72%" : "18%" }} />
+                </div>
+              </div>
+            </aside>
+          </div>
           </section>
 
           {hasLocationInput && (
-            <section className="rest-toolbar-panel">
+            <section className="ts-fig-container ts-fig-rest-toolbar-panel">
               <div className="rest-search-control">
                 <Search size={18} aria-hidden="true" />
                 <input
@@ -286,7 +351,9 @@ function RestaurantFinderContent() {
             </section>
           )}
 
-          {loading ? (
+          <section className="ts-fig-section ts-fig-rest-results-section">
+            <div className="ts-fig-container">
+          {loading && hasLocationInput ? (
             <div className="rest-grid">
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="rest-card rest-card-skeleton">
@@ -312,7 +379,8 @@ function RestaurantFinderContent() {
                 >
                   <div className="rest-results-head">
                     <div>
-                      <h3>Available Restaurants</h3>
+                      <span className="ts-fig-kicker">Near you</span>
+                      <h2>Kitchens worth knowing.</h2>
                       <p>Restaurants matching this delivery area and your filters.</p>
                     </div>
                     <span>{displayRestaurants.length} {displayRestaurants.length === 1 ? "partner" : "partners"}</span>
@@ -343,48 +411,48 @@ function RestaurantFinderContent() {
               )}
               {displayRestaurants.length === 0 && !loading && (
                 <div
-                  className="food-panel col-span-full text-center py-16 px-8"
-                  style={{ opacity: 1, textAlign: "center" }}
+                  className="ts-fig-empty-state"
                 >
                   {hasLocationInput ? (
                     <>
-                      <p className="food-kicker mb-3">Outside our current zone</p>
-                      <h3 className="food-heading !text-[30px] mb-3">We haven&apos;t reached <span className="accent">{placeLabel}</span> yet.</h3>
-                      <p className="text-sm text-white/55 mb-6 max-w-sm mx-auto leading-relaxed">
+                      <p className="ts-fig-kicker">Outside our current zone</p>
+                      <h2>We haven&apos;t reached <span>{placeLabel}</span> yet.</h2>
+                      <p>
                         We&apos;re onboarding nearby restaurant partners now. Leave your email and we&apos;ll alert you when TrueServe opens ordering around this address.
                       </p>
                       <form
                         onSubmit={(e) => { e.preventDefault(); const el = e.currentTarget.querySelector('input') as HTMLInputElement; if (el?.value) { el.value = ''; alert('You\'re on the list — we\'ll reach out when we launch near you!'); } }}
-                        style={{ display: 'flex', gap: 8, maxWidth: 360, margin: '0 auto' }}
+                        className="ts-fig-empty-form"
                       >
-                        <input type="email" placeholder="your@email.com" required style={{ flex: 1, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10, padding: '10px 14px', color: '#fff', fontSize: 13, outline: 'none', fontFamily: 'inherit' }} />
-                        <button type="submit" className="portal-btn-gold" style={{ whiteSpace: 'nowrap' }}>Notify Me</button>
+                        <input type="email" placeholder="your@email.com" required />
+                        <button type="submit" className="ts-fig-btn">Notify Me</button>
                       </form>
                     </>
                   ) : (
                     <>
-                      <div className="mx-auto flex max-w-2xl flex-col items-center text-center" style={{ width: "100%", maxWidth: 760, margin: "0 auto", alignItems: "center", textAlign: "center" }}>
-                        <p className="food-kicker mb-3">Pilot launch</p>
-                        <h3 className="food-heading !text-[30px] mb-3 text-center" style={{ width: "100%", textAlign: "center" }}>Now live with <span className="accent">{activeRestaurantCount || "local"} restaurant partners</span></h3>
-                        <p className="text-sm text-white/55 max-w-xl leading-relaxed text-center" style={{ margin: "0 auto", textAlign: "center" }}>
-                          Enter your address above to see restaurants near you and discover currently active merchant locations in your area.
-                        </p>
-                      </div>
+                      <p className="ts-fig-kicker teal">Pilot launch</p>
+                      <h2>Now live with <span>{activeRestaurantCount || "local"} restaurant partners</span></h2>
+                      <p>
+                        Enter your address above to see only restaurants that can deliver to your location.
+                        No cuisine rows, no restaurant feed, and no saved-account shortcuts until we know where you are.
+                      </p>
                     </>
                   )}
                 </div>
               )}
             </motion.div>
           )}
-        </div>
+            </div>
+          </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }
 
 export default function RestaurantFinder() {
   return (
-    <Suspense fallback={<div className="food-app-shell flex min-h-screen items-center justify-center text-[#f97316] font-bold">Loading restaurants...</div>}>
+    <Suspense fallback={<div className="ts-fig flex min-h-screen items-center justify-center text-[#ff6b35] font-bold">Loading restaurants...</div>}>
       <RestaurantFinderContent />
     </Suspense>
   );

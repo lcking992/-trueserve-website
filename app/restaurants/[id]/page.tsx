@@ -104,7 +104,13 @@ async function getRestaurant(id: string) {
         const openTime = (restaurant.openTime || "08:00:00").slice(0, 5);
         const closeTime = (restaurant.closeTime || "22:00:00").slice(0, 5);
         const currentHHMM = now.toTimeString().slice(0, 5);
-        restaurant.isOpen = restaurant.isMock ? true : (currentHHMM >= openTime && currentHHMM <= closeTime);
+        const isQaRuntime =
+            process.env.APP_ENV === "qa" ||
+            process.env.APP_ENV === "preview" ||
+            process.env.NEXT_PUBLIC_APP_ENV === "qa" ||
+            process.env.NEXT_PUBLIC_APP_ENV === "preview" ||
+            process.env.VERCEL_ENV === "preview";
+        restaurant.isOpen = isQaRuntime || restaurant.isMock ? true : (currentHHMM >= openTime && currentHHMM <= closeTime);
         restaurant.openTimeDisplay = openTime;
         restaurant.closeTimeDisplay = closeTime;
 

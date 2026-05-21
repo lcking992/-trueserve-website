@@ -26,7 +26,9 @@ import SiteFooter from "@/components/SiteFooter";
 import LandingSearch from "@/components/LandingSearch";
 import { supabase } from "@/lib/supabase";
 import {
+  addDistanceMiles,
   getLiveRestaurants,
+  normalizeSearchText,
   type PublicRestaurantRecord,
 } from "@/lib/public-restaurants";
 
@@ -194,64 +196,156 @@ function CountUp({ to, prefix = "", suffix = "", duration = 1.2 }: { to: number;
   return <>{prefix}{value.toLocaleString()}{suffix}</>;
 }
 
+function cityFromAddress(address: string | null): string {
+  if (!address) return "";
+  const parts = address
+    .split(",")
+    .map((p) => normalizeSearchText(p))
+    .filter(Boolean);
+  if (parts.length >= 3) return parts[parts.length - 2];
+  if (parts.length >= 2) return parts[0];
+  return parts[0] || "";
+}
+
+function etaFromDistance(distanceMiles: number | null | undefined): string {
+  if (typeof distanceMiles !== "number") return "25 min";
+  if (distanceMiles <= 1) return "15 min";
+  if (distanceMiles <= 2) return "20 min";
+  if (distanceMiles <= 4) return "28 min";
+  return "35 min";
+}
+
+function distanceLabel(distanceMiles: number | null | undefined, fallbackCity?: string): string {
+  if (typeof distanceMiles === "number") return `${distanceMiles.toFixed(1)} mi`;
+  return fallbackCity || "Nearby";
+}
+
 export default function Home() {
   const [networkStats, setNetworkStats] = useState({
     totalRestaurants: 0,
     averageRating: null as number | null,
   });
   const [liveRestaurants, setLiveRestaurants] = useState<FeaturedRestaurant[]>([]);
+  const [nearbyRestaurants, setNearbyRestaurants] = useState<FeaturedRestaurant[]>([]);
   const [hasLocationContext, setHasLocationContext] = useState(false);
 
   useEffect(() => {
     let mounted = true;
+
+    // 1. Read any locally-saved address (typed into the hero search) — has the
+    //    best signal because it's already geocoded into lat/lng.
+    let savedAddress = "";
+    let savedLat: number | null = null;
+    let savedLng: number | null = null;
     try {
-      const savedAddress = localStorage.getItem("ts.delivery.address");
-      const savedLat = localStorage.getItem("ts.delivery.lat");
-      const savedLng = localStorage.getItem("ts.delivery.lng");
-      setHasLocationContext(Boolean(savedAddress?.trim() || (savedLat && savedLng)));
-    } catch {
-      setHasLocationContext(false);
+      savedAddress = localStorage.getItem("ts.delivery.address")?.trim() || "";
+      const lat = Number(localStorage.getItem("ts.delivery.lat"));
+      const lng = Number(localStorage.getItem("ts.delivery.lng"));
+      if (Number.isFinite(lat)) savedLat = lat;
+      if (Number.isFinite(lng)) savedLng = lng;
+    } catch {}
+
+    // 2. Try to load signed-in user's saved address from User table.
+    //    Falls back to localStorage if the user isn't signed in or has no address.
+    async function resolveLocation() {
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user?.id) {
+          const { data: profile } = await supabase
+            .from("User")
+            .select("address")
+            .eq("id", data.user.id)
+            .maybeSingle();
+          if (profile?.address && !savedAddress) {
+            savedAddress = String(profile.address).trim();
+          }
+        }
+      } catch {}
+      return { savedAddress, savedLat, savedLng };
     }
 
-    supabase
-      .from("Restaurant")
-      .select("*, healthGrade, complianceStatus, complianceScore, createdAt")
-      .limit(80)
-      .then((result) => {
-        if (!mounted || result.error) return;
-        const live = getLiveRestaurants(result.data || []);
-        const ratings = live.map((r) => Number(r.rating)).filter((n) => Number.isFinite(n) && n > 0);
-        const avg = ratings.length ? ratings.reduce((s, n) => s + n, 0) / ratings.length : null;
-        setNetworkStats({ totalRestaurants: live.length, averageRating: avg });
-        setLiveRestaurants(live as FeaturedRestaurant[]);
-      });
+    async function load() {
+      const loc = await resolveLocation();
+      const restaurantsResult = await supabase
+        .from("Restaurant")
+        .select("*, healthGrade, complianceStatus, complianceScore, createdAt")
+        .limit(80);
+      if (!mounted || restaurantsResult.error) return;
+
+      const live = getLiveRestaurants(restaurantsResult.data || []) as FeaturedRestaurant[];
+      const ratings = live
+        .map((r) => Number(r.rating))
+        .filter((n) => Number.isFinite(n) && n > 0);
+      const avg = ratings.length ? ratings.reduce((s, n) => s + n, 0) / ratings.length : null;
+
+      setNetworkStats({ totalRestaurants: live.length, averageRating: avg });
+      setLiveRestaurants(live);
+
+      const hasCoords = loc.savedLat !== null && loc.savedLng !== null;
+      const hasAddress = Boolean(loc.savedAddress);
+      const cityToken = cityFromAddress(loc.savedAddress);
+
+      let nearby: FeaturedRestaurant[] = [];
+      if (hasCoords) {
+        nearby = addDistanceMiles(live, loc.savedLat, loc.savedLng)
+          .filter(
+            (r) =>
+              typeof r.distanceMiles === "number" &&
+              Number(r.distanceMiles) <= 25,
+          )
+          .sort(
+            (a, b) =>
+              Number(a.distanceMiles ?? 9999) - Number(b.distanceMiles ?? 9999),
+          );
+      } else if (hasAddress && cityToken) {
+        nearby = live.filter(
+          (r) => normalizeSearchText(String(r.city || "")) === cityToken,
+        );
+      }
+
+      setHasLocationContext((hasCoords || hasAddress) && nearby.length > 0);
+      setNearbyRestaurants(nearby);
+    }
+
+    load();
     return () => {
       mounted = false;
     };
   }, []);
 
-  const liveKitchens = useMemo(() => {
-    if (!hasLocationContext || liveRestaurants.length < 3) return LOCATION_PROMPTS;
-    return liveRestaurants.slice(0, 3).map((r, i) => {
-      return {
-        name: r.name ?? "Local Kitchen",
-        cuisine: String(r.cuisineType || r.category || "Local"),
-        rating: r.rating ? String(r.rating) : "4.8",
-        eta: ["12 min", "18 min", "25 min"][i] || "25 min",
-        distance: ["0.8 mi", "1.3 mi", "2.1 mi"][i] || "2.0 mi",
-        Icon: Store,
-        popular: i === 2,
-      };
-    });
-  }, [hasLocationContext, liveRestaurants]);
-
-  const marqueeItems = useMemo(() => {
-    if (!hasLocationContext || liveRestaurants.length < 4) return INTRO_MARQUEE;
-    return liveRestaurants.slice(0, 8).map((r) => ({
+  const liveKitchens = useMemo<LiveKitchen[]>(() => {
+    if (!hasLocationContext || nearbyRestaurants.length < 1) return LOCATION_PROMPTS;
+    return nearbyRestaurants.slice(0, 3).map((r, i) => ({
       name: r.name ?? "Local Kitchen",
       cuisine: String(r.cuisineType || r.category || "Local"),
+      rating: r.rating ? String(r.rating) : "4.8",
+      eta: etaFromDistance(r.distanceMiles),
+      distance: distanceLabel(r.distanceMiles, String(r.city || "Nearby")),
+      Icon: Store,
+      popular: i === 0,
     }));
-  }, [hasLocationContext, liveRestaurants]);
+  }, [hasLocationContext, nearbyRestaurants]);
+
+  // Marquee = distinct cuisines from nearby restaurants only. If we don't
+  // have any nearby (no address saved, or no partners in their area yet),
+  // fall back to the intro marquee.
+  const marqueeItems = useMemo(() => {
+    if (!hasLocationContext || nearbyRestaurants.length < 3) return INTRO_MARQUEE;
+
+    // Build distinct (restaurant -> cuisine) pairs preserving order.
+    const seenCuisines = new Set<string>();
+    const items: { name: string; cuisine: string }[] = [];
+    for (const r of nearbyRestaurants) {
+      const cuisine = String(r.cuisineType || r.category || "Local").trim();
+      if (!cuisine) continue;
+      const key = cuisine.toLowerCase();
+      if (seenCuisines.has(key)) continue;
+      seenCuisines.add(key);
+      items.push({ name: r.name ?? "Local Kitchen", cuisine });
+      if (items.length >= 8) break;
+    }
+    return items.length >= 3 ? items : INTRO_MARQUEE;
+  }, [hasLocationContext, nearbyRestaurants]);
 
   const handleLocate = () => {
     if (!navigator.geolocation) {

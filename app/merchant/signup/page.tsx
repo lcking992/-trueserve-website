@@ -3,7 +3,8 @@
 import React, { useActionState, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Logo from "@/components/Logo";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { submitMerchantInquiry } from "@/app/merchant/actions";
 import { Building2, ChefHat, LockKeyhole, Mail, MapPin, Phone, UserRound } from "lucide-react";
 
@@ -32,12 +33,10 @@ export default function MerchantSignupPage() {
   }, [stateData?.success]);
 
   return (
-    <div className="food-app-shell">
-      <nav className="food-app-nav">
-        <Logo size="sm" />
-      </nav>
+    <div className="ts-fig ts-fig-merchant-signup-page">
+      <SiteHeader />
 
-      <main className="food-auth-wrap">
+      <main className="food-auth-wrap ts-fig-merchant-signup-main">
         <div className="food-auth-grid">
           <section className="food-hero-card food-auth-hero">
             <div className="food-auth-image" style={{ backgroundImage: "url('/merchant_hero.png')" }} />
@@ -210,6 +209,7 @@ export default function MerchantSignupPage() {
           </section>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
